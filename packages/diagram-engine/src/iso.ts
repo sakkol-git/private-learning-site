@@ -1,6 +1,6 @@
 /** Fixed isometric camera at 30°. */
 export const COS30 = Math.cos(Math.PI / 6);
-export const SIN30 = 0.5;
+const SIN30 = 0.5;
 /** Screen pixels per floor grid cell. */
 export const UNIT = 26;
 

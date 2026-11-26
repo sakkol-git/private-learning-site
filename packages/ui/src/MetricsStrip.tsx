@@ -12,15 +12,15 @@ export interface MetricsLabels {
 
 type Status = 'ok' | 'warn' | 'fail';
 
-export function latencyStatus(ms: number): Status {
+function latencyStatus(ms: number): Status {
   return ms >= 1000 ? 'fail' : ms >= 400 ? 'warn' : 'ok';
 }
 
-export function errorStatus(pct: number): Status {
+function errorStatus(pct: number): Status {
   return pct >= 5 ? 'fail' : pct > 0.5 ? 'warn' : 'ok';
 }
 
-export function healthyStatus([up, total]: [number, number]): Status {
+function healthyStatus([up, total]: [number, number]): Status {
   return total > 0 && up === 0 ? 'fail' : up < total ? 'warn' : 'ok';
 }
 

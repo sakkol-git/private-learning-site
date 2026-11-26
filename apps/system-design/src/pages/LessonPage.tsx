@@ -78,6 +78,13 @@ function LessonView({
     [lesson],
   );
 
+  // The step we are heading to. navigate() updates the URL before React re-renders,
+  // so quick repeated key presses must build on this rather than on `index`.
+  const targetRef = useRef(index);
+  useEffect(() => {
+    targetRef.current = index;
+  }, [index]);
+
   const goTo = useCallback(
     (i: number) => {
       if (i < 0) return;
@@ -85,6 +92,7 @@ function LessonView({
         navigate(place.next ? `/lesson/${place.next.slug}/1` : '/');
         return;
       }
+      targetRef.current = i;
       navigate(`/lesson/${lesson.slug}/${i + 1}`);
     },
     [count, lesson.slug, navigate, place.next],
@@ -100,8 +108,8 @@ function LessonView({
       const command = keyToCommand(e);
       if (!command) return;
       e.preventDefault();
-      if (command === 'next') goTo(index + 1);
-      if (command === 'prev') goTo(index - 1);
+      if (command === 'next') goTo(targetRef.current + 1);
+      if (command === 'prev') goTo(targetRef.current - 1);
       if (command === 'replay') {
         setBroken(null);
         stageRef.current?.replay();
@@ -110,7 +118,7 @@ function LessonView({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [goTo, index]);
+  }, [goTo]);
 
   useEffect(() => {
     const onChange = () => setFullscreen(document.fullscreenElement === panelRef.current);

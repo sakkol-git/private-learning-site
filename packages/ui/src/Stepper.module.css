@@ -5,6 +5,7 @@
 }
 
 .rail {
+  --dot: 32px;
   position: relative;
   flex: 1;
   min-width: 0;
@@ -22,17 +23,18 @@
 .track,
 .fill {
   position: absolute;
-  top: 15px;
-  left: 16px;
+  top: calc(var(--dot) / 2 - 1px);
+  left: calc(var(--dot) / 2);
   height: 2px;
   background: var(--line);
 }
 
 .track {
-  right: 16px;
+  right: calc(var(--dot) / 2);
 }
 
 .fill {
+  width: calc((100% - var(--dot)) * var(--k));
   background: var(--accent);
   transition: width var(--dur-slow) var(--ease);
 }
@@ -46,8 +48,8 @@
 }
 
 .circle {
-  width: 32px;
-  height: 32px;
+  width: var(--dot);
+  height: var(--dot);
   border-radius: 50%;
   border: 1px solid var(--line-strong);
   background: var(--card);
@@ -81,7 +83,9 @@
 
 .caption {
   position: absolute;
-  top: 40px;
+  top: calc(var(--dot) + 8px);
+  left: calc(var(--dot) / 2 + (100% - var(--dot)) * var(--k));
+  transform: translateX(calc(var(--k) * -100%));
   font: 600 11px/1.2 var(--font-mono);
   color: var(--ink-2);
   white-space: nowrap;
@@ -94,19 +98,28 @@
 }
 
 @media (max-width: 640px) {
+  .wrap {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rail {
+    width: 100%;
+  }
+
+  .count {
+    order: -1;
+    align-self: flex-end;
+    line-height: 1;
+    margin-top: -30px;
+  }
+
+  .rail {
+    --dot: 24px;
+  }
+
   .circle {
-    width: 26px;
-    height: 26px;
-    font-size: 11px;
-  }
-
-  .track,
-  .fill {
-    top: 12px;
-    left: 13px;
-  }
-
-  .caption {
-    top: 34px;
+    font-size: 10.5px;
+    box-shadow: 0 1px 0 var(--line-strong);
   }
 }

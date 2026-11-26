@@ -6,6 +6,9 @@
 }
 
 .tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background: var(--card);
   border: 1px solid var(--line);
   border-bottom-width: 3px;
@@ -32,9 +35,7 @@
   text-transform: uppercase;
   letter-spacing: 0.07em;
   color: var(--muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
 }
 
 .value {

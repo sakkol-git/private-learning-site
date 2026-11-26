@@ -15,13 +15,15 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "validate": "pnpm --filter @ss/tools validate",
-    "lessons": "pnpm --filter @ss/tools validate --write"
+    "lessons": "pnpm --filter @ss/tools validate --write",
+    "knip": "knip"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.15.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.14.0",
+    "knip": "^6.48.0",
     "prettier": "^3.10.1",
     "turbo": "^2.11.13",
     "typescript": "~6.0.3",

@@ -36,6 +36,7 @@ export function DiagramStage({
   ref,
 }: DiagramStageProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Stage | null>(null);
   const metricsCb = useRef(onMetrics);
   const stepRef = useRef(step);
@@ -51,6 +52,9 @@ export function DiagramStage({
     const stage = createStage(svg, diagram, { reducedMotion });
     stageRef.current = stage;
     stage.goToStep(stepRef.current);
+    // On narrow screens the diagram scrolls sideways; start in the middle of it.
+    const scroller = scrollerRef.current;
+    if (scroller) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
     let timer: ReturnType<typeof setTimeout> | undefined;
     const off = stage.onMetrics((m, text) => {
       metricsCb.current(m);
@@ -92,7 +96,13 @@ export function DiagramStage({
   );
 
   return (
-    <div className={styles.scroller} tabIndex={0} role="region" aria-label={label}>
+    <div
+      ref={scrollerRef}
+      className={styles.scroller}
+      tabIndex={0}
+      role="region"
+      aria-label={label}
+    >
       <svg ref={svgRef} className={styles.svg} />
       <p className="visually-hidden" aria-live="polite">
         {summary}

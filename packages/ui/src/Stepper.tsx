@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import styles from './Stepper.module.css';
 
 interface StepperProps {
@@ -21,13 +22,9 @@ export function Stepper({
   const currentStep = steps[current];
   return (
     <div className={styles.wrap}>
-      <div className={styles.rail}>
+      <div className={styles.rail} style={{ '--k': pct / 100 } as CSSProperties}>
         <span className={styles.track} aria-hidden="true" />
-        <span
-          className={styles.fill}
-          style={{ width: `calc((100% - 32px) * ${pct / 100})` }}
-          aria-hidden="true"
-        />
+        <span className={styles.fill} aria-hidden="true" />
         <ol className={styles.list}>
           {steps.map((s, i) => {
             const state = i === current ? styles.current : i <= furthest ? styles.visited : '';
@@ -47,14 +44,7 @@ export function Stepper({
           })}
         </ol>
         {currentStep && (
-          <span
-            className={styles.caption}
-            style={{
-              left: `calc(16px + (100% - 32px) * ${pct / 100})`,
-              transform: `translateX(-${pct}%)`,
-            }}
-            aria-hidden="true"
-          >
+          <span className={styles.caption} aria-hidden="true">
             {currentStep.short}
           </span>
         )}

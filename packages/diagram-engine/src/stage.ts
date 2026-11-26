@@ -42,7 +42,7 @@ export interface StageOptions {
   scheduler?: Scheduler;
 }
 
-export type MetricsListener = (metrics: Metrics, summary: string) => void;
+type MetricsListener = (metrics: Metrics, summary: string) => void;
 
 export interface Stage {
   goToStep(index: number): void;
@@ -160,7 +160,7 @@ function formatNumber(n: number): string {
   return Math.round(n).toLocaleString('en-US');
 }
 
-export function summarize(state: DiagramState, m: Metrics): string {
+function summarize(state: DiagramState, m: Metrics): string {
   const parts = state.nodes.map((n) =>
     n.health && n.health !== 'healthy' ? `${n.label} (${n.health})` : n.label,
   );

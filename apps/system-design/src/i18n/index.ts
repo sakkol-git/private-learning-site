@@ -1,7 +1,6 @@
 import en from './en.json';
 
 export type MessageKey = keyof typeof en;
-export type Locale = 'en' | 'km';
 
 const messages: Record<MessageKey, string> = en;
 

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    "apps/system-design": {
+      "entry": ["src/lessons/*.ts", "e2e/**/*.spec.ts"],
+      "project": ["src/**/*.{ts,tsx}", "e2e/**/*.ts"]
+    },
+    "packages/*": { "project": ["src/**/*.{ts,tsx}"] },
+    "packages/theme": {
+      "project": ["src/**/*.ts"],
+      "ignoreDependencies": ["@fontsource/ibm-plex-mono", "@fontsource/ibm-plex-sans"]
+    }
+  }
+}

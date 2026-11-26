@@ -115,7 +115,7 @@ function killServer(base: DiagramState): Scenario | null {
   };
 }
 
-export const SPIKE_FACTOR = 5;
+const SPIKE_FACTOR = 5;
 const SPIKE_RAMP_MS = 1500;
 
 function spikeTraffic(base: DiagramState): Scenario {
@@ -158,7 +158,7 @@ function spikeTraffic(base: DiagramState): Scenario {
   };
 }
 
-export const SLOW_DB_EXTRA_MS = 900;
+const SLOW_DB_EXTRA_MS = 900;
 
 /**
  * Share of user requests that reach a database. p95 only moves when more than
