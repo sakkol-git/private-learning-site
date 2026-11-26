@@ -19,7 +19,7 @@ const replicate = (from: string, to: string) => ({
 
 const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
   slug: 'database-replication',
-  chapter: 'Scaling',
+  chapter: 'Data across machines',
   title: 'Database replication',
   summary: 'Keep copies of your data to serve more reads and survive a dead primary.',
   minutes: 10,
@@ -50,6 +50,7 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
         x: 9,
         y: 6,
         capacity: 600,
+        tag: 'primary',
       },
     ],
     links: [
@@ -225,22 +226,15 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
     {
       id: 'primary-dies',
       short: 'Primary dies',
-      tag: 'PROBLEM',
+      tag: 'TRY IT',
       title: 'The primary goes down',
       body: [
-        'The primary’s disk fails. Reads still work, because the replicas are fine.',
-        'But every write fails. Nobody can post, comment or change a setting.',
+        'Predict: if the primary dies, which requests fail, and for how long?',
+        'Press <b>Kill the primary database</b>. Reads keep working on the replicas, but every write and every writer’s read fails: 130 of 900 a second, about <b>14%</b>. After about 4 seconds Replica 1 is promoted and errors return to <b>0%</b>, but p95 climbs to about <b>280 ms</b>: one fewer copy is now doing reads and writes.',
       ],
-      keyIdea: 'Replicas keep reads alive. Writes need a new primary.',
-      change: {
-        update: { nodes: [{ id: 'primary', health: 'down' }] },
-        flows: [
-          reads('r1', 405),
-          reads('r2', 405),
-          { route: ['users', 'app', 'primary'], kind: 'failed', ratePerSec: 90 },
-        ],
-        metrics: { errorRatePct: 10, p95LatencyMs: 120 },
-      },
+      keyIdea: 'Replicas keep reads alive. Writes wait for a new primary.',
+      change: {},
+      breakActions: ['killDatabase'],
     },
     {
       id: 'failover',
@@ -248,7 +242,7 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       tag: 'SOLUTION',
       title: 'Promote a replica',
       body: [
-        '<b>Failover</b>: pick the replica that is furthest ahead, Replica 1, and make it the new primary. Point writes at it and re-point the other replica.',
+        'What you just saw is <b>failover</b>: pick the replica that is furthest ahead, Replica 1, and make it the new primary. Point writes at it and re-point the other replica.',
         'A fresh replica is built to replace the lost capacity. With good tooling this takes under a minute.',
       ],
       keyIdea:
@@ -295,6 +289,18 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       ],
       keyIdea:
         'You choose between faster writes and never losing one. Waiting for one replica is a common middle ground.',
+      change: {},
+    },
+    {
+      id: 'styles',
+      short: 'Styles',
+      tag: 'IDEA',
+      title: 'One leader, many leaders, or none',
+      body: [
+        'Everything here used <b>one leader</b>: simple, and every write has one home. <b>Multi-leader</b> setups accept writes in several regions, then must merge conflicting edits. <b>Leaderless</b> stores write to several copies at once and read from several, accepting an answer once enough agree.',
+        'Replicas also serve quieter jobs: an analytics replica keeps heavy reports off the primary, and a delayed replica is an undo button for a bad delete.',
+      ],
+      keyIdea: 'More leaders mean more places to write, and more conflicts to resolve.',
       change: {},
     },
     {

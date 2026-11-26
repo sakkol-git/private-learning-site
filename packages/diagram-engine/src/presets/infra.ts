@@ -13,6 +13,14 @@ import {
   type Scenarios,
 } from '../scenario';
 import type { DiagramNode, DiagramState, TrafficFlow } from '../types';
+import {
+  expireCache,
+  killDatabase,
+  noisyClient,
+  partition,
+  slowDependency,
+  stopWorkers,
+} from './infra-failures';
 
 export interface InfraMetrics {
   users: number;
@@ -23,7 +31,16 @@ export interface InfraMetrics {
   healthy: [number, number];
 }
 
-export type InfraAction = 'killServer' | 'spikeTraffic' | 'slowDatabase';
+export type InfraAction =
+  | 'killServer'
+  | 'spikeTraffic'
+  | 'slowDatabase'
+  | 'expireCache'
+  | 'killDatabase'
+  | 'partition'
+  | 'stopWorkers'
+  | 'noisyClient'
+  | 'slowDependency';
 
 /** How long a dead server keeps receiving traffic before the health check notices. */
 export const HEALTH_CHECK_DETECT_MS = 3000;
@@ -34,7 +51,16 @@ function killServer(base: DiagramState<InfraMetrics>): Scenario<InfraMetrics> | 
   if (!target) return null;
   const n = servers.length;
   const m = base.metrics;
-  const share = 100 / n;
+  const servesViaServer = (flow: TrafficFlow) =>
+    flow.route.some((id) => base.nodes.some((node) => node.id === id && node.kind === 'server'));
+  // The dead server's share of the traffic that servers handle; an even split when no traffic is drawn.
+  const served = base.flows.filter((f) => f.kind === 'request' && servesViaServer(f));
+  const servedRate = served.reduce((s, f) => s + f.ratePerSec, 0);
+  const lostRate = served
+    .filter((f) => f.route.includes(target.id))
+    .reduce((s, f) => s + f.ratePerSec, 0);
+  const lostShare = servedRate > 0 ? lostRate / servedRate : 1 / n;
+  const share = n > 1 ? lostShare * 100 : 100;
   const down = (node: DiagramNode): DiagramNode =>
     node.id === target.id ? { ...node, health: 'down' } : node;
 
@@ -43,9 +69,7 @@ function killServer(base: DiagramState<InfraMetrics>): Scenario<InfraMetrics> | 
     if (i < 0 || flow.kind !== 'request') return flow;
     return { ...flow, kind: 'failed', route: flow.route.slice(0, i + 1) };
   });
-  const scale = n > 1 ? n / (n - 1) : 1;
-  const servesViaServer = (flow: TrafficFlow) =>
-    flow.route.some((id) => base.nodes.some((node) => node.id === id && node.kind === 'server'));
+  const scale = n > 1 && lostShare < 1 ? 1 / (1 - lostShare) : 1;
   const rerouted: TrafficFlow[] = [];
   const checks: TrafficFlow[] = [];
   for (const flow of base.flows) {
@@ -182,12 +206,24 @@ export const infraScenarios: Scenarios<InfraMetrics, InfraAction> = {
   killServer,
   spikeTraffic,
   slowDatabase,
+  expireCache,
+  killDatabase,
+  partition,
+  stopWorkers,
+  noisyClient,
+  slowDependency,
 };
 
 export const INFRA_ACTION_NEEDS: ActionNeeds<InfraAction> = {
   killServer: ['server'],
   spikeTraffic: ['server'],
   slowDatabase: ['database'],
+  expireCache: ['cache', 'cdn'],
+  killDatabase: ['database'],
+  partition: ['server', 'database', 'service'],
+  stopWorkers: ['service'],
+  noisyClient: ['users'],
+  slowDependency: ['service'],
 };
 
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US');

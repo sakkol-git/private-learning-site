@@ -13,6 +13,8 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
     { text: 'What DNS does before anything else happens', stepId: 'find-address' },
     { text: 'Why opening a connection costs round trips', stepId: 'connect' },
     { text: 'What the server and database each add', stepId: 'query' },
+    { text: 'Why one page is really dozens of requests', stepId: 'more-files' },
+    { text: 'What a slow query and a distant user each cost', stepId: 'far-away' },
     { text: 'Where the waiting actually comes from', stepId: 'where-time-goes' },
   ],
   initial: {
@@ -125,17 +127,72 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       },
     },
     {
+      id: 'more-files',
+      short: 'More files',
+      tag: 'IDEA',
+      title: 'One page, thirty more requests',
+      body: [
+        'The HTML names about <b>30 other files</b>: styles, scripts and images. Each is its own request.',
+        'Browsers reuse the open connection and fetch several files at once, so the page is ready after roughly <b>300 ms</b>, not 30 × 175 ms.',
+      ],
+      keyIdea:
+        'A page is many requests. Reusing connections and fetching in parallel is what keeps it fast.',
+      change: {
+        update: { nodes: [{ id: 'browser', sublabel: 'page + 30 files' }] },
+        flows: [
+          { route: ['browser', 'web', 'db'], kind: 'request', ratePerSec: 12 },
+          { route: ['db', 'web', 'browser'], kind: 'response', ratePerSec: 12 },
+          { route: ['browser', 'web'], kind: 'request', ratePerSec: 60 },
+          { route: ['web', 'browser'], kind: 'response', ratePerSec: 60 },
+        ],
+      },
+    },
+    {
       id: 'slow-db',
       short: 'Slow DB',
       tag: 'TRY IT',
       title: 'What if the database is slow?',
       body: [
         'Press <b>Slow the database</b>. Maybe a missing index, maybe another job is hogging the disk.',
-        'Watch p95 latency. Nothing else in the path changed, but every page now waits on the slowest hop.',
+        'Watch p95 latency climb from 175 ms to about <b>1,075 ms</b>. Nothing else in the path changed, but every page now waits on the slowest hop.',
       ],
       keyIdea: 'A request is only as fast as the slowest step it has to wait for.',
       change: {},
       breakActions: ['slowDatabase'],
+    },
+    {
+      id: 'far-away',
+      short: 'Far away',
+      tag: 'PROBLEM',
+      title: 'A visitor on another continent',
+      body: [
+        'One visitor in ten now connects from far away. Their round trip is <b>150 ms</b> instead of 30 ms.',
+        'Lookup, two handshakes and the request are four round trips, so they wait about 480 ms longer. p95 now describes them: about <b>655 ms</b>.',
+      ],
+      keyIdea:
+        'Distance multiplies every round trip. p95 shows the users you would otherwise forget.',
+      change: {
+        add: {
+          nodes: [
+            {
+              id: 'far',
+              kind: 'users',
+              label: 'Far visitor',
+              sublabel: '150 ms away',
+              x: 4,
+              y: 10,
+            },
+          ],
+          links: [{ id: 'far-web', from: 'far', to: 'web' }],
+        },
+        flows: [
+          { route: ['browser', 'web', 'db'], kind: 'request', ratePerSec: 12 },
+          { route: ['db', 'web', 'browser'], kind: 'response', ratePerSec: 12 },
+          { route: ['far', 'web', 'db'], kind: 'request', ratePerSec: 2 },
+          { route: ['db', 'web', 'far'], kind: 'response', ratePerSec: 2 },
+        ],
+        metrics: { users: 44, requestsPerSec: 14, p95LatencyMs: 655 },
+      },
     },
     {
       id: 'where-time-goes',
@@ -144,7 +201,7 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       title: 'Most of the wait is travel',
       body: [
         'Add it up: about 80 ms of DNS and handshakes, 25 ms of server work, 40 ms of database, 30 ms of transfer.',
-        'Nearly half the time was spent before the server did anything. That is why later lessons move content closer to users and reuse connections.',
+        'Nearly half the time was spent before the server did anything, and for the far visitor it was most of it. That is why later lessons move content closer to users and reuse connections.',
       ],
       keyIdea: 'Before optimising code, measure the network. It is often the bigger slice.',
       change: {},

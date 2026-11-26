@@ -38,10 +38,22 @@
         "tag": "SOLUTION"
       },
       {
+        "id": "more-files",
+        "short": "More files",
+        "title": "One page, thirty more requests",
+        "tag": "IDEA"
+      },
+      {
         "id": "slow-db",
         "short": "Slow DB",
         "title": "What if the database is slow?",
         "tag": "TRY IT"
+      },
+      {
+        "id": "far-away",
+        "short": "Far away",
+        "title": "A visitor on another continent",
+        "tag": "PROBLEM"
       },
       {
         "id": "where-time-goes",
@@ -58,8 +70,212 @@
     ]
   },
   {
-    "slug": "vertical-vs-horizontal",
+    "slug": "latency-and-throughput",
     "chapter": "Foundations",
+    "title": "Latency and throughput",
+    "summary": "How fast one request is, how many you can serve, and why the two pull against each other near the limit.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "two-numbers",
+        "short": "Two numbers",
+        "title": "How long, and how many",
+        "tag": "IDEA"
+      },
+      {
+        "id": "busier",
+        "short": "Busier",
+        "title": "Three times the traffic",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "hockey-stick",
+        "short": "Curve",
+        "title": "The hockey stick",
+        "tag": "IDEA"
+      },
+      {
+        "id": "overload",
+        "short": "Overload",
+        "title": "Push it past the limit",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "percentiles",
+        "short": "p95",
+        "title": "Averages hide the slow requests",
+        "tag": "IDEA"
+      },
+      {
+        "id": "more-capacity",
+        "short": "Capacity",
+        "title": "Add a second server",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "distance",
+        "short": "Distance",
+        "title": "Servers cannot fix distance",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "in-flight",
+        "short": "In flight",
+        "title": "Little's law",
+        "tag": "IDEA"
+      },
+      {
+        "id": "fan-out",
+        "short": "Fan-out",
+        "title": "Fan-out makes tails common",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Watch both numbers",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "back-of-the-envelope",
+    "chapter": "Foundations",
+    "title": "Back-of-the-envelope maths",
+    "summary": "Turn \"ten million users\" into requests per second, servers, storage and bandwidth, in a few lines of arithmetic.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "question",
+        "short": "Question",
+        "title": "How many servers do we need?",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "per-second",
+        "short": "Per second",
+        "title": "From users per day to requests per second",
+        "tag": "IDEA"
+      },
+      {
+        "id": "peak",
+        "short": "Peak",
+        "title": "Plan for the busiest hour",
+        "tag": "IDEA"
+      },
+      {
+        "id": "servers",
+        "short": "Servers",
+        "title": "Count the servers",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "storage",
+        "short": "Storage",
+        "title": "How much disk?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "bandwidth",
+        "short": "Bandwidth",
+        "title": "How much network?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "cache-size",
+        "short": "Cache",
+        "title": "How much memory for a cache?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "launch-day",
+        "short": "Launch",
+        "title": "Launch day is bigger than planned",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "numbers",
+        "short": "Numbers",
+        "title": "Numbers worth remembering",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Rough numbers, good decisions",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "design-levels",
+    "chapter": "Foundations",
+    "title": "High-level and low-level design",
+    "summary": "Two zoom levels for every system: the boxes and arrows, and what happens inside one box.",
+    "minutes": 8,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "two-levels",
+        "short": "Two levels",
+        "title": "A map and a floor plan",
+        "tag": "IDEA"
+      },
+      {
+        "id": "the-map",
+        "short": "The map",
+        "title": "Draw the boxes",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "hld-choices",
+        "short": "Trade-offs",
+        "title": "HLD decisions are trade-offs",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "inside-a-box",
+        "short": "Zoom in",
+        "title": "Zoom into the API",
+        "tag": "IDEA"
+      },
+      {
+        "id": "lld-decisions",
+        "short": "Details",
+        "title": "Small decisions with big effects",
+        "tag": "IDEA"
+      },
+      {
+        "id": "contracts",
+        "short": "Contracts",
+        "title": "Contracts are where the levels meet",
+        "tag": "IDEA"
+      },
+      {
+        "id": "capacity-check",
+        "short": "Check",
+        "title": "Test an HLD assumption",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "top-down",
+        "short": "Top-down",
+        "title": "How a design session flows",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Map first, then floor plans",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "vertical-vs-horizontal",
+    "chapter": "Scaling the web tier",
     "title": "Vertical vs horizontal scaling",
     "summary": "Buy a bigger machine, or run more of them? Each answer breaks in a different way.",
     "minutes": 8,
@@ -102,6 +318,12 @@
         "tag": "TRY IT"
       },
       {
+        "id": "autoscale",
+        "short": "Autoscale",
+        "title": "Let the pool grow and shrink",
+        "tag": "IDEA"
+      },
+      {
         "id": "stateless",
         "short": "Stateless",
         "title": "Copies must not remember things",
@@ -123,7 +345,7 @@
   },
   {
     "slug": "load-balancing",
-    "chapter": "Scaling",
+    "chapter": "Scaling the web tier",
     "title": "Load balancing",
     "summary": "Spread traffic across many servers, and keep going when one of them dies.",
     "minutes": 9,
@@ -198,8 +420,130 @@
     ]
   },
   {
+    "slug": "stateless-servers",
+    "chapter": "Scaling the web tier",
+    "title": "Stateless servers",
+    "summary": "Why servers that remember nothing between requests are the ones you can add, remove and lose freely.",
+    "minutes": 8,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "carts",
+        "short": "Carts",
+        "title": "Each server remembers its shoppers",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "crash",
+        "short": "Crash",
+        "title": "Lose the server holding the carts",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "what-is-state",
+        "short": "State",
+        "title": "What counts as state",
+        "tag": "IDEA"
+      },
+      {
+        "id": "shared-store",
+        "short": "Store",
+        "title": "Move sessions to a shared store",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "crash-again",
+        "short": "Crash again",
+        "title": "Crash a server again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "tokens",
+        "short": "Tokens",
+        "title": "Or let the request carry it",
+        "tag": "IDEA"
+      },
+      {
+        "id": "store-cost",
+        "short": "Cost",
+        "title": "The store is a new dependency",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Servers you can throw away",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "service-discovery",
+    "chapter": "Scaling the web tier",
+    "title": "Service discovery",
+    "summary": "When servers come and go every hour, how does one service find another?",
+    "minutes": 8,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "hard-coded",
+        "short": "Addresses",
+        "title": "A list of addresses in a config file",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "moving-target",
+        "short": "Moving",
+        "title": "The addresses keep changing",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "registry",
+        "short": "Registry",
+        "title": "A registry of live instances",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "who-looks-up",
+        "short": "Lookup",
+        "title": "Who does the looking up?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "instance-dies",
+        "short": "Lose one",
+        "title": "An instance dies without saying goodbye",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "leases",
+        "short": "Leases",
+        "title": "How quickly to give up on an instance",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "ready",
+        "short": "Ready",
+        "title": "Alive is not the same as ready",
+        "tag": "IDEA"
+      },
+      {
+        "id": "registry-risk",
+        "short": "Risk",
+        "title": "The registry must not be the weak spot",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Find services by name",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
     "slug": "caching",
-    "chapter": "Scaling",
+    "chapter": "Making reads fast",
     "title": "Caching",
     "summary": "Answer repeat questions from memory, and learn the three ways a cache can bite back.",
     "minutes": 9,
@@ -250,14 +594,26 @@
       {
         "id": "stampede",
         "short": "Stampede",
-        "title": "A popular entry expires",
-        "tag": "PROBLEM"
+        "title": "A cache stampede",
+        "tag": "TRY IT"
       },
       {
         "id": "single-flight",
         "short": "Fix it",
         "title": "Let one request refill the entry",
         "tag": "SOLUTION"
+      },
+      {
+        "id": "eviction",
+        "short": "Eviction",
+        "title": "Memory runs out",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "layers",
+        "short": "Layers",
+        "title": "Caches come in layers",
+        "tag": "IDEA"
       },
       {
         "id": "recap",
@@ -268,8 +624,426 @@
     ]
   },
   {
+    "slug": "content-delivery",
+    "chapter": "Making reads fast",
+    "title": "Content delivery networks",
+    "summary": "Copy files to servers near your users, so distance and your origin stop being the bottleneck.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "far-origin",
+        "short": "Far away",
+        "title": "Every file crosses an ocean",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "edge",
+        "short": "Edge",
+        "title": "Put a copy near the readers",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "hit-ratio",
+        "short": "Hit ratio",
+        "title": "Not everything caches equally",
+        "tag": "IDEA"
+      },
+      {
+        "id": "purge",
+        "short": "Purge",
+        "title": "Empty the edge",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "versioned",
+        "short": "Versions",
+        "title": "Change the name, not the file",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "dynamic",
+        "short": "Dynamic",
+        "title": "Personal pages still go home",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "shield",
+        "short": "Shield",
+        "title": "Many edges, one origin",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Closer and lighter",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "database-indexes",
+    "chapter": "Making reads fast",
+    "title": "Database indexes",
+    "summary": "Why a search that reads every row falls over, and how an index finds one row in a few steps.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "slow-search",
+        "short": "Slow search",
+        "title": "Finding one customer takes a second",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "full-scan",
+        "short": "Full scan",
+        "title": "The database reads every row",
+        "tag": "IDEA"
+      },
+      {
+        "id": "flood",
+        "short": "Flood",
+        "title": "The dashboard refreshes too often",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "add-index",
+        "short": "Index",
+        "title": "Add an index on email",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "flood-again",
+        "short": "Flood again",
+        "title": "Flood it again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "b-tree",
+        "short": "B-tree",
+        "title": "How the index finds a row",
+        "tag": "IDEA"
+      },
+      {
+        "id": "composite",
+        "short": "Composite",
+        "title": "Column order matters",
+        "tag": "IDEA"
+      },
+      {
+        "id": "write-cost",
+        "short": "Writes",
+        "title": "Every index slows every write",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Find, do not search",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "choosing-a-database",
+    "chapter": "Storing data",
+    "title": "Choosing a database",
+    "summary": "Relational, document, key-value and more: pick the store whose shape matches how the data is read.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "one-db",
+        "short": "One DB",
+        "title": "Recipes do not fit in rows",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "relational",
+        "short": "SQL",
+        "title": "What relational databases do best",
+        "tag": "IDEA"
+      },
+      {
+        "id": "documents",
+        "short": "Documents",
+        "title": "Store each recipe as one document",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "families",
+        "short": "Families",
+        "title": "The main families",
+        "tag": "IDEA"
+      },
+      {
+        "id": "node-dies",
+        "short": "Lose a node",
+        "title": "Lose a document node",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "give-up",
+        "short": "Give up",
+        "title": "What you give up",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "decide",
+        "short": "Decide",
+        "title": "Four questions to decide",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "The right store for each job",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "storage-engines",
+    "chapter": "Storing data",
+    "title": "Storage engines",
+    "summary": "How a database lays bytes on disk decides whether it is better at writes or reads.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "write-heavy",
+        "short": "Writes",
+        "title": "Three thousand writes a second",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "b-tree",
+        "short": "B-tree",
+        "title": "B-trees update pages in place",
+        "tag": "IDEA"
+      },
+      {
+        "id": "lsm",
+        "short": "LSM",
+        "title": "Append now, sort later",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "read-path",
+        "short": "Reads",
+        "title": "A read may check several files",
+        "tag": "IDEA"
+      },
+      {
+        "id": "compaction",
+        "short": "Compaction",
+        "title": "Compaction tidies up",
+        "tag": "IDEA"
+      },
+      {
+        "id": "compaction-stall",
+        "short": "Stall",
+        "title": "Compaction falls behind",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "choose",
+        "short": "Choose",
+        "title": "Which engine when",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Bytes on disk shape everything",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "transactions",
+    "chapter": "Storing data",
+    "title": "Transactions",
+    "summary": "Group several changes so they all happen or none do, even when two people want the same seat.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "double-booked",
+        "short": "Problem",
+        "title": "Two fans, one seat",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "acid",
+        "short": "ACID",
+        "title": "A transaction is all or nothing",
+        "tag": "IDEA"
+      },
+      {
+        "id": "crash",
+        "short": "Crash",
+        "title": "Crash a server mid-purchase",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "conditional",
+        "short": "Claim",
+        "title": "Claim the seat in one statement",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "isolation",
+        "short": "Isolation",
+        "title": "How isolated is isolated?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "optimistic",
+        "short": "Optimistic",
+        "title": "Lock first, or check at the end",
+        "tag": "IDEA"
+      },
+      {
+        "id": "hot-row",
+        "short": "Hot row",
+        "title": "Ten thousand fans, one row",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "durable",
+        "short": "Durable",
+        "title": "Committed means on disk",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "One unit of work",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "unique-ids",
+    "chapter": "Storing data",
+    "title": "Unique IDs at scale",
+    "summary": "When many machines create records at once, who hands out the numbers?",
+    "minutes": 8,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "collide",
+        "short": "Collide",
+        "title": "Two orders numbered 1042",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "ticket-server",
+        "short": "Ticket",
+        "title": "One server hands out numbers",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "ticket-spike",
+        "short": "Spike",
+        "title": "A flash sale",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "uuid",
+        "short": "UUID",
+        "title": "Random IDs need no one",
+        "tag": "IDEA"
+      },
+      {
+        "id": "time-ids",
+        "short": "Time IDs",
+        "title": "Time, machine, sequence",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "spike-again",
+        "short": "Spike again",
+        "title": "The same flash sale",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "clocks",
+        "short": "Clocks",
+        "title": "Now clocks matter",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Unique without a bottleneck",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "files-and-media",
+    "chapter": "Storing data",
+    "title": "Files and media",
+    "summary": "Keep big files out of servers and databases: object storage, direct uploads and background processing.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "through-server",
+        "short": "Problem",
+        "title": "Photos squeezed through the API",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "object-storage",
+        "short": "Objects",
+        "title": "Put files in object storage",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "direct-upload",
+        "short": "Direct",
+        "title": "Let the browser upload directly",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "serving",
+        "short": "Serving",
+        "title": "Serve and upload large files well",
+        "tag": "IDEA"
+      },
+      {
+        "id": "thumbnails",
+        "short": "Thumbnails",
+        "title": "Make thumbnails in the background",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "workers-stop",
+        "short": "Workers",
+        "title": "The workers stop",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "two-stores",
+        "short": "Two stores",
+        "title": "Two stores can disagree",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Bytes, facts and jobs",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
     "slug": "database-replication",
-    "chapter": "Scaling",
+    "chapter": "Data across machines",
     "title": "Database replication",
     "summary": "Keep copies of your data to serve more reads and survive a dead primary.",
     "minutes": 10,
@@ -321,7 +1095,7 @@
         "id": "primary-dies",
         "short": "Primary dies",
         "title": "The primary goes down",
-        "tag": "PROBLEM"
+        "tag": "TRY IT"
       },
       {
         "id": "failover",
@@ -336,9 +1110,1547 @@
         "tag": "TRADE-OFF"
       },
       {
+        "id": "styles",
+        "short": "Styles",
+        "title": "One leader, many leaders, or none",
+        "tag": "IDEA"
+      },
+      {
         "id": "recap",
         "short": "Recap",
         "title": "More copies, more choices",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "sharding",
+    "chapter": "Data across machines",
+    "title": "Sharding",
+    "summary": "When one database cannot take the writes, split the data so each machine owns a slice.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "too-many-writes",
+        "short": "Too many",
+        "title": "Writes outgrew the biggest machine",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "split",
+        "short": "Split",
+        "title": "Give each machine a slice",
+        "tag": "IDEA"
+      },
+      {
+        "id": "shard-key",
+        "short": "Shard key",
+        "title": "Shard by member id",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "routing",
+        "short": "Routing",
+        "title": "Someone must know where things live",
+        "tag": "IDEA"
+      },
+      {
+        "id": "hot-key",
+        "short": "Hot key",
+        "title": "The star posts something big",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "hot-fix",
+        "short": "Cache it",
+        "title": "Take hot reads off the shard",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "cross-shard",
+        "short": "Across",
+        "title": "Queries that span shards",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "resharding",
+        "short": "Reshard",
+        "title": "Adding a fourth shard",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Split by key",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "consistent-hashing",
+    "chapter": "Data across machines",
+    "title": "Consistent hashing",
+    "summary": "Add or remove a machine and move only a small share of keys, instead of nearly all of them.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "three-caches",
+        "short": "Three",
+        "title": "Keys spread with mod 3",
+        "tag": "IDEA"
+      },
+      {
+        "id": "add-node",
+        "short": "Add node",
+        "title": "A fourth node changes almost everything",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "mod-n-try",
+        "short": "Try mod N",
+        "title": "Turn on the fourth node",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "ring",
+        "short": "Ring",
+        "title": "Put nodes and keys on a ring",
+        "tag": "IDEA"
+      },
+      {
+        "id": "ring-join",
+        "short": "Join",
+        "title": "Join the ring",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "ring-try",
+        "short": "Try ring",
+        "title": "Turn on the fourth node again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "virtual-nodes",
+        "short": "Virtual",
+        "title": "Virtual nodes",
+        "tag": "IDEA"
+      },
+      {
+        "id": "limits",
+        "short": "Limits",
+        "title": "What the ring does not solve",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Grow without going cold",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "consistency-and-partitions",
+    "chapter": "Data across machines",
+    "title": "Consistency and partitions",
+    "summary": "When two regions cannot talk, each must choose: refuse requests, or answer with data that may disagree.",
+    "minutes": 10,
+    "level": "advanced",
+    "steps": [
+      {
+        "id": "two-regions",
+        "short": "Regions",
+        "title": "One leader, two regions",
+        "tag": "IDEA"
+      },
+      {
+        "id": "partition",
+        "short": "Partition",
+        "title": "The regions lose each other",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "consistent-try",
+        "short": "Refuse",
+        "title": "Cut the link: consistent design",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "cap",
+        "short": "CAP",
+        "title": "The choice CAP describes",
+        "tag": "IDEA"
+      },
+      {
+        "id": "available",
+        "short": "Local",
+        "title": "Let each region answer locally",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "available-try",
+        "short": "Answer",
+        "title": "Cut the link: available design",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "conflicts",
+        "short": "Conflicts",
+        "title": "Resolving the disagreement",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "models",
+        "short": "Models",
+        "title": "A ladder of consistency",
+        "tag": "IDEA"
+      },
+      {
+        "id": "latency",
+        "short": "Latency",
+        "title": "Even without a partition",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Choose per feature",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "leader-election",
+    "chapter": "Data across machines",
+    "title": "Leader election and consensus",
+    "summary": "How a small cluster agrees on exactly one leader, and keeps agreeing when that leader dies.",
+    "minutes": 10,
+    "level": "advanced",
+    "steps": [
+      {
+        "id": "two-leaders",
+        "short": "Problem",
+        "title": "Two machines both run the billing job",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "majority",
+        "short": "Majority",
+        "title": "A leader needs a majority",
+        "tag": "IDEA"
+      },
+      {
+        "id": "cluster",
+        "short": "Cluster",
+        "title": "Writes go through the leader",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "leader-dies",
+        "short": "Leader dies",
+        "title": "Kill the leader",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "timeouts",
+        "short": "Timeouts",
+        "title": "How long to wait before electing",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "stale-leader",
+        "short": "Fencing",
+        "title": "The old leader comes back",
+        "tag": "IDEA"
+      },
+      {
+        "id": "odd-sizes",
+        "short": "Sizes",
+        "title": "Why 3 or 5 nodes",
+        "tag": "IDEA"
+      },
+      {
+        "id": "use-one",
+        "short": "Reuse",
+        "title": "Do not build this yourself",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Exactly one in charge",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "api-styles",
+    "chapter": "Services talking",
+    "title": "Designing APIs",
+    "summary": "REST, RPC or GraphQL, and the contract details that keep an API fast and safe: paging, limits, idempotency, versions.",
+    "minutes": 10,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "contract",
+        "short": "Contract",
+        "title": "An API is a promise",
+        "tag": "IDEA"
+      },
+      {
+        "id": "styles",
+        "short": "Styles",
+        "title": "Three common styles",
+        "tag": "IDEA"
+      },
+      {
+        "id": "unbounded",
+        "short": "Unbounded",
+        "title": "One call returns everything",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "unbounded-try",
+        "short": "Flood",
+        "title": "The partner syncs more often",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "paging",
+        "short": "Paging",
+        "title": "Pages, cursors and limits",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "paging-try",
+        "short": "Flood again",
+        "title": "Flood it again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "idempotency",
+        "short": "Retries",
+        "title": "Make retries safe",
+        "tag": "IDEA"
+      },
+      {
+        "id": "versioning",
+        "short": "Versions",
+        "title": "Change without breaking",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "errors",
+        "short": "Errors",
+        "title": "Errors are part of the contract",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "A contract that holds up",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "message-queues",
+    "chapter": "Services talking",
+    "title": "Message queues",
+    "summary": "Hand slow work to a queue, so a slow or broken worker delays it instead of failing your users.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "sync",
+        "short": "Waiting",
+        "title": "Checkout waits for an email",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "sync-try",
+        "short": "Slow mail",
+        "title": "The email provider slows down",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "queue",
+        "short": "Queue",
+        "title": "Write it down and move on",
+        "tag": "IDEA"
+      },
+      {
+        "id": "decouple",
+        "short": "Decouple",
+        "title": "Put a queue between them",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "workers-stop",
+        "short": "Stop",
+        "title": "Stop every worker",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "delivery",
+        "short": "Delivery",
+        "title": "At least once, maybe twice",
+        "tag": "IDEA"
+      },
+      {
+        "id": "dead-letters",
+        "short": "Poison",
+        "title": "Jobs that always fail",
+        "tag": "IDEA"
+      },
+      {
+        "id": "backlog",
+        "short": "Backlog",
+        "title": "Queues can hide trouble",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Accept now, work later",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "publish-subscribe",
+    "chapter": "Services talking",
+    "title": "Publish and subscribe",
+    "summary": "Announce that something happened once, and let any number of services react on their own.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "direct",
+        "short": "Direct",
+        "title": "One order, three calls",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "direct-try",
+        "short": "Slow one",
+        "title": "Analytics has a bad day",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "coupling",
+        "short": "Coupling",
+        "title": "The caller knows too much",
+        "tag": "IDEA"
+      },
+      {
+        "id": "topic",
+        "short": "Topic",
+        "title": "Publish one event",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "topic-try",
+        "short": "Slow again",
+        "title": "Slow analytics again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "queue-vs-topic",
+        "short": "Queue/topic",
+        "title": "Queue or topic?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "event-design",
+        "short": "Events",
+        "title": "What goes in an event",
+        "tag": "IDEA"
+      },
+      {
+        "id": "costs",
+        "short": "Costs",
+        "title": "Looser, and harder to follow",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Announce, do not call",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "real-time-updates",
+    "chapter": "Services talking",
+    "title": "Real-time updates",
+    "summary": "Polling, long polling, server-sent events and WebSockets: how a server tells clients something changed.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "polling",
+        "short": "Polling",
+        "title": "Any news? Any news? Any news?",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "polling-try",
+        "short": "Kick-off",
+        "title": "The final starts",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "long-polling",
+        "short": "Long poll",
+        "title": "Hold the question open",
+        "tag": "IDEA"
+      },
+      {
+        "id": "push",
+        "short": "Push",
+        "title": "Keep a connection, push changes",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "push-try",
+        "short": "Final",
+        "title": "The final, with push",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "gateway-dies",
+        "short": "Lose one",
+        "title": "A gateway dies",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "fan-out",
+        "short": "Fan-out",
+        "title": "Every gateway must hear the goal",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "choose",
+        "short": "Choose",
+        "title": "Which one when",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Tell them when it changes",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "redundancy-and-failover",
+    "chapter": "Staying up",
+    "title": "Redundancy and failover",
+    "summary": "Find every single point of failure, give it a spare, and make switching to the spare automatic.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "one-of-each",
+        "short": "One of each",
+        "title": "One of everything",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "one-dies",
+        "short": "Lose it",
+        "title": "Lose the only server",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "second-server",
+        "short": "Spare",
+        "title": "Run two, each able to carry the load",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "second-server-try",
+        "short": "Lose one",
+        "title": "Lose one of two",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "standby",
+        "short": "Standby",
+        "title": "A standby database",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "db-failover",
+        "short": "Failover",
+        "title": "Lose the primary database",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "independent",
+        "short": "Independent",
+        "title": "Spares must not fail together",
+        "tag": "IDEA"
+      },
+      {
+        "id": "active-passive",
+        "short": "Modes",
+        "title": "Active-active or active-passive",
+        "tag": "IDEA"
+      },
+      {
+        "id": "cost",
+        "short": "Cost",
+        "title": "Paying for things that wait",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "No single point of failure",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "rate-limiting",
+    "chapter": "Staying up",
+    "title": "Rate limiting",
+    "summary": "Cap how fast each client can call you, so one runaway script cannot starve everyone else.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "shared",
+        "short": "Shared",
+        "title": "Everyone shares one API",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "flood",
+        "short": "Flood",
+        "title": "The script goes wild",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "limits",
+        "short": "Limits",
+        "title": "A budget per client",
+        "tag": "IDEA"
+      },
+      {
+        "id": "token-bucket",
+        "short": "Bucket",
+        "title": "A token bucket in front",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "flood-again",
+        "short": "Flood again",
+        "title": "The same loop, with a limit",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "algorithms",
+        "short": "Algorithms",
+        "title": "Four ways to count",
+        "tag": "IDEA"
+      },
+      {
+        "id": "distributed",
+        "short": "Many servers",
+        "title": "Counting across many servers",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "shedding",
+        "short": "Shedding",
+        "title": "When everyone is within limits",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Fair shares",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "timeouts-and-retries",
+    "chapter": "Staying up",
+    "title": "Timeouts, retries and circuit breakers",
+    "summary": "Stop waiting on a slow service, retry carefully, and fall back so one slow part does not freeze everything.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "chain",
+        "short": "Chain",
+        "title": "Search asks pricing for every result",
+        "tag": "IDEA"
+      },
+      {
+        "id": "slow-try",
+        "short": "Slow",
+        "title": "Pricing gets slow",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "timeouts",
+        "short": "Timeouts",
+        "title": "Never wait forever",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "retries",
+        "short": "Retries",
+        "title": "Retry, but gently",
+        "tag": "IDEA"
+      },
+      {
+        "id": "breaker",
+        "short": "Breaker",
+        "title": "A circuit breaker with a fallback",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "breaker-try",
+        "short": "Slow again",
+        "title": "Pricing slows again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "states",
+        "short": "States",
+        "title": "Closed, open, half-open",
+        "tag": "IDEA"
+      },
+      {
+        "id": "bulkheads",
+        "short": "Bulkheads",
+        "title": "Separate pools",
+        "tag": "IDEA"
+      },
+      {
+        "id": "tuning",
+        "short": "Tuning",
+        "title": "Too tight, too loose",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Fail fast, degrade gracefully",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "observability",
+    "chapter": "Staying up",
+    "title": "Observability",
+    "summary": "Metrics tell you something is wrong, traces tell you where, logs tell you why.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "blind",
+        "short": "Blind",
+        "title": "\"Payments feel slow\"",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "metrics",
+        "short": "Metrics",
+        "title": "Rate, errors, duration",
+        "tag": "IDEA"
+      },
+      {
+        "id": "slow-db-try",
+        "short": "Symptom",
+        "title": "Watch a symptom appear",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "logs",
+        "short": "Logs",
+        "title": "Logs you can query",
+        "tag": "IDEA"
+      },
+      {
+        "id": "traces",
+        "short": "Traces",
+        "title": "Follow one request through",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "fraud-try",
+        "short": "Find it",
+        "title": "Find the slow hop",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "alerts",
+        "short": "Alerts",
+        "title": "Alert on what users feel",
+        "tag": "IDEA"
+      },
+      {
+        "id": "cost",
+        "short": "Cost",
+        "title": "Seeing costs money",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Know before they tell you",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "monolith-to-microservices",
+    "chapter": "Bigger architectures",
+    "title": "Monoliths and microservices",
+    "summary": "One deployable app or many small services: what splitting buys, and the bill that comes with it.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "monolith",
+        "short": "Monolith",
+        "title": "One app does everything",
+        "tag": "IDEA"
+      },
+      {
+        "id": "growing-pains",
+        "short": "Pains",
+        "title": "Forty engineers, one deploy",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "shared-fate",
+        "short": "Month end",
+        "title": "Month-end reports",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "split",
+        "short": "Split",
+        "title": "Split by business capability",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "isolated",
+        "short": "Isolated",
+        "title": "Month-end, split",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "boundaries",
+        "short": "Boundaries",
+        "title": "Where to draw the lines",
+        "tag": "IDEA"
+      },
+      {
+        "id": "costs",
+        "short": "Costs",
+        "title": "The bill for splitting",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "modular",
+        "short": "Middle",
+        "title": "A modular monolith",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Split for a reason",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "distributed-transactions",
+    "chapter": "Bigger architectures",
+    "title": "Transactions across services",
+    "summary": "When one booking spans three services with three databases, use two-phase commit or a saga with compensations.",
+    "minutes": 10,
+    "level": "advanced",
+    "steps": [
+      {
+        "id": "three-services",
+        "short": "Problem",
+        "title": "One trip, three databases",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "two-phase",
+        "short": "2PC",
+        "title": "Two-phase commit",
+        "tag": "IDEA"
+      },
+      {
+        "id": "two-phase-try",
+        "short": "Hotels down",
+        "title": "Hotels goes down",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "saga",
+        "short": "Saga",
+        "title": "A saga: steps with undo",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "saga-try",
+        "short": "Down again",
+        "title": "Hotels goes down again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "compensations",
+        "short": "Undo",
+        "title": "Undo is a new action",
+        "tag": "IDEA"
+      },
+      {
+        "id": "styles",
+        "short": "Styles",
+        "title": "Conductor or dancers",
+        "tag": "IDEA"
+      },
+      {
+        "id": "isolation",
+        "short": "Isolation",
+        "title": "Others see the middle",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Eventually all or nothing",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "batch-and-stream",
+    "chapter": "Bigger architectures",
+    "title": "Batch and stream processing",
+    "summary": "Crunch yesterday’s data in big batches, or update answers as events arrive, without hurting the live app.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "two-needs",
+        "short": "Two needs",
+        "title": "Two kinds of question",
+        "tag": "IDEA"
+      },
+      {
+        "id": "on-prod",
+        "short": "On prod",
+        "title": "The report runs on the live database",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "report-try",
+        "short": "Month end",
+        "title": "The month-end run",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "batch",
+        "short": "Batch",
+        "title": "Batch on a copy",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "batch-try",
+        "short": "Month end",
+        "title": "Month-end on the warehouse",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "stream",
+        "short": "Stream",
+        "title": "Count plays as they happen",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "stream-try",
+        "short": "Stop it",
+        "title": "The processor stops",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "windows",
+        "short": "Windows",
+        "title": "Time is tricky in streams",
+        "tag": "IDEA"
+      },
+      {
+        "id": "both",
+        "short": "Both",
+        "title": "Fresh or exact, or both",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Right tool, right time",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "authentication",
+    "chapter": "Security",
+    "title": "Authentication",
+    "summary": "Prove who someone is without storing their password, survive bots guessing at logins, and keep them signed in safely.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "who",
+        "short": "Who?",
+        "title": "Who is this?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "passwords",
+        "short": "Passwords",
+        "title": "Never store the password",
+        "tag": "IDEA"
+      },
+      {
+        "id": "stuffing",
+        "short": "Bots",
+        "title": "Credential stuffing",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "stuffing-try",
+        "short": "Flood",
+        "title": "The bots speed up",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "throttle",
+        "short": "Throttle",
+        "title": "Throttle logins, add a second factor",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "throttle-try",
+        "short": "Flood again",
+        "title": "The bots try again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "sessions",
+        "short": "Sessions",
+        "title": "Staying signed in",
+        "tag": "IDEA"
+      },
+      {
+        "id": "delegated",
+        "short": "Sign in with",
+        "title": "Let a provider check the password",
+        "tag": "IDEA"
+      },
+      {
+        "id": "friction",
+        "short": "Friction",
+        "title": "Security that people tolerate",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Prove it, safely",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "authorization",
+    "chapter": "Security",
+    "title": "Authorization",
+    "summary": "Check, on every request, that this user may do this to this object, and keep those checks fast.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "idor",
+        "short": "Problem",
+        "title": "Change one number, read someone else’s doc",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "every-request",
+        "short": "Every time",
+        "title": "Deny unless allowed",
+        "tag": "IDEA"
+      },
+      {
+        "id": "models",
+        "short": "Models",
+        "title": "Roles, attributes, relationships",
+        "tag": "IDEA"
+      },
+      {
+        "id": "policy",
+        "short": "Policy",
+        "title": "One place for the rules",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "policy-try",
+        "short": "Slow",
+        "title": "The policy service slows down",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "decision-cache",
+        "short": "Cache",
+        "title": "Cache decisions briefly",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "staleness",
+        "short": "Staleness",
+        "title": "Revoked, but still allowed",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "least-privilege",
+        "short": "Least",
+        "title": "Least privilege",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Allowed, per object, every time",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "encryption-and-secrets",
+    "chapter": "Security",
+    "title": "Encryption and secrets",
+    "summary": "Encrypt data on the wire and on disk, keep keys in a key service, and keep secrets out of code.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "in-transit",
+        "short": "In transit",
+        "title": "Encrypt everything on the wire",
+        "tag": "IDEA"
+      },
+      {
+        "id": "internal-tls",
+        "short": "Inside",
+        "title": "Inside the network too",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "at-rest",
+        "short": "At rest",
+        "title": "Encrypt what is stored",
+        "tag": "IDEA"
+      },
+      {
+        "id": "key-service",
+        "short": "Keys",
+        "title": "Keys live in a key service",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "kms-try",
+        "short": "Slow keys",
+        "title": "The key service slows down",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "envelope",
+        "short": "Envelope",
+        "title": "Envelope encryption",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "secrets",
+        "short": "Secrets",
+        "title": "Secrets stay out of code",
+        "tag": "IDEA"
+      },
+      {
+        "id": "kinds",
+        "short": "Hash/encrypt",
+        "title": "Hash, encrypt or sign?",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Encrypted, with keys elsewhere",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "testing-strategies",
+    "chapter": "Shipping safely",
+    "title": "Testing a system",
+    "summary": "Unit, integration, contract, load and failure tests: each catches a different kind of problem before users do.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "bug",
+        "short": "Bug",
+        "title": "Totals were wrong for a day",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "pyramid",
+        "short": "Pyramid",
+        "title": "Many small tests, few big ones",
+        "tag": "IDEA"
+      },
+      {
+        "id": "contracts",
+        "short": "Contracts",
+        "title": "Test the agreements between services",
+        "tag": "IDEA"
+      },
+      {
+        "id": "load-test",
+        "short": "Load test",
+        "title": "Load-test the launch",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "scale",
+        "short": "Add servers",
+        "title": "Plan from the result",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "load-test-again",
+        "short": "Re-test",
+        "title": "Run the load test again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "chaos",
+        "short": "Chaos",
+        "title": "Break it on purpose",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "limits",
+        "short": "Limits",
+        "title": "What tests cannot tell you",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Test each kind of risk",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "deployments",
+    "chapter": "Shipping safely",
+    "title": "Deploying safely",
+    "summary": "Rolling, blue-green and canary releases, feature flags and two-step database changes: ship often without big outages.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "big-bang",
+        "short": "Big bang",
+        "title": "Everything at once, on a Friday",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "rolling",
+        "short": "Rolling",
+        "title": "One server at a time",
+        "tag": "IDEA"
+      },
+      {
+        "id": "blue-green",
+        "short": "Blue-green",
+        "title": "Two environments, one switch",
+        "tag": "IDEA"
+      },
+      {
+        "id": "canary",
+        "short": "Canary",
+        "title": "Send 10% to the new version",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "canary-try",
+        "short": "Bad build",
+        "title": "The new version crashes",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "auto-rollback",
+        "short": "Rollback",
+        "title": "Let metrics decide",
+        "tag": "IDEA"
+      },
+      {
+        "id": "flags",
+        "short": "Flags",
+        "title": "Deploy is not release",
+        "tag": "IDEA"
+      },
+      {
+        "id": "migrations",
+        "short": "Schema",
+        "title": "Changing the database safely",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Small, watched, reversible",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "url-shortener",
+    "chapter": "Case studies",
+    "title": "Design a URL shortener",
+    "summary": "Short codes, a read-heavy redirect path, a cache that carries the load, and click analytics off to the side.",
+    "minutes": 12,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "requirements",
+        "short": "Needs",
+        "title": "What it must do",
+        "tag": "IDEA"
+      },
+      {
+        "id": "estimate",
+        "short": "Numbers",
+        "title": "Read-heavy by a hundred to one",
+        "tag": "IDEA"
+      },
+      {
+        "id": "api-design",
+        "short": "API",
+        "title": "Two endpoints",
+        "tag": "IDEA"
+      },
+      {
+        "id": "codes",
+        "short": "Codes",
+        "title": "Short and unique",
+        "tag": "IDEA"
+      },
+      {
+        "id": "read-path",
+        "short": "Read path",
+        "title": "Cache the hot links",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "viral",
+        "short": "Viral",
+        "title": "A link goes viral",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "cache-restart",
+        "short": "Restart",
+        "title": "The cache restarts",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "cache-ha",
+        "short": "Protect",
+        "title": "Treat the cache like a database",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "analytics",
+        "short": "Clicks",
+        "title": "Count clicks off the hot path",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "abuse",
+        "short": "Abuse",
+        "title": "Short links hide where they go",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Snip, end to end",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "news-feed",
+    "chapter": "Case studies",
+    "title": "Design a news feed",
+    "summary": "Build each person’s feed when posts are written or when feeds are read, and handle the accounts with millions of followers.",
+    "minutes": 12,
+    "level": "advanced",
+    "steps": [
+      {
+        "id": "requirements",
+        "short": "Needs",
+        "title": "Posts from people you follow",
+        "tag": "IDEA"
+      },
+      {
+        "id": "on-read",
+        "short": "On read",
+        "title": "Build the feed when it is opened",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "on-write",
+        "short": "On write",
+        "title": "Build the feed when a post is written",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "celebrity-try",
+        "short": "Star posts",
+        "title": "A star posts",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "hybrid",
+        "short": "Hybrid",
+        "title": "Push for most, pull for stars",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "fanout-stops",
+        "short": "Workers stop",
+        "title": "Fan-out workers stop",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "ranking",
+        "short": "Ranking",
+        "title": "Which posts first",
+        "tag": "IDEA"
+      },
+      {
+        "id": "costs",
+        "short": "Costs",
+        "title": "Memory, staleness and quiet users",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Murmur, end to end",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "chat-system",
+    "chapter": "Case studies",
+    "title": "Design a chat system",
+    "summary": "Lasting connections, a durable message store, ordering per conversation, and notifications for people who are offline.",
+    "minutes": 12,
+    "level": "advanced",
+    "steps": [
+      {
+        "id": "requirements",
+        "short": "Needs",
+        "title": "What chat needs",
+        "tag": "IDEA"
+      },
+      {
+        "id": "connections",
+        "short": "Connect",
+        "title": "Every app keeps a connection open",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "send-path",
+        "short": "Send",
+        "title": "From one phone to another",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "gateway-dies",
+        "short": "Lose one",
+        "title": "Gateway 2 dies",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "dedupe",
+        "short": "No repeats",
+        "title": "Resending without duplicates",
+        "tag": "IDEA"
+      },
+      {
+        "id": "ordering",
+        "short": "Order",
+        "title": "Keeping order",
+        "tag": "IDEA"
+      },
+      {
+        "id": "offline",
+        "short": "Offline",
+        "title": "Notify people who are offline",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "push-stops",
+        "short": "Push stops",
+        "title": "The push workers stop",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "storage",
+        "short": "Storage",
+        "title": "Storing billions of messages",
+        "tag": "IDEA"
+      },
+      {
+        "id": "groups",
+        "short": "Groups",
+        "title": "Big groups",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Parley, end to end",
         "tag": "RECAP"
       }
     ]

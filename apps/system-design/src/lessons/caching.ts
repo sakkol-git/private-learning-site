@@ -9,7 +9,7 @@ const reads = (hits: number, misses: number) => [
 
 const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
   slug: 'caching',
-  chapter: 'Scaling',
+  chapter: 'Making reads fast',
   title: 'Caching',
   summary: 'Answer repeat questions from memory, and learn the three ways a cache can bite back.',
   minutes: 9,
@@ -168,27 +168,16 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
     {
       id: 'stampede',
       short: 'Stampede',
-      tag: 'PROBLEM',
-      title: 'A popular entry expires',
+      tag: 'TRY IT',
+      title: 'A cache stampede',
       body: [
-        'The homepage entry expires at noon. In the next 50 ms, hundreds of requests all miss at once.',
-        'Each one queries the database for the same row. The database chokes on a crowd it never normally sees. This is a <b>cache stampede</b>.',
+        'A deploy set the same 60-second TTL on every product at the same moment. Predict: what happens to the database when they all expire together?',
+        'Press <b>Expire many keys at once</b>. All 336 hits a second become misses, the database jumps from 4% to <b>88% busy</b> and p95 rises from 32 ms to about <b>200 ms</b>. It eases back over about 4 seconds as misses refill the cache. This is a <b>cache stampede</b>.',
       ],
       keyIdea:
         'A cache protects the database only while it is warm. Mass expiry removes the shield all at once.',
-      change: {
-        update: {
-          nodes: [
-            { id: 'cache', sublabel: 'hot key expired' },
-            { id: 'db', health: 'degraded' },
-          ],
-        },
-        flows: [
-          ...reads(40, 310),
-          { route: ['editor', 'app', 'db'], kind: 'request', ratePerSec: 2 },
-        ],
-        metrics: { p95LatencyMs: 980, errorRatePct: 2.5 },
-      },
+      change: {},
+      breakActions: ['expireCache'],
     },
     {
       id: 'single-flight',
@@ -200,19 +189,32 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
         'Add a little random jitter to each TTL, too, so popular entries do not all expire in the same second.',
       ],
       keyIdea: 'Collapse identical misses into one database read, and spread out expiry times.',
-      change: {
-        update: {
-          nodes: [
-            { id: 'cache', sublabel: 'TTL 60 s ± jitter' },
-            { id: 'db', health: 'healthy' },
-          ],
-        },
-        flows: [
-          ...reads(336, 14),
-          { route: ['editor', 'app', 'db'], kind: 'request', ratePerSec: 2 },
-        ],
-        metrics: { p95LatencyMs: 32, errorRatePct: 0 },
-      },
+      change: { update: { nodes: [{ id: 'cache', sublabel: 'TTL 60 s ± jitter' }] } },
+    },
+    {
+      id: 'eviction',
+      short: 'Eviction',
+      tag: 'TRADE-OFF',
+      title: 'Memory runs out',
+      body: [
+        'The cache holds 2 GB. When it is full, something must go. <b>LRU</b> (least recently used) evicts what nobody has asked for lately, which suits product pages well.',
+        'Watch for <b>missing keys</b> too: a request for a product that does not exist misses every time. Cache the "not found" answer for a short while, or the database pays for every bad link.',
+      ],
+      keyIdea:
+        'Pick an eviction policy that matches how your data is read, and cache negative answers.',
+      change: { update: { nodes: [{ id: 'cache', sublabel: '2 GB · LRU' }] } },
+    },
+    {
+      id: 'layers',
+      short: 'Layers',
+      tag: 'IDEA',
+      title: 'Caches come in layers',
+      body: [
+        'The browser caches images, a CDN caches whole pages near the user, this shared cache holds rows, and the database keeps hot pages in its own memory.',
+        'Each layer is faster and smaller than the one behind it. Each one also needs its own answer to "when is this copy wrong?".',
+      ],
+      keyIdea: 'Cache as close to the user as freshness allows.',
+      change: {},
     },
     {
       id: 'recap',

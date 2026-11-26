@@ -6,15 +6,15 @@ Guide for coding agents working in this repo. Read it fully before changing anyt
 
 A monorepo of **interactive course sites** that share one course shell and one UI, and plug in a visual engine. Each lesson is a short story told with an animated SVG scene: a problem appears, a technique fixes it, the numbers react, and the learner can break things on purpose.
 
-| App                  | Site name         | Topic                  | Engine                              | Break-it actions                                                           |
-| -------------------- | ----------------- | ---------------------- | ----------------------------------- | -------------------------------------------------------------------------- |
-| `apps/system-design` | Systems, Sketched | System design          | isometric diagram (infra preset)    | kill a server, spike traffic, slow the database                            |
-| `apps/finance`       | Money, Mapped     | Personal finance       | isometric diagram (money preset)    | surprise bill, lose your income, rates rise, market crash, new money stops |
-| `apps/forex`         | Pips, Plotted     | Forex trading basics   | price chart                         | price moves against you, news spike, weekend gap, spread widens            |
-| `apps/stocks`        | Shares, Sketched  | Stock market basics    | price chart (stock market)          | earnings surprise, market sell-off, company collapses, short squeeze       |
-| `apps/internet`      | Wires, Sketched   | How the internet works | isometric diagram (network preset)  | a router fails, DNS goes down, packets get lost, DDoS attack               |
-| `apps/security`      | Locks, Sketched   | Everyday cybersecurity | isometric diagram (security preset) | a website leaks passwords, click the phishing link, ransomware strikes     |
-| `apps/business`      | Business, Mapped  | How a business runs    | isometric diagram (business preset) | supplier is late, demand spikes, customers pay late                        |
+| App                  | Site name         | Topic                  | Engine                              | Break-it actions                                                                                                                                                   |
+| -------------------- | ----------------- | ---------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apps/system-design` | Systems, Sketched | System design          | isometric diagram (infra preset)    | kill a server, spike traffic, slow the database, expire caches, kill the primary database, partition zones, stop workers, flood from one client, slow a dependency |
+| `apps/finance`       | Money, Mapped     | Personal finance       | isometric diagram (money preset)    | surprise bill, lose your income, rates rise, market crash, new money stops                                                                                         |
+| `apps/forex`         | Pips, Plotted     | Forex trading basics   | price chart                         | price moves against you, news spike, weekend gap, spread widens                                                                                                    |
+| `apps/stocks`        | Shares, Sketched  | Stock market basics    | price chart (stock market)          | earnings surprise, market sell-off, company collapses, short squeeze                                                                                               |
+| `apps/internet`      | Wires, Sketched   | How the internet works | isometric diagram (network preset)  | a router fails, DNS goes down, packets get lost, DDoS attack                                                                                                       |
+| `apps/security`      | Locks, Sketched   | Everyday cybersecurity | isometric diagram (security preset) | a website leaks passwords, click the phishing link, ransomware strikes                                                                                             |
+| `apps/business`      | Business, Mapped  | How a business runs    | isometric diagram (business preset) | supplier is late, demand spikes, customers pay late                                                                                                                |
 
 - Static sites, **no backend** in v1. A Spring Boot API (accounts, synced progress) comes later. Do not add one.
 - Each site's name and author live only in its `src/config.ts` (`SITE_NAME`, `AUTHOR_NAME`).
@@ -75,6 +75,7 @@ packages/ui/                 presentational React components + SceneStage (the o
 packages/lesson-engine/      generic Lesson/Step types, validator, diagramScene checks, catalog, progress, keyboard
 packages/diagram-engine/     isometric SVG renderer, step diffs, shape library
   src/presets/infra.ts       system design metrics, scenarios, summary
+  src/presets/infra-failures.ts  caches, failover, partitions, queues, noisy clients, slow dependencies
   src/presets/money.ts       money metrics, scenarios, summary, formatMoney
   src/presets/network.ts     page-load metrics; router, DNS, packet-loss and DDoS scenarios
   src/presets/security.ts    account/file metrics; breach, phishing and ransomware scenarios
@@ -127,9 +128,17 @@ Packages export TypeScript source directly (`"exports": "./src/index.ts"`). Ther
 - **Stat pill:** if a node has `value`, the pill shows `formatValue(value)`. Otherwise, if it has `capacity`, the pill shows its load (request flows ÷ capacity). A jar's coin level is `value / capacity`.
 - Flow kinds: `request` = the main thing moving, `response` = what comes back, `failed` = bounces back in red, `healthCheck` = muted pings.
 - **Infra preset:**
-  - `killServer` kills the second healthy server; its traffic fails for 3 s, then gets rerouted. With a single server, errors stay at 100%.
-  - `spikeTraffic` applies 5× load.
+  - `killServer` kills the second healthy server; its share of server traffic fails for 3 s, then the rest absorb it. With a single server, errors stay at 100%.
+  - `spikeTraffic` applies 5× load; errors and p95 come from the busiest **server** only.
   - `slowDatabase` adds latency scaled by `databaseShare()`.
+  - The other six live in `infra-failures.ts` and are scored by `evaluate`: failed flows plus requests dropped at any node past capacity, with p95 scaled by the worst utilisation on a request's path. Conventions:
+    - `expireCache`: every `cache`/`cdn` (or only those tagged `expires`) goes cold for 0.6 s, then warms over 4 s; misses go to the nearest database (or a CDN's origin).
+    - `killDatabase`: the database tagged `primary` (else the busiest) fails its requests for 4 s, then they reroute to the nearest other database the caller links to. Nothing to fail over to means errors stay.
+    - `partition`: node `tag`s are zones; requests fail at the first hop between two different zones.
+    - `stopWorkers`: `service` nodes tagged `worker` stop. Behind a `queue` the work waits (the queue's `value` grows by rate × seconds, no errors); called directly, it fails.
+    - `noisyClient`: nodes tagged `noisy` send 10×; their own requests are not counted as errors. A `shield` on their path (rate limiter) passes 1.2× and rejects the rest.
+    - `slowDependency`: the busiest non-worker `service` slows; callers back to the nearest queue keep 1/5 of their capacity. A `shield` before it (timeout + fallback, cache) answers instead.
+  - Error % shows no decimals at 10% and above, so lesson prose rounds the same way.
 - **Money preset** (one simulated month per second):
   - `loseIncome` drains the jar month by month, then turns the shortfall into debt.
   - `surpriseExpense` is a bill of 1.5 months of spending. The jar pays what it can, and the rest becomes debt.
@@ -233,7 +242,7 @@ Content style:
 - WCAG AA, full keyboard use, visible focus, an `aria-label` on every icon-only button, and support for `prefers-reduced-motion` (no packets or animated reveals; diagram scenarios still tick their metrics, chart scenarios jump to their result).
 - Each stage SVG has `role="img"` and an `aria-label` summary. A debounced live region announces changes.
 - Keyboard: `←`/`→` change step, `R` replays, `Space` pauses, `⌘K`/`Ctrl K` opens search.
-- Initial JS ≤ 150 KB gzipped per app (about 104 KB now). Each lesson stays a separate lazy chunk. Lighthouse ≥ 95 for Performance and Accessibility.
+- Initial JS ≤ 150 KB gzipped per app (about 104 KB for most; about 118 KB for system design, whose 40-lesson catalog is in the main bundle for search). Each lesson stays a separate lazy chunk. Lighthouse ≥ 95 for Performance and Accessibility.
 
 ## Testing
 
@@ -243,7 +252,7 @@ Content style:
   - each scenario, `chartScene`, render helpers, and the stage with a manual `Scheduler`.
 - **Lesson engine**: validator, `diagramScene`, outline/catalog, progress, keyboard mapping. **Course**: `search.test.ts`.
 - **Playwright**, per app (previews on :4173 system design, :4175 finance, :4176 forex, :4177 stocks, :4178 internet, :4179 security, :4180 business):
-  - System design: kill a server → errors rise, then return to 0%; progress; ⌘K search.
+  - System design: kill a server → errors rise, then return to 0%; progress; ⌘K search (including a new lesson); sharding opened at step 5, a flood fails 13%, and home resumes it; killing the primary database fails 14% until a replica is promoted; stopped workers grow a queue backlog with 0% errors.
   - Finance: lose your income → debt; the fund absorbs a bill; a scheme collapse removes your stake.
   - Forex: 500:1 leverage → margin call to $434; a planned trade hits its target for +$600; a spread spike stops out a tight stop.
   - Stocks: a company collapse takes a single-stock holding to $1,577 but the index holding only to $9,936; an earnings gap stops out at −$256; a short squeeze ends in a −$5,911 margin call.

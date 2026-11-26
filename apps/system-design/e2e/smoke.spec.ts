@@ -41,6 +41,50 @@ test('progress is remembered on the home page', async ({ page }) => {
   );
 });
 
+test('a new lesson opens directly at a middle step and its scenario runs', async ({ page }) => {
+  await page.goto('/lesson/sharding/5');
+  await expect(page.getByRole('heading', { name: 'The star posts something big' })).toBeVisible();
+  const errorRate = page.locator('[data-metric="err"] dd');
+  await expect(errorRate).toHaveText('0%');
+  await page.getByRole('button', { name: 'One client floods', exact: true }).click();
+  await expect
+    .poll(async () => parseFloat((await errorRate.textContent()) ?? '0'), { timeout: 3000 })
+    .toBeCloseTo(12.8, 0);
+
+  // Resume from home.
+  await page.goto('/');
+  await expect(page.getByRole('link', { name: /Continue where you left off/ })).toContainText(
+    'Sharding',
+  );
+});
+
+test('killing the primary database fails writes until a replica is promoted', async ({ page }) => {
+  await page.goto('/lesson/database-replication/8');
+  await expect(page.getByRole('heading', { name: 'The primary goes down' })).toBeVisible();
+  const errorRate = page.locator('[data-metric="err"] dd');
+  await page.getByRole('button', { name: 'Kill the primary database', exact: true }).click();
+  await expect(errorRate).toHaveText('14%', { timeout: 2000 });
+  await expect(errorRate).toHaveText('0%', { timeout: 8000 });
+});
+
+test('a queue keeps checkout up when every worker stops', async ({ page }) => {
+  await page.goto('/lesson/message-queues/5');
+  await expect(page.getByRole('heading', { name: 'Stop every worker' })).toBeVisible();
+  await page.getByRole('button', { name: 'Stop the workers', exact: true }).click();
+  // The backlog grows while errors stay at zero.
+  await expect(page.locator('svg[role="img"]')).toContainText('1,500', { timeout: 8000 });
+  await expect(page.locator('[data-metric="err"] dd')).toHaveText('0%');
+});
+
+test('⌘K search finds a new lesson', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium');
+  await page.goto('/');
+  await page.keyboard.press('ControlOrMeta+k');
+  await page.getByRole('combobox', { name: 'Search lessons' }).fill('virtual nodes');
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/\/lesson\/consistent-hashing\/7$/);
+});
+
 test('⌘K search jumps to a step', async ({ page, browserName }) => {
   test.skip(browserName !== 'chromium');
   await page.goto('/');

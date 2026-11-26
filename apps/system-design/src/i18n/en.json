@@ -13,5 +13,12 @@
   "action.slowDatabase": "Slow the database",
   "legend.request": "Request",
   "legend.failed": "Failed request",
-  "legend.check": "Failing health check"
+  "legend.check": "Failing health check",
+  "action.expireCache": "Expire many keys at once",
+  "action.killDatabase": "Kill the primary database",
+  "action.partition": "Cut the network between zones",
+  "action.stopWorkers": "Stop the workers",
+  "action.noisyClient": "One client floods",
+  "action.slowDependency": "Slow down a dependency",
+  "legend.response": "Response"
 }

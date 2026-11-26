@@ -15,7 +15,7 @@ const healthChecks = ['a', 'b', 'c'].map((id) => ({
 
 const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
   slug: 'load-balancing',
-  chapter: 'Scaling',
+  chapter: 'Scaling the web tier',
   title: 'Load balancing',
   summary: 'Spread traffic across many servers, and keep going when one of them dies.',
   minutes: 9,

@@ -13,7 +13,7 @@ const spread = (rate: number) =>
 
 const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
   slug: 'vertical-vs-horizontal',
-  chapter: 'Foundations',
+  chapter: 'Scaling the web tier',
   title: 'Vertical vs horizontal scaling',
   summary: 'Buy a bigger machine, or run more of them? Each answer breaks in a different way.',
   minutes: 8,
@@ -153,6 +153,18 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       keyIdea: 'With many copies, a crash costs capacity, not availability.',
       change: {},
       breakActions: ['killServer', 'spikeTraffic'],
+    },
+    {
+      id: 'autoscale',
+      short: 'Autoscale',
+      tag: 'IDEA',
+      title: 'Let the pool grow and shrink',
+      body: [
+        'Traffic at 3 a.m. is a tenth of the evening peak. An <b>autoscaler</b> watches average CPU and adds a server when the pool passes about 60% busy, then removes one when it drops below 30%.',
+        'A new server takes a few minutes to boot and warm up, so scaling lags a sudden spike. For a known event, such as a sale at 9 a.m., add servers beforehand.',
+      ],
+      keyIdea: 'Autoscaling follows gradual change. Planned peaks need pre-scaling.',
+      change: { update: { nodes: APPS.map((id) => ({ id, sublabel: 'autoscaled · 2–8' })) } },
     },
     {
       id: 'stateless',

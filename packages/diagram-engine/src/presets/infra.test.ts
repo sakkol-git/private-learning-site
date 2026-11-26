@@ -67,6 +67,27 @@ describe('killServer', () => {
   });
 });
 
+describe('killServer with uneven traffic', () => {
+  // A canary: server b takes 10% of traffic.
+  const canary: DiagramState<InfraMetrics> = {
+    ...base,
+    nodes: base.nodes.filter((n) => n.id !== 'c'),
+    flows: [
+      { route: ['users', 'lb', 'a', 'db'], kind: 'request', ratePerSec: 360 },
+      { route: ['users', 'lb', 'b', 'db'], kind: 'request', ratePerSec: 40 },
+    ],
+    metrics: { ...base.metrics, healthy: [2, 2] },
+  };
+  const s = createScenario('killServer', canary);
+  if (!s) throw new Error('scenario expected');
+
+  it('fails only the dead server’s share, then moves exactly that traffic', () => {
+    expect(s.metricsAt(1000).errorRatePct).toBe(10);
+    const after = s.stateAt(HEALTH_CHECK_DETECT_MS + 1);
+    expect(after.flows.find((f) => f.route.includes('a'))?.ratePerSec).toBeCloseTo(400);
+  });
+});
+
 describe('spikeTraffic', () => {
   const s = createScenario('spikeTraffic', base);
   if (!s) throw new Error('scenario expected');
