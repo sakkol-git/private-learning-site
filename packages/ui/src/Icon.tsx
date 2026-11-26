@@ -13,6 +13,8 @@ const PATHS = {
   arrowLeft: 'M19 12H5M11 6l-6 6 6 6',
   arrowRight: 'M5 12h14M13 6l6 6-6 6',
   bolt: 'M13 3L5 14h6l-1 7 8-11h-6z',
+  chevron: 'M9 6l6 6-6 6',
+  folder: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
   reset: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5',
 } as const;
 
