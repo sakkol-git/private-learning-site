@@ -1,0 +1,78 @@
+[
+  {
+    "slug": "load-balancing",
+    "chapter": "Scaling",
+    "title": "Load balancing",
+    "summary": "Spread traffic across many servers, and keep going when one of them dies.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "too-busy",
+        "short": "Overload",
+        "title": "One server, too many shoppers",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "more-servers",
+        "short": "More boxes",
+        "title": "Buy two more servers",
+        "tag": "IDEA"
+      },
+      {
+        "id": "front-door",
+        "short": "Front door",
+        "title": "Put a load balancer in front",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "health-checks",
+        "short": "Health checks",
+        "title": "Ask each server: are you alive?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "pull-the-plug",
+        "short": "Pull the plug",
+        "title": "Pull the plug on Server B",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "round-robin",
+        "short": "Round robin",
+        "title": "Round robin ignores how busy a server is",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "least-connections",
+        "short": "Least conn.",
+        "title": "Send work to whoever is least busy",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "sticky-sessions",
+        "short": "Sticky",
+        "title": "Sticky sessions: convenient, then lopsided",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "l4-vs-l7",
+        "short": "L4 vs L7",
+        "title": "How much should the balancer read?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "single-point",
+        "short": "Backup",
+        "title": "Now the balancer is the weak spot",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "What you built",
+        "tag": "RECAP"
+      }
+    ]
+  }
+]

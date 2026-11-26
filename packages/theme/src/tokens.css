@@ -58,6 +58,8 @@
   --floor-edge: #d9d2c6;
   --floor-grid: #ddd6ca;
   --packet-health: #8f897f;
+  --glyph: #fbf9f5;
+  --led: #a6f0d4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -103,6 +105,8 @@
     --floor-edge: #1a1815;
     --floor-grid: #36322b;
     --packet-health: #8a857b;
+    --glyph: #1c1a17;
+    --led: #c4f7e3;
   }
 }
 
@@ -148,4 +152,6 @@
   --floor-edge: #1a1815;
   --floor-grid: #36322b;
   --packet-health: #8a857b;
+  --glyph: #1c1a17;
+  --led: #c4f7e3;
 }
