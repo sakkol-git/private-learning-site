@@ -1,10 +1,13 @@
 import { createCourseApp, type CourseConfig } from '@ss/course';
 import {
+  createStage,
   formatMoney,
   moneyScenarios,
   summarizeMoney,
+  type DiagramInitial,
   type MoneyAction,
   type MoneyMetrics,
+  type StepChange,
 } from '@ss/diagram-engine';
 import en from './i18n/en.json';
 import { catalog, loadLesson } from './lessons';
@@ -15,7 +18,12 @@ const SITE_NAME = 'Money, Mapped';
 /** Shown in the top bar credit. */
 const AUTHOR_NAME = 'Your Name';
 
-const config: CourseConfig<MoneyMetrics, MoneyAction> = {
+const config: CourseConfig<
+  MoneyMetrics,
+  MoneyAction,
+  DiagramInitial<MoneyMetrics>,
+  StepChange<MoneyMetrics>
+> = {
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,
@@ -24,7 +32,14 @@ const config: CourseConfig<MoneyMetrics, MoneyAction> = {
   home: { kicker: en['home.kicker'], title: en['home.title'], intro: en['home.intro'] },
   messages: { 'step.breakIt': en['step.breakIt'], 'lesson.diagram': en['lesson.diagram'] },
   notice: en.notice,
-  engine: { scenarios: moneyScenarios, summarize: summarizeMoney, formatValue: formatMoney },
+  createStage: (svg, scene, reducedMotion) =>
+    createStage(svg, scene, {
+      scenarios: moneyScenarios,
+      summarize: summarizeMoney,
+      formatValue: formatMoney,
+      reducedMotion,
+    }),
+  initialMetrics: (initial) => initial.metrics,
   metricTiles: (m) => [
     { key: 'income', label: en['metrics.income'], value: formatMoney(m.income), status: 'ok' },
     {

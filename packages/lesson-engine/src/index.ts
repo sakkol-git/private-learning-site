@@ -1,6 +1,7 @@
-export type { Lesson, LessonLevel, Step, StepTag } from './types';
+export type { DiagramLesson, Lesson, LessonLevel, Step, StepTag } from './types';
 export { validateCatalog, validateLesson } from './validate';
-export type { ValidateOptions } from './validate';
+export type { SceneIssue, SceneValidator, ValidateOptions } from './validate';
+export { diagramScene } from './diagram-scene';
 export { orderCatalog, toCatalogEntry, validateOutline } from './catalog';
 export type { CatalogEntry, Chapter } from './catalog';
 export { completion, loadProgress, recordStep } from './progress';

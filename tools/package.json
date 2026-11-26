@@ -8,7 +8,6 @@
     "validate": "tsx validate-lessons.ts"
   },
   "dependencies": {
-    "@ss/diagram-engine": "workspace:*",
     "@ss/lesson-engine": "workspace:*"
   },
   "devDependencies": {

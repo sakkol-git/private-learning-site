@@ -1,9 +1,12 @@
 import { createCourseApp, type CourseConfig } from '@ss/course';
 import {
+  createStage,
   infraScenarios,
   summarizeInfra,
+  type DiagramInitial,
   type InfraAction,
   type InfraMetrics,
+  type StepChange,
 } from '@ss/diagram-engine';
 import en from './i18n/en.json';
 import { catalog, loadLesson } from './lessons';
@@ -16,14 +19,25 @@ const AUTHOR_NAME = 'Your Name';
 
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
 
-const config: CourseConfig<InfraMetrics, InfraAction> = {
+const config: CourseConfig<
+  InfraMetrics,
+  InfraAction,
+  DiagramInitial<InfraMetrics>,
+  StepChange<InfraMetrics>
+> = {
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,
   chapters: CHAPTERS,
   loadLesson,
   home: { kicker: en['home.kicker'], title: en['home.title'], intro: en['home.intro'] },
-  engine: { scenarios: infraScenarios, summarize: summarizeInfra },
+  createStage: (svg, scene, reducedMotion) =>
+    createStage(svg, scene, {
+      scenarios: infraScenarios,
+      summarize: summarizeInfra,
+      reducedMotion,
+    }),
+  initialMetrics: (initial) => initial.metrics,
   metricTiles: (m) => [
     { key: 'users', label: en['metrics.users'], value: fmt(m.users), status: 'ok' },
     { key: 'rps', label: en['metrics.rps'], value: fmt(m.requestsPerSec), status: 'ok' },

@@ -1,5 +1,5 @@
 import type { InfraAction, InfraMetrics } from '@ss/diagram-engine';
-import type { Lesson } from '@ss/lesson-engine';
+import type { DiagramLesson } from '@ss/lesson-engine';
 
 const writes = (to: string, rate = 90) => ({
   route: ['users', 'app', to],
@@ -17,7 +17,7 @@ const replicate = (from: string, to: string) => ({
   ratePerSec: 90,
 });
 
-const lesson: Lesson<InfraMetrics, InfraAction> = {
+const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
   slug: 'database-replication',
   chapter: 'Scaling',
   title: 'Database replication',

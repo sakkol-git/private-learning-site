@@ -7,7 +7,7 @@ import { HomePage } from './pages/HomePage';
 import { LessonPage } from './pages/LessonPage';
 
 /** Builds the whole site (shell, home, lessons, search) for one course. */
-export function createCourseApp<M, A extends string>(config: CourseConfig<M, A>) {
+export function createCourseApp<M, A extends string, I, C>(config: CourseConfig<M, A, I, C>) {
   const info: CourseInfo = {
     siteName: config.siteName,
     authorName: config.authorName,

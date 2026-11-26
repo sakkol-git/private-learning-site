@@ -1,3 +1,6 @@
+import { INFRA_ACTION_NEEDS, type InfraMetrics } from '@ss/diagram-engine';
+import { diagramScene } from '@ss/lesson-engine';
+
 /** Course outline. Lesson order here is the order learners see. */
 export const CHAPTERS: readonly { id: string; title: string; lessons: readonly string[] }[] = [
   {
@@ -12,5 +15,5 @@ export const CHAPTERS: readonly { id: string; title: string; lessons: readonly s
   },
 ];
 
-/** Node kinds each break action needs; the lesson validator checks lessons against it. */
-export { INFRA_ACTION_NEEDS as ACTION_NEEDS } from '@ss/diagram-engine';
+/** Engine-specific lesson checks, including which node kinds each break action needs. */
+export const validateScene = diagramScene<InfraMetrics>(INFRA_ACTION_NEEDS);

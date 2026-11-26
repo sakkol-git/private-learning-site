@@ -1,0 +1,21 @@
+{
+  "home.kicker": "An interactive forex course",
+  "home.title": "Read the chart, size the trade, then stress-test it.",
+  "home.intro": "Each lesson builds a trade on a simulated EUR/USD chart, one step at a time. Then a news spike, a weekend gap or a wider spread hits it, and you see exactly what happens to your account.",
+  "metrics.balance": "Balance",
+  "metrics.equity": "Equity",
+  "metrics.openPnl": "Open P&L",
+  "metrics.marginLevel": "Margin level",
+  "metrics.drawdown": "Drawdown",
+  "action.priceMovesAgainst": "Price moves against you",
+  "action.newsSpike": "News spike",
+  "action.weekendGap": "Weekend gap",
+  "action.spreadWidens": "Spread widens",
+  "legend.up": "Closed higher",
+  "legend.down": "Closed lower",
+  "legend.stop": "Stop-loss",
+  "legend.target": "Take-profit",
+  "notice": "For learning only, not financial advice. Prices are simulated. Leveraged trading can lose money fast, and most retail traders lose.",
+  "step.breakIt": "Stress test",
+  "lesson.diagram": "Price chart"
+}

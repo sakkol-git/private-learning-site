@@ -1,3 +1,6 @@
+import { MONEY_ACTION_NEEDS, type MoneyMetrics } from '@ss/diagram-engine';
+import { diagramScene } from '@ss/lesson-engine';
+
 /** Course outline. Lesson order here is the order learners see. */
 export const CHAPTERS: readonly { id: string; title: string; lessons: readonly string[] }[] = [
   { id: 'everyday', title: 'Everyday money', lessons: ['where-your-money-goes', 'safety-net'] },
@@ -9,5 +12,5 @@ export const CHAPTERS: readonly { id: string; title: string; lessons: readonly s
   { id: 'protecting', title: 'Protecting yourself', lessons: ['spotting-a-scheme'] },
 ];
 
-/** Node kinds each break action needs; the lesson validator checks lessons against it. */
-export { MONEY_ACTION_NEEDS as ACTION_NEEDS } from '@ss/diagram-engine';
+/** Engine-specific lesson checks, including which node kinds each break action needs. */
+export const validateScene = diagramScene<MoneyMetrics>(MONEY_ACTION_NEEDS);

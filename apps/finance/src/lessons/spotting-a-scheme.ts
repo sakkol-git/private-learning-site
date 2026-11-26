@@ -1,7 +1,7 @@
 import type { MoneyAction, MoneyMetrics } from '@ss/diagram-engine';
-import type { Lesson } from '@ss/lesson-engine';
+import type { DiagramLesson } from '@ss/lesson-engine';
 
-const lesson: Lesson<MoneyMetrics, MoneyAction> = {
+const lesson: DiagramLesson<MoneyMetrics, MoneyAction> = {
   slug: 'spotting-a-scheme',
   chapter: 'Protecting yourself',
   title: 'Spotting a Ponzi scheme',

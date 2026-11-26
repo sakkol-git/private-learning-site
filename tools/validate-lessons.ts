@@ -5,12 +5,11 @@
  *   tsx validate-lessons.ts --write  validate and regenerate catalog.json files
  *
  * Each lessons folder has one file per lesson (default export) and a chapters.ts
- * exporting CHAPTERS (the outline) and ACTION_NEEDS (from the course's engine preset).
+ * exporting CHAPTERS (the outline) and validateScene (the engine's scene checks).
  */
 import { access, readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { NodeKind } from '@ss/diagram-engine';
 import {
   orderCatalog,
   toCatalogEntry,
@@ -18,6 +17,7 @@ import {
   validateOutline,
   type Chapter,
   type Lesson,
+  type SceneValidator,
 } from '@ss/lesson-engine';
 
 const appsDir = resolve(import.meta.dirname, '../apps');
@@ -48,10 +48,11 @@ async function checkCourse(app: string): Promise<string[]> {
   }
   const outline = (await import(pathToFileURL(join(dir, 'chapters.ts')).href)) as {
     CHAPTERS: Chapter[];
-    ACTION_NEEDS?: Record<string, readonly NodeKind[]>;
+    validateScene?: SceneValidator<unknown, unknown>;
   };
+  if (!outline.validateScene) issues.push('chapters.ts does not export validateScene');
   issues.push(
-    ...validateCatalog(lessons, outline.ACTION_NEEDS ? { actionNeeds: outline.ACTION_NEEDS } : {}),
+    ...validateCatalog(lessons, outline.validateScene ? { scene: outline.validateScene } : {}),
     ...validateOutline(outline.CHAPTERS, lessons),
   );
   if (issues.length > 0) return issues.map((i) => `${app}: ${i}`);

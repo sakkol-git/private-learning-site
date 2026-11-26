@@ -18,7 +18,8 @@
     "lessons": "pnpm --filter @ss/tools validate --write",
     "knip": "knip",
     "dev:finance": "turbo run dev --filter=@ss/finance",
-    "e2e": "pnpm --filter \"./apps/*\" e2e"
+    "e2e": "pnpm --filter \"./apps/*\" e2e",
+    "dev:forex": "turbo run dev --filter=@ss/forex"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

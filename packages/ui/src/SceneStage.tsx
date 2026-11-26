@@ -1,41 +1,53 @@
-import { createStage, type Stage, type StageDiagram, type StageOptions } from '@ss/diagram-engine';
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
-import styles from './DiagramStage.module.css';
+import styles from './SceneStage.module.css';
 
-export interface DiagramStageHandle<A extends string = string> {
+/** What every visual engine (diagram, chart, …) exposes to the page. */
+export interface EngineStage<M, A extends string> {
+  goToStep(index: number): void;
+  play(): void;
+  pause(): void;
+  replay(): void;
+  break(action: A): boolean;
+  reset(): void;
+  onMetrics(cb: (metrics: M, summary: string) => void): () => void;
+  setReducedMotion(reduced: boolean): void;
+  destroy(): void;
+}
+
+export interface SceneStageHandle<A extends string = string> {
   break(action: A): boolean;
   reset(): void;
   replay(): void;
 }
 
-interface DiagramStageProps<M, A extends string> {
-  diagram: StageDiagram<M>;
-  /** Scenarios, summary and value formatting for this course. Read once per diagram. */
-  engine: Pick<StageOptions<M, A>, 'scenarios' | 'summarize' | 'formatValue'>;
+interface SceneStageProps<M, A extends string> {
+  /** Builds the engine on the SVG. Called again only when `sceneKey` changes. */
+  create: (svg: SVGSVGElement, reducedMotion: boolean) => EngineStage<M, A>;
+  sceneKey: unknown;
   step: number;
   playing: boolean;
   reducedMotion: boolean;
   onMetrics: (metrics: M) => void;
   /** Accessible name of the scrollable diagram region. */
   label: string;
-  ref?: Ref<DiagramStageHandle<A>>;
+  ref?: Ref<SceneStageHandle<A>>;
 }
 
-/** The one React wrapper around the framework-agnostic diagram engine. */
-export function DiagramStage<M, A extends string>({
-  diagram,
-  engine,
+/** The one React wrapper around the framework-agnostic visual engines. */
+export function SceneStage<M, A extends string>({
+  create,
+  sceneKey,
   step,
   playing,
   reducedMotion,
   onMetrics,
   label,
   ref,
-}: DiagramStageProps<M, A>) {
+}: SceneStageProps<M, A>) {
   const svgRef = useRef<SVGSVGElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<Stage<M, A> | null>(null);
-  const engineRef = useRef(engine);
+  const stageRef = useRef<EngineStage<M, A> | null>(null);
+  const createRef = useRef(create);
   const metricsCb = useRef(onMetrics);
   const stepRef = useRef(step);
   const [summary, setSummary] = useState('');
@@ -45,9 +57,13 @@ export function DiagramStage<M, A extends string>({
   }, [onMetrics]);
 
   useEffect(() => {
+    createRef.current = create;
+  }, [create]);
+
+  useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    const stage = createStage<M, A>(svg, diagram, { ...engineRef.current, reducedMotion });
+    const stage = createRef.current(svg, reducedMotion);
     stageRef.current = stage;
     stage.goToStep(stepRef.current);
     // On narrow screens the diagram scrolls sideways; start in the middle of it.
@@ -67,7 +83,7 @@ export function DiagramStage<M, A extends string>({
     };
     // reducedMotion changes are applied below without rebuilding the stage
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [diagram]);
+  }, [sceneKey]);
 
   useEffect(() => {
     stepRef.current = step;

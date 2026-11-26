@@ -4,11 +4,11 @@ import {
   Card,
   Checklist,
   Chip,
-  DiagramStage,
   MetricsStrip,
   StepCard,
   Stepper,
-  type DiagramStageHandle,
+  SceneStage,
+  type SceneStageHandle,
 } from '@ss/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router';
@@ -17,12 +17,16 @@ import { useProgress } from '../hooks/useProgress';
 import { useReducedMotion } from '../hooks/useReducedMotion';
 import styles from './LessonPage.module.css';
 
-export function LessonPage<M, A extends string>({ config }: { config: CourseConfig<M, A> }) {
+export function LessonPage<M, A extends string, I, C>({
+  config,
+}: {
+  config: CourseConfig<M, A, I, C>;
+}) {
   const course = useCourse();
   const { t } = course;
   const { slug = '', step = '1' } = useParams();
   const place = placeOf(course, slug);
-  const [loaded, setLoaded] = useState<Lesson<M, A> | null>(null);
+  const [loaded, setLoaded] = useState<Lesson<I, C, A> | null>(null);
   const lesson = loaded?.slug === slug ? loaded : null;
 
   useEffect(() => {
@@ -52,14 +56,14 @@ const LEVEL_KEY = {
   advanced: 'lesson.level.advanced',
 } as const;
 
-function LessonView<M, A extends string>({
+function LessonView<M, A extends string, I, C>({
   config,
   lesson,
   place,
   index,
 }: {
-  config: CourseConfig<M, A>;
-  lesson: Lesson<M, A>;
+  config: CourseConfig<M, A, I, C>;
+  lesson: Lesson<I, C, A>;
   place: LessonPlace;
   index: number;
 }) {
@@ -67,9 +71,9 @@ function LessonView<M, A extends string>({
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
   const { progress, record } = useProgress();
-  const stageRef = useRef<DiagramStageHandle<A>>(null);
+  const stageRef = useRef<SceneStageHandle<A>>(null);
   const panelRef = useRef<HTMLElement>(null);
-  const [metrics, setMetrics] = useState<M>(lesson.initial.metrics);
+  const [metrics, setMetrics] = useState<M>(() => config.initialMetrics(lesson.initial));
   const [playing, setPlaying] = useState(true);
   const [broken, setBroken] = useState<{ action: A; step: number } | null>(null);
   const activeBreak = broken?.step === index ? broken.action : null;
@@ -77,9 +81,13 @@ function LessonView<M, A extends string>({
 
   const step = lesson.steps[index] ?? lesson.steps[0];
   const count = lesson.steps.length;
-  const diagram = useMemo(
+  const scene = useMemo(
     () => ({ initial: lesson.initial, changes: lesson.steps.map((s) => s.change) }),
     [lesson],
+  );
+  const createStage = useCallback(
+    (svg: SVGSVGElement, reduced: boolean) => config.createStage(svg, scene, reduced),
+    [config, scene],
   );
 
   // The step we are heading to. navigate() updates the URL before React re-renders,
@@ -175,10 +183,10 @@ function LessonView<M, A extends string>({
           <p className={styles.summary}>{lesson.summary}</p>
           {notice && <p className={styles.notice}>{notice}</p>}
           <MetricsStrip tiles={config.metricTiles(metrics)} />
-          <DiagramStage
+          <SceneStage
             ref={stageRef}
-            diagram={diagram}
-            engine={config.engine}
+            create={createStage}
+            sceneKey={scene}
             step={index}
             playing={playing}
             reducedMotion={reducedMotion}

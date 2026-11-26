@@ -3,8 +3,8 @@ import type { DiagramInitial, StepChange } from '@ss/diagram-engine';
 export type StepTag = 'PROBLEM' | 'IDEA' | 'SOLUTION' | 'TRY IT' | 'TRADE-OFF' | 'RECAP';
 export type LessonLevel = 'beginner' | 'intermediate' | 'advanced';
 
-/** M is the course's metrics shape, A its break-it action names. */
-export interface Step<M = unknown, A extends string = string> {
+/** C is the scene diff the course's engine understands, A its break-it action names. */
+export interface Step<C = unknown, A extends string = string> {
   id: string;
   /** One or two words, shown under the stepper circle and on the Next button. */
   short: string;
@@ -13,12 +13,13 @@ export interface Step<M = unknown, A extends string = string> {
   /** Short paragraphs; only <b> and <code> markup is allowed. */
   body: string[];
   keyIdea?: string;
-  change: StepChange<M>;
+  change: C;
   /** Shown as buttons on TRY IT steps. */
   breakActions?: A[];
 }
 
-export interface Lesson<M = unknown, A extends string = string> {
+/** I is the engine's starting scene, C its step diff, A the break-it action names. */
+export interface Lesson<I = unknown, C = unknown, A extends string = string> {
   slug: string;
   chapter: string;
   title: string;
@@ -27,6 +28,9 @@ export interface Lesson<M = unknown, A extends string = string> {
   level: LessonLevel;
   /** Each item is ticked once the learner reaches the step with the matching id. */
   youWillLearn: { text: string; stepId: string }[];
-  initial: DiagramInitial<M>;
-  steps: Step<M, A>[];
+  initial: I;
+  steps: Step<C, A>[];
 }
+
+/** A lesson told with the isometric diagram engine. */
+export type DiagramLesson<M, A extends string> = Lesson<DiagramInitial<M>, StepChange<M>, A>;

@@ -1,5 +1,5 @@
 import type { InfraAction, InfraMetrics } from '@ss/diagram-engine';
-import type { Lesson } from '@ss/lesson-engine';
+import type { DiagramLesson } from '@ss/lesson-engine';
 
 /** Product-page reads: `hits` answered by the cache, `misses` fall through to the database. */
 const reads = (hits: number, misses: number) => [
@@ -7,7 +7,7 @@ const reads = (hits: number, misses: number) => [
   { route: ['users', 'app', 'db'], kind: 'request' as const, ratePerSec: misses },
 ];
 
-const lesson: Lesson<InfraMetrics, InfraAction> = {
+const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
   slug: 'caching',
   chapter: 'Scaling',
   title: 'Caching',

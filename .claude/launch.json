@@ -12,6 +12,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ss/finance", "dev", "--port", "5174", "--strictPort"],
       "port": 5174
+    },
+    {
+      "name": "forex",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ss/forex", "dev", "--port", "5175", "--strictPort"],
+      "port": 5175
     }
   ]
 }

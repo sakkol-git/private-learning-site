@@ -1,24 +1,25 @@
 # Sketched courses
 
-Interactive course sites built on one shared engine. Each lesson is a short story told with an animated isometric diagram: a problem appears, a technique fixes it, and the numbers react. Learners can break things on purpose and watch what happens.
+Interactive course sites built on one shared course shell and two visual engines (isometric diagrams and price charts). Each lesson is a short story told with an animated scene: a problem appears, a technique fixes it, and the numbers react. Learners can break things on purpose and watch what happens.
 
-| App                  | Site              | Topic                                                                         |
-| -------------------- | ----------------- | ----------------------------------------------------------------------------- |
-| `apps/system-design` | Systems, Sketched | System design: requests, scaling, load balancing, caching, replication        |
-| `apps/finance`       | Money, Mapped     | Financial education: budgeting, emergency funds, debt, compound growth, scams |
+| App                  | Site              | Topic                                                                             |
+| -------------------- | ----------------- | --------------------------------------------------------------------------------- |
+| `apps/system-design` | Systems, Sketched | System design: requests, scaling, load balancing, caching, replication            |
+| `apps/finance`       | Money, Mapped     | Financial education: budgeting, emergency funds, debt, compound growth, scams     |
+| `apps/forex`         | Pips, Plotted     | Forex basics on simulated charts: candles, pips and lots, spread, stops, leverage |
 
 ## Commands
 
-| Command                                      | What it does                                                |
-| -------------------------------------------- | ----------------------------------------------------------- |
-| `pnpm install`                               | Install everything (Node 22+, pnpm 12)                      |
-| `pnpm dev` / `pnpm dev:finance`              | Run a site at http://localhost:5173 / http://localhost:5174 |
-| `pnpm build`                                 | Production builds into `apps/<app>/dist`                    |
-| `pnpm test`                                  | Unit tests (Vitest) for every package                       |
-| `pnpm lint` · `pnpm typecheck` · `pnpm knip` | ESLint, strict TypeScript, unused code and exports          |
-| `pnpm validate`                              | Check every lesson and that each `catalog.json` is current  |
-| `pnpm lessons`                               | Validate and regenerate catalogs after editing a lesson     |
-| `pnpm e2e`                                   | Playwright smoke tests for every app (desktop + mobile)     |
+| Command                                            | What it does                                               |
+| -------------------------------------------------- | ---------------------------------------------------------- |
+| `pnpm install`                                     | Install everything (Node 22+, pnpm 12)                     |
+| `pnpm dev` · `pnpm dev:finance` · `pnpm dev:forex` | Run a site at http://localhost:5173 · :5174 · :5175        |
+| `pnpm build`                                       | Production builds into `apps/<app>/dist`                   |
+| `pnpm test`                                        | Unit tests (Vitest) for every package                      |
+| `pnpm lint` · `pnpm typecheck` · `pnpm knip`       | ESLint, strict TypeScript, unused code and exports         |
+| `pnpm validate`                                    | Check every lesson and that each `catalog.json` is current |
+| `pnpm lessons`                                     | Validate and regenerate catalogs after editing a lesson    |
+| `pnpm e2e`                                         | Playwright smoke tests for every app (desktop + mobile)    |
 
 ## Layout
 
@@ -27,14 +28,15 @@ apps/<app>              a course: config, lessons, strings
 packages/course         the shared site: shell, home, lesson page, search, progress
 packages/ui             shared React components and the DiagramStage wrapper
 packages/lesson-engine  generic lesson types, validation, catalog, progress, keyboard
-packages/diagram-engine framework-free SVG renderer, shapes, and presets (infra, money)
+packages/diagram-engine isometric SVG renderer, shapes, and presets (infra, money)
+packages/chart-engine   price-chart SVG renderer, seeded prices, trading maths, forex scenarios
 packages/theme          Stone & Teal tokens (light/dark), fonts, theme mode
 tools/validate-lessons.ts   build-time lesson checks + catalog generation
 ```
 
 ## Writing a lesson
 
-1. Add `apps/<app>/src/lessons/<slug>.ts` that default-exports a `Lesson` typed with the app's preset.
+1. Add `apps/<app>/src/lessons/<slug>.ts` that default-exports a lesson typed with the app's lesson type.
 2. Add the slug to a chapter in that app's `chapters.ts`.
 3. Run `pnpm lessons`. It fails on broken ids, links between missing nodes, flows that hop between unlinked nodes, removals of things that do not exist, unknown break actions, or disallowed markup.
 

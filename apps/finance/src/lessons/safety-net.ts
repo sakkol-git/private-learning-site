@@ -1,5 +1,5 @@
 import type { MoneyAction, MoneyMetrics } from '@ss/diagram-engine';
-import type { Lesson } from '@ss/lesson-engine';
+import type { DiagramLesson } from '@ss/lesson-engine';
 
 const month = [
   { route: ['job', 'account'], kind: 'request' as const, ratePerSec: 2000 },
@@ -7,7 +7,7 @@ const month = [
   { route: ['account', 'savings'], kind: 'request' as const, ratePerSec: 300 },
 ];
 
-const lesson: Lesson<MoneyMetrics, MoneyAction> = {
+const lesson: DiagramLesson<MoneyMetrics, MoneyAction> = {
   slug: 'safety-net',
   chapter: 'Everyday money',
   title: 'Building a safety net',

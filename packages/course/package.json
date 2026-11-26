@@ -14,7 +14,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@ss/diagram-engine": "workspace:*",
     "@ss/lesson-engine": "workspace:*",
     "@ss/theme": "workspace:*",
     "@ss/ui": "workspace:*",

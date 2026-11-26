@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import type { Lesson, Step } from './types';
+import type { InfraMetrics } from '@ss/diagram-engine';
+import { diagramScene } from './diagram-scene';
+import type { DiagramLesson } from './types';
 import { validateCatalog, validateLesson } from './validate';
 
-const STEP: Step = {
+type L = DiagramLesson<InfraMetrics, string>;
+const scene = { scene: diagramScene<InfraMetrics>() };
+
+const STEP: L['steps'][number] = {
   id: 's1',
   short: 'Start',
   tag: 'PROBLEM',
@@ -11,7 +16,7 @@ const STEP: Step = {
   change: { flows: [{ route: ['users', 'web'], kind: 'request', ratePerSec: 5 }] },
 };
 
-function lesson(overrides: Partial<Lesson> = {}): Lesson {
+function lesson(overrides: Partial<L> = {}): L {
   return {
     slug: 'demo',
     chapter: 'Basics',
@@ -35,7 +40,7 @@ function lesson(overrides: Partial<Lesson> = {}): Lesson {
 
 describe('validateLesson', () => {
   it('accepts a valid lesson', () => {
-    expect(validateLesson(lesson())).toEqual([]);
+    expect(validateLesson(lesson(), scene)).toEqual([]);
   });
 
   it('fails on no steps and empty youWillLearn', () => {
@@ -46,31 +51,37 @@ describe('validateLesson', () => {
 
   it('fails when a link references a missing node', () => {
     const base = lesson();
-    const issues = validateLesson({
-      ...base,
-      initial: { ...base.initial, links: [{ id: 'x', from: 'users', to: 'db' }] },
-    });
+    const issues = validateLesson(
+      {
+        ...base,
+        initial: { ...base.initial, links: [{ id: 'x', from: 'users', to: 'db' }] },
+      },
+      scene,
+    );
     expect(issues).toContain('demo initial: link "x" references missing node "db"');
   });
 
   it('fails when a flow references a missing node or an unlinked hop', () => {
     const base = lesson();
     const step = STEP;
-    const issues = validateLesson({
-      ...base,
-      initial: {
-        ...base.initial,
-        nodes: [...base.initial.nodes, { id: 'db', kind: 'database', label: 'DB', x: 8, y: 0 }],
-      },
-      steps: [
-        {
-          ...step,
-          change: {
-            flows: [{ route: ['users', 'web', 'db', 'ghost'], kind: 'request', ratePerSec: 1 }],
-          },
+    const issues = validateLesson(
+      {
+        ...base,
+        initial: {
+          ...base.initial,
+          nodes: [...base.initial.nodes, { id: 'db', kind: 'database', label: 'DB', x: 8, y: 0 }],
         },
-      ],
-    });
+        steps: [
+          {
+            ...step,
+            change: {
+              flows: [{ route: ['users', 'web', 'db', 'ghost'], kind: 'request', ratePerSec: 1 }],
+            },
+          },
+        ],
+      },
+      scene,
+    );
     expect(issues).toContain('demo step 1 (s1): flow references missing node "ghost"');
     expect(issues).toContain('demo step 1 (s1): flow hop web → db has no link');
   });
@@ -78,33 +89,39 @@ describe('validateLesson', () => {
   it('fails when ids repeat', () => {
     const base = lesson();
     const step = STEP;
-    const issues = validateLesson({
-      ...base,
-      steps: [
-        step,
-        {
-          ...step,
-          change: { add: { nodes: [{ id: 'web', kind: 'server', label: 'Again', x: 1, y: 1 }] } },
-        },
-      ],
-    });
+    const issues = validateLesson(
+      {
+        ...base,
+        steps: [
+          step,
+          {
+            ...step,
+            change: { add: { nodes: [{ id: 'web', kind: 'server', label: 'Again', x: 1, y: 1 }] } },
+          },
+        ],
+      },
+      scene,
+    );
     expect(issues).toContain('demo lesson: step id "s1" repeats');
     expect(issues).toContain('demo step 2 (s1): adds duplicate node "web"');
   });
 
   it('fails when a step removes something that does not exist', () => {
     const base = lesson();
-    const issues = validateLesson({
-      ...base,
-      steps: [{ ...STEP, change: { remove: { nodes: ['nope'], links: ['gone'] } } }],
-    });
+    const issues = validateLesson(
+      {
+        ...base,
+        steps: [{ ...STEP, change: { remove: { nodes: ['nope'], links: ['gone'] } } }],
+      },
+      scene,
+    );
     expect(issues).toContain('demo step 1 (s1): removes missing node "nope"');
     expect(issues).toContain('demo step 1 (s1): removes missing link "gone"');
   });
 
   it('rejects markup other than <b> and <code>', () => {
     const base = lesson();
-    const issues = validateLesson({ ...base, steps: [{ ...STEP, body: ['<i>no</i>'] }] });
+    const issues = validateLesson({ ...base, steps: [{ ...STEP, body: ['<i>no</i>'] }] }, scene);
     expect(issues).toContain('demo step 1 (s1): body uses disallowed markup <i>');
   });
 
@@ -116,12 +133,13 @@ describe('validateLesson', () => {
 
   it('checks break actions against the course preset', () => {
     const needs = { killServer: ['server'], slowDatabase: ['database'] } as const;
+    const withNeeds = { scene: diagramScene<InfraMetrics>(needs) };
     const withActions = (breakActions: string[]) => lesson({ steps: [{ ...STEP, breakActions }] });
-    expect(validateLesson(withActions(['killServer']), { actionNeeds: needs })).toEqual([]);
-    expect(validateLesson(withActions(['slowDatabase']), { actionNeeds: needs })).toEqual([
+    expect(validateLesson(withActions(['killServer']), withNeeds)).toEqual([]);
+    expect(validateLesson(withActions(['slowDatabase']), withNeeds)).toEqual([
       'demo step 1 (s1): break action slowDatabase needs a database',
     ]);
-    expect(validateLesson(withActions(['teleport']), { actionNeeds: needs })).toEqual([
+    expect(validateLesson(withActions(['teleport']), withNeeds)).toEqual([
       'demo step 1 (s1): unknown break action "teleport"',
     ]);
   });

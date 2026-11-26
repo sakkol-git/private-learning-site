@@ -1,0 +1,268 @@
+[
+  {
+    "slug": "reading-a-candle",
+    "chapter": "Reading the market",
+    "title": "Reading a candlestick",
+    "summary": "What each candle on a price chart tells you, and why a line chart hides most of it.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "line",
+        "short": "Line",
+        "title": "A line only shows where each hour ended",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "candles",
+        "short": "Candles",
+        "title": "One candle per hour",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "body",
+        "short": "Body",
+        "title": "The body: from open to close",
+        "tag": "IDEA"
+      },
+      {
+        "id": "wicks",
+        "short": "Wicks",
+        "title": "Wicks: how far price travelled",
+        "tag": "IDEA"
+      },
+      {
+        "id": "news",
+        "short": "News",
+        "title": "A surprise announcement",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "zoom-out",
+        "short": "Average",
+        "title": "Step back and smooth it out",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Four prices per candle",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "pips-and-lots",
+    "chapter": "Reading the market",
+    "title": "Pips, lots and what a move costs",
+    "summary": "How a tiny price change turns into dollars, and why trade size matters more than direction.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "a-pip",
+        "short": "Pip",
+        "title": "A pip is the fourth decimal",
+        "tag": "IDEA"
+      },
+      {
+        "id": "lots",
+        "short": "Lots",
+        "title": "Lot size sets what a pip is worth",
+        "tag": "IDEA"
+      },
+      {
+        "id": "it-moves",
+        "short": "It moves",
+        "title": "Twenty hours later",
+        "tag": "IDEA"
+      },
+      {
+        "id": "ten-times",
+        "short": "10× size",
+        "title": "Ten times the size, ten times the swing",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "against-you",
+        "short": "Against",
+        "title": "Now let it go the other way",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "size-decides",
+        "short": "Size",
+        "title": "Choose size before direction",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Pips × size = dollars",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "spread-and-costs",
+    "chapter": "Reading the market",
+    "title": "Spread and slippage",
+    "summary": "Why every trade starts at a loss, and how thin markets and gaps make costs jump.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "two-prices",
+        "short": "Bid/ask",
+        "title": "There are always two prices",
+        "tag": "IDEA"
+      },
+      {
+        "id": "start-behind",
+        "short": "Behind",
+        "title": "Every trade starts in the red",
+        "tag": "IDEA"
+      },
+      {
+        "id": "thin-market",
+        "short": "Thin",
+        "title": "Late at night, spreads widen",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "tight-stop",
+        "short": "Spike",
+        "title": "A tight stop meets a wide spread",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "gap",
+        "short": "Gap",
+        "title": "Slippage: the stop is not a promise",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "costs-add-up",
+        "short": "Costs",
+        "title": "Small costs, many trades",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "You pay to play",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "stop-loss",
+    "chapter": "Managing risk",
+    "title": "Stop-loss and take-profit",
+    "summary": "Decide where you are wrong and where you are right before you enter, and let the plan run.",
+    "minutes": 8,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "no-plan",
+        "short": "No plan",
+        "title": "Buy, and hope",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "stop",
+        "short": "Stop",
+        "title": "Decide where you are wrong",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "target",
+        "short": "Target",
+        "title": "Decide where you are right",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "let-it-run",
+        "short": "Wait",
+        "title": "Let the plan work",
+        "tag": "IDEA"
+      },
+      {
+        "id": "gap",
+        "short": "Gap",
+        "title": "When the stop slips",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "win-rate",
+        "short": "Win rate",
+        "title": "You can be wrong more often than right",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Exit first, enter second",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "leverage-and-margin",
+    "chapter": "Managing risk",
+    "title": "Leverage and margin calls",
+    "summary": "How a small deposit controls a large position, and how fast high leverage can empty an account.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "leverage",
+        "short": "Leverage",
+        "title": "A small deposit, a large position",
+        "tag": "IDEA"
+      },
+      {
+        "id": "margin-level",
+        "short": "Margin %",
+        "title": "Margin level: your safety gauge",
+        "tag": "IDEA"
+      },
+      {
+        "id": "max-leverage",
+        "short": "500:1",
+        "title": "Some brokers offer 500:1",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "margin-call",
+        "short": "Margin call",
+        "title": "A normal move, a wiped account",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "size-from-risk",
+        "short": "Size right",
+        "title": "Size the trade from the risk",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "same-move",
+        "short": "Retest",
+        "title": "The same move, a small loss",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "most-lose",
+        "short": "The odds",
+        "title": "Why most retail traders lose",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Leverage is a tool with no safety catch",
+        "tag": "RECAP"
+      }
+    ]
+  }
+]

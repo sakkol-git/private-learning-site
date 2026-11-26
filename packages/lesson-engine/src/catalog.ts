@@ -17,7 +17,7 @@ export interface Chapter {
   lessons: readonly string[];
 }
 
-export function toCatalogEntry<M, A extends string>(lesson: Lesson<M, A>): CatalogEntry {
+export function toCatalogEntry<I, C, A extends string>(lesson: Lesson<I, C, A>): CatalogEntry {
   const { slug, chapter, title, summary, minutes, level } = lesson;
   return {
     slug,
