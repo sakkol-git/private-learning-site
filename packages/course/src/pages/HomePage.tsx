@@ -2,10 +2,8 @@ import { completion } from '@ss/lesson-engine';
 import { Chip } from '@ss/ui';
 import { useEffect } from 'react';
 import { Link } from 'react-router';
-import { SITE_NAME } from '../config';
+import { useCourse } from '../config';
 import { useProgress } from '../hooks/useProgress';
-import { t } from '../i18n';
-import { CATALOG, CHAPTERS } from '../lessons';
 import styles from './HomePage.module.css';
 
 const LEVEL_KEY = {
@@ -15,22 +13,23 @@ const LEVEL_KEY = {
 } as const;
 
 export function HomePage() {
+  const { t, siteName, catalog, chapters, home } = useCourse();
   const { progress } = useProgress();
   useEffect(() => {
-    document.title = SITE_NAME;
-  }, []);
+    document.title = siteName;
+  }, [siteName]);
 
   const lastSlug = progress.lastSlug;
-  const last = lastSlug ? CATALOG.find((e) => e.slug === lastSlug) : undefined;
+  const last = lastSlug ? catalog.find((e) => e.slug === lastSlug) : undefined;
   const lastProgress = lastSlug ? progress.lessons[lastSlug] : undefined;
-  const first = CATALOG[0];
+  const first = catalog[0];
 
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
-        <p className={styles.kicker}>{t('home.kicker')}</p>
-        <h1 className={styles.title}>{t('home.title')}</h1>
-        <p className={styles.intro}>{t('home.intro')}</p>
+        <p className={styles.kicker}>{home.kicker}</p>
+        <h1 className={styles.title}>{home.title}</h1>
+        <p className={styles.intro}>{home.intro}</p>
         {last && lastProgress ? (
           <Link className={styles.continue} to={`/lesson/${last.slug}/${lastProgress.last + 1}`}>
             <span className={styles.continueLabel}>{t('home.continue')}</span>
@@ -48,7 +47,7 @@ export function HomePage() {
           )
         )}
       </section>
-      {CHAPTERS.map((chapter, ci) => (
+      {chapters.map((chapter, ci) => (
         <section
           key={chapter.id}
           className={styles.chapter}
@@ -62,7 +61,7 @@ export function HomePage() {
           </h2>
           <ul className={styles.grid}>
             {chapter.lessons.map((slug) => {
-              const entry = CATALOG.find((e) => e.slug === slug);
+              const entry = catalog.find((e) => e.slug === slug);
               if (!entry) return null;
               const pct = Math.round(completion(progress.lessons[slug]) * 100);
               return (

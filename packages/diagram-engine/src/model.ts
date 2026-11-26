@@ -1,16 +1,16 @@
 import type { DiagramInitial, DiagramState, StepChange } from './types';
 
-export interface ApplyResult {
-  state: DiagramState;
+export interface ApplyResult<M> {
+  state: DiagramState<M>;
   issues: string[];
 }
 
-export function initialState(initial: DiagramInitial): DiagramState {
+export function initialState<M>(initial: DiagramInitial<M>): DiagramState<M> {
   return {
     nodes: initial.nodes.map((n) => ({ ...n })),
     links: initial.links.map((l) => ({ ...l })),
     flows: [],
-    metrics: { ...initial.metrics, healthy: [...initial.metrics.healthy] },
+    metrics: { ...initial.metrics },
   };
 }
 
@@ -19,7 +19,7 @@ export function initialState(initial: DiagramInitial): DiagramState {
  * offending part of the diff is skipped, so the renderer stays usable while the
  * validator can fail the build on the same issues.
  */
-export function applyChange(prev: DiagramState, change: StepChange): ApplyResult {
+export function applyChange<M>(prev: DiagramState<M>, change: StepChange<M>): ApplyResult<M> {
   const issues: string[] = [];
   let nodes = prev.nodes.map((n) => ({ ...n }));
   let links = prev.links.map((l) => ({ ...l }));
@@ -69,14 +69,16 @@ export function applyChange(prev: DiagramState, change: StepChange): ApplyResult
     return missing.length === 0;
   });
 
-  const metrics = { ...prev.metrics, ...change.metrics };
-  metrics.healthy = [...metrics.healthy];
+  const metrics: M = { ...prev.metrics, ...change.metrics };
   return { state: { nodes, links, flows, metrics }, issues };
 }
 
 /** states[i] is the diagram after applying the diffs of steps 0..i. */
-export function buildStepStates(initial: DiagramInitial, changes: StepChange[]): DiagramState[] {
-  const states: DiagramState[] = [];
+export function buildStepStates<M>(
+  initial: DiagramInitial<M>,
+  changes: StepChange<M>[],
+): DiagramState<M>[] {
+  const states: DiagramState<M>[] = [];
   let state = initialState(initial);
   for (const change of changes) {
     state = applyChange(state, change).state;
@@ -86,6 +88,6 @@ export function buildStepStates(initial: DiagramInitial, changes: StepChange[]):
 }
 
 /** Finds the link joining two nodes in either direction. */
-export function findLinkBetween(state: DiagramState, a: string, b: string) {
+export function findLinkBetween<M>(state: DiagramState<M>, a: string, b: string) {
   return state.links.find((l) => (l.from === a && l.to === b) || (l.from === b && l.to === a));
 }

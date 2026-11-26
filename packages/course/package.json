@@ -1,0 +1,31 @@
+{
+  "name": "@ss/course",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ss/diagram-engine": "workspace:*",
+    "@ss/lesson-engine": "workspace:*",
+    "@ss/theme": "workspace:*",
+    "@ss/ui": "workspace:*",
+    "react-router": "^8.5.3"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.2",
+    "react": "^19.3.1",
+    "vite": "^8.3.8"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  }
+}

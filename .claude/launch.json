@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ss/system-design", "dev", "--port", "5173", "--strictPort"],
       "port": 5173
+    },
+    {
+      "name": "finance",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ss/finance", "dev", "--port", "5174", "--strictPort"],
+      "port": 5174
     }
   ]
 }

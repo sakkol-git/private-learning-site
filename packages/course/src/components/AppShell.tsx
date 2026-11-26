@@ -2,9 +2,8 @@ import { isSearchShortcut } from '@ss/lesson-engine';
 import { Button, Dialog, Icon, TopBar } from '@ss/ui';
 import { useEffect, useState } from 'react';
 import { Link, Outlet, useParams } from 'react-router';
-import { AUTHOR_NAME } from '../config';
+import { useCourse } from '../config';
 import { useTheme } from '../hooks/useTheme';
-import { t } from '../i18n';
 import styles from './AppShell.module.css';
 import { LessonList } from './LessonList';
 import { Logo } from './Logo';
@@ -13,6 +12,7 @@ import { SearchDialog } from './SearchDialog';
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 export function AppShell() {
+  const { t, authorName } = useCourse();
   const [drawer, setDrawer] = useState(false);
   const [searching, setSearching] = useState(false);
   const [theme, toggleTheme] = useTheme();
@@ -74,7 +74,7 @@ export function AppShell() {
               aria-label={theme === 'dark' ? t('nav.themeToLight') : t('nav.themeToDark')}
               onClick={toggleTheme}
             />
-            <span className={styles.credit}>{t('nav.madeBy', { name: AUTHOR_NAME })}</span>
+            <span className={styles.credit}>{t('nav.madeBy', { name: authorName })}</span>
           </>
         }
       />

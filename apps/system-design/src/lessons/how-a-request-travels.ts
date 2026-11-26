@@ -1,6 +1,7 @@
+import type { InfraAction, InfraMetrics } from '@ss/diagram-engine';
 import type { Lesson } from '@ss/lesson-engine';
 
-const lesson: Lesson = {
+const lesson: Lesson<InfraMetrics, InfraAction> = {
   slug: 'how-a-request-travels',
   chapter: 'Foundations',
   title: 'How a request travels',

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { applyChange, buildStepStates, initialState } from './model';
+import type { InfraMetrics } from './presets/infra';
 import type { DiagramInitial } from './types';
 
-const initial: DiagramInitial = {
+const initial: DiagramInitial<InfraMetrics> = {
   nodes: [
     { id: 'users', kind: 'users', label: 'Users', x: 0, y: 2 },
     { id: 'a', kind: 'server', label: 'Server A', x: 4, y: 2 },

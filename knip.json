@@ -1,7 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "workspaces": {
-    "apps/system-design": {
+    "apps/*": {
       "entry": ["src/lessons/*.ts", "e2e/**/*.spec.ts"],
       "project": ["src/**/*.{ts,tsx}", "e2e/**/*.ts"]
     },

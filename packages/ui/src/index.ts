@@ -7,7 +7,7 @@ export type { DiagramStageHandle } from './DiagramStage';
 export { Dialog } from './Dialog';
 export { Icon } from './Icon';
 export { MetricsStrip } from './MetricsStrip';
-export type { MetricsLabels } from './MetricsStrip';
+export type { MetricTile } from './MetricsStrip';
 export { RichText } from './RichText';
 export { StepCard } from './StepCard';
 export type { StepCardLabels } from './StepCard';

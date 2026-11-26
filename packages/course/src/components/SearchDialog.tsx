@@ -1,12 +1,12 @@
 import { Dialog, Icon } from '@ss/ui';
 import { useId, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { t } from '../i18n';
-import { CATALOG } from '../lessons';
+import { useCourse } from '../config';
 import { buildIndex, search } from '../search';
 import styles from './AppShell.module.css';
 
 export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { t } = useCourse();
   return (
     <Dialog open={open} onClose={onClose} label={t('nav.search')}>
       <SearchPanel onClose={onClose} />
@@ -15,7 +15,8 @@ export function SearchDialog({ open, onClose }: { open: boolean; onClose: () => 
 }
 
 function SearchPanel({ onClose }: { onClose: () => void }) {
-  const index = useMemo(() => buildIndex(CATALOG), []);
+  const { catalog, t } = useCourse();
+  const index = useMemo(() => buildIndex(catalog), [catalog]);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const navigate = useNavigate();

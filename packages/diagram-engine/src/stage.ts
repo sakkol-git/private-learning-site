@@ -11,23 +11,21 @@ import { depthSort, project, UNIT } from './iso';
 import { buildStepStates, findLinkBetween, initialState } from './model';
 import { paletteFor } from './palette';
 import { SHAPES } from './shapes';
-import { computeLoads, createScenario, type Scenario } from './simulation';
+import { computeLoads, type Scenario, type Scenarios } from './scenario';
 import { STAGE_CSS } from './stage-styles';
 import type {
-  BreakAction,
   DiagramInitial,
   DiagramLink,
   DiagramNode,
   DiagramState,
-  Metrics,
   StepChange,
   TrafficFlow,
 } from './types';
 
-export interface StageDiagram {
-  initial: DiagramInitial;
+export interface StageDiagram<M> {
+  initial: DiagramInitial<M>;
   /** One diff per lesson step, in order. */
-  changes: StepChange[];
+  changes: StepChange<M>[];
 }
 
 /** Frame clock; injectable so tests can drive time deterministically. */
@@ -37,25 +35,31 @@ export interface Scheduler {
   cancel(id: number): void;
 }
 
-export interface StageOptions {
+export interface StageOptions<M, A extends string> {
   reducedMotion?: boolean;
   scheduler?: Scheduler;
+  /** Break-it scenarios this course offers. */
+  scenarios?: Partial<Scenarios<M, A>>;
+  /** Screen-reader summary of the diagram and its numbers. */
+  summarize?: (state: DiagramState<M>, metrics: M) => string;
+  /** Text for a node's stat pill when it has a `value` (for example a currency amount). */
+  formatValue?: (value: number, node: DiagramNode) => string;
 }
 
-type MetricsListener = (metrics: Metrics, summary: string) => void;
+type MetricsListener<M> = (metrics: M, summary: string) => void;
 
-export interface Stage {
+export interface Stage<M, A extends string> {
   goToStep(index: number): void;
   play(): void;
   pause(): void;
   replay(): void;
   isPlaying(): boolean;
   /** Runs a break-it scenario on top of the current step. Returns false if it cannot apply. */
-  break(action: BreakAction): boolean;
+  break(action: A): boolean;
   reset(): void;
-  onMetrics(cb: MetricsListener): () => void;
+  onMetrics(cb: MetricsListener<M>): () => void;
   /** The diagram as currently shown, including any break-it scenario. */
-  current(): DiagramState;
+  current(): DiagramState<M>;
   setReducedMotion(reduced: boolean): void;
   destroy(): void;
 }
@@ -156,26 +160,21 @@ function visualRate(ratePerSec: number, kind: TrafficFlow['kind']): number {
   return Math.min(4.5, 0.8 + Math.log10(1 + ratePerSec) * 1.1);
 }
 
-function formatNumber(n: number): string {
-  return Math.round(n).toLocaleString('en-US');
-}
-
-function summarize(state: DiagramState, m: Metrics): string {
+function listNodes<M>(state: DiagramState<M>): string {
   const parts = state.nodes.map((n) =>
     n.health && n.health !== 'healthy' ? `${n.label} (${n.health})` : n.label,
   );
-  return (
-    `Diagram: ${parts.join(', ')}. ${formatNumber(m.users)} users, ${formatNumber(m.requestsPerSec)} requests per second, ` +
-    `p95 latency ${formatNumber(m.p95LatencyMs)} ms, ${m.errorRatePct}% errors, ${m.healthy[0]} of ${m.healthy[1]} servers healthy.`
-  );
+  return `Diagram: ${parts.join(', ')}.`;
 }
 
-export function createStage(
+export function createStage<M, A extends string = string>(
   svg: SVGSVGElement,
-  diagram: StageDiagram,
-  options: StageOptions = {},
-): Stage {
+  diagram: StageDiagram<M>,
+  options: StageOptions<M, A> = {},
+): Stage<M, A> {
   const scheduler = options.scheduler ?? defaultScheduler;
+  const summarize = options.summarize ?? listNodes;
+  const formatValue = options.formatValue ?? ((value: number) => value.toLocaleString('en-US'));
   let reduced = options.reducedMotion ?? false;
   const start = initialState(diagram.initial);
   const states = buildStepStates(diagram.initial, diagram.changes);
@@ -196,13 +195,13 @@ export function createStage(
   let tweens: Tween[] = [];
   let packets: Packet[] = [];
   let emitters: Emitter[] = [];
-  const listeners = new Set<MetricsListener>();
+  const listeners = new Set<MetricsListener<M>>();
 
   let stepIndex = -1;
-  let shown: DiagramState = start;
-  let metrics: Metrics = start.metrics;
+  let shown: DiagramState<M> = start;
+  let metrics: M = start.metrics;
   let lastEmitted = '';
-  let scenario: Scenario | null = null;
+  let scenario: Scenario<M> | null = null;
   let scenarioT = 0;
   let scenarioPhase = 0;
   let playing = true;
@@ -327,7 +326,7 @@ export function createStage(
   function createNodeView(node: DiagramNode): NodeView {
     const g = make('g', { class: 'ss-node' }, blockLayer);
     const inner = make('g', {}, g);
-    inner.innerHTML = SHAPES[node.kind].draw();
+    inner.innerHTML = SHAPES[node.kind].draw(node);
     const label = make('g', { class: 'ss-node-label' }, labelLayer);
     const title = make('text', { class: 'ss-label', y: 0 }, label);
     const sub = make('text', { class: 'ss-sublabel', y: 15 }, label);
@@ -379,12 +378,23 @@ export function createStage(
     v.g.setAttribute('class', `ss-node is-${health}`);
     v.title.textContent = v.node.label;
     v.sub.textContent = v.node.sublabel ?? '';
-    const showPill = load !== undefined && health !== 'down';
+    const text =
+      v.node.value !== undefined
+        ? formatValue(v.node.value, v.node)
+        : load !== undefined
+          ? `${Math.round(load * 100)}%`
+          : null;
+    const showPill = text !== null && health !== 'down';
     v.pill.style.display = showPill ? '' : 'none';
     v.badge.style.display = health === 'down' ? '' : 'none';
     if (showPill) {
-      const pct = Math.round(load * 100);
-      v.pillText.textContent = `${pct}%`;
+      v.pillText.textContent = text;
+      const width = Math.max(52, text.length * 7.2 + 26);
+      v.pillRect.setAttribute('x', String(round(-width / 2)));
+      v.pillRect.setAttribute('width', String(round(width)));
+      v.pillDot.setAttribute('cx', String(round(-width / 2 + 12)));
+      v.pillText.setAttribute('x', String(5));
+      const pct = load !== undefined && v.node.value === undefined ? load * 100 : 0;
       const level =
         health === 'degraded' || pct >= 90
           ? pct >= 100
@@ -397,7 +407,7 @@ export function createStage(
     }
   }
 
-  function syncNodes(state: DiagramState, animate: boolean) {
+  function syncNodes(state: DiagramState<M>, animate: boolean) {
     const next = new Map(state.nodes.map((n) => [n.id, n]));
     const loads = computeLoads(state);
     for (const [id, v] of nodeViews) {
@@ -446,7 +456,13 @@ export function createStage(
         continue;
       }
       const view = v;
-      if (view.node.kind !== node.kind) view.inner.innerHTML = SHAPES[node.kind].draw();
+      if (
+        view.node.kind !== node.kind ||
+        view.node.value !== node.value ||
+        view.node.capacity !== node.capacity
+      ) {
+        view.inner.innerHTML = SHAPES[node.kind].draw(node);
+      }
       const from = { ...view.pos };
       view.node = node;
       styleNode(view, loads.get(node.id));
@@ -525,7 +541,7 @@ export function createStage(
     for (const v of linkViews.values()) if (!v.removing) drawLink(v);
   }
 
-  function syncLinks(state: DiagramState, animate: boolean) {
+  function syncLinks(state: DiagramState<M>, animate: boolean) {
     const next = new Set(state.links.map((l) => l.id));
     for (const [id, v] of linkViews) {
       if (next.has(id) || v.removing) continue;
@@ -614,7 +630,7 @@ export function createStage(
     return pieces;
   }
 
-  function syncFlows(state: DiagramState) {
+  function syncFlows(state: DiagramState<M>) {
     emitters = state.flows.map((flow, i) => {
       const target = flow.route[flow.route.length - 1] ?? '';
       const targetDown = state.nodes.find((n) => n.id === target)?.health === 'down';
@@ -720,7 +736,7 @@ export function createStage(
 
   // ---------- state & metrics ----------
 
-  function emit(m: Metrics) {
+  function emit(m: M) {
     metrics = m;
     const summary = summarize(shown, m);
     const key = JSON.stringify(m) + summary;
@@ -730,7 +746,7 @@ export function createStage(
     for (const cb of listeners) cb(m, summary);
   }
 
-  function render(state: DiagramState, animate: boolean) {
+  function render(state: DiagramState<M>, animate: boolean) {
     shown = state;
     syncNodes(state, animate && !reduced);
     syncLinks(state, animate && !reduced);
@@ -749,7 +765,7 @@ export function createStage(
     emit(scenario.metricsAt(scenarioT));
   }
 
-  function stepState(index: number): DiagramState {
+  function stepState(index: number): DiagramState<M> {
     return index < 0 ? start : (states[index] ?? start);
   }
 
@@ -780,7 +796,8 @@ export function createStage(
       emit(stepState(stepIndex).metrics);
     },
     break(action) {
-      const next = createScenario(action, stepState(stepIndex));
+      const factory = options.scenarios?.[action];
+      const next = factory ? factory(stepState(stepIndex)) : null;
       if (!next) return false;
       scenario = next;
       scenarioT = 0;

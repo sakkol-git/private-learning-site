@@ -11,3 +11,6 @@ export const CHAPTERS: readonly { id: string; title: string; lessons: readonly s
     lessons: ['load-balancing', 'caching', 'database-replication'],
   },
 ];
+
+/** Node kinds each break action needs; the lesson validator checks lessons against it. */
+export { INFRA_ACTION_NEEDS as ACTION_NEEDS } from '@ss/diagram-engine';

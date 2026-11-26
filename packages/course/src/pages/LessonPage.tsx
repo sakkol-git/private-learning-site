@@ -1,4 +1,3 @@
-import type { BreakAction, Metrics } from '@ss/diagram-engine';
 import { keyToCommand, type Lesson } from '@ss/lesson-engine';
 import {
   Button,
@@ -13,28 +12,28 @@ import {
 } from '@ss/ui';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router';
-import { SITE_NAME } from '../config';
+import { placeOf, useCourse, type CourseConfig, type LessonPlace } from '../config';
 import { useProgress } from '../hooks/useProgress';
 import { useReducedMotion } from '../hooks/useReducedMotion';
-import { t } from '../i18n';
-import { loadLesson, placeOf, type LessonPlace } from '../lessons';
 import styles from './LessonPage.module.css';
 
-export function LessonPage() {
+export function LessonPage<M, A extends string>({ config }: { config: CourseConfig<M, A> }) {
+  const course = useCourse();
+  const { t } = course;
   const { slug = '', step = '1' } = useParams();
-  const place = placeOf(slug);
-  const [loaded, setLoaded] = useState<Lesson | null>(null);
+  const place = placeOf(course, slug);
+  const [loaded, setLoaded] = useState<Lesson<M, A> | null>(null);
   const lesson = loaded?.slug === slug ? loaded : null;
 
   useEffect(() => {
     let live = true;
-    loadLesson(slug)?.then((l) => {
+    config.loadLesson(slug)?.then((l) => {
       if (live) setLoaded(l);
     });
     return () => {
       live = false;
     };
-  }, [slug]);
+  }, [config, slug]);
 
   if (!place) return <p className={styles.status}>{t('lesson.notFound')}</p>;
   if (!lesson) return <p className={styles.status}>{t('lesson.loading')}</p>;
@@ -42,7 +41,9 @@ export function LessonPage() {
   if (!Number.isInteger(index) || index < 0 || index >= lesson.steps.length) {
     return <Navigate to={`/lesson/${slug}/1`} replace />;
   }
-  return <LessonView key={lesson.slug} lesson={lesson} place={place} index={index} />;
+  return (
+    <LessonView key={lesson.slug} config={config} lesson={lesson} place={place} index={index} />
+  );
 }
 
 const LEVEL_KEY = {
@@ -51,23 +52,26 @@ const LEVEL_KEY = {
   advanced: 'lesson.level.advanced',
 } as const;
 
-function LessonView({
+function LessonView<M, A extends string>({
+  config,
   lesson,
   place,
   index,
 }: {
-  lesson: Lesson;
+  config: CourseConfig<M, A>;
+  lesson: Lesson<M, A>;
   place: LessonPlace;
   index: number;
 }) {
+  const { t, siteName, notice } = useCourse();
   const navigate = useNavigate();
   const reducedMotion = useReducedMotion();
   const { progress, record } = useProgress();
-  const stageRef = useRef<DiagramStageHandle>(null);
+  const stageRef = useRef<DiagramStageHandle<A>>(null);
   const panelRef = useRef<HTMLElement>(null);
-  const [metrics, setMetrics] = useState<Metrics>(lesson.initial.metrics);
+  const [metrics, setMetrics] = useState<M>(lesson.initial.metrics);
   const [playing, setPlaying] = useState(true);
-  const [broken, setBroken] = useState<{ action: BreakAction; step: number } | null>(null);
+  const [broken, setBroken] = useState<{ action: A; step: number } | null>(null);
   const activeBreak = broken?.step === index ? broken.action : null;
   const [fullscreen, setFullscreen] = useState(false);
 
@@ -100,8 +104,8 @@ function LessonView({
 
   useEffect(() => {
     record(lesson.slug, index, count);
-    document.title = `${lesson.steps[index]?.title ?? lesson.title} · ${lesson.title} · ${SITE_NAME}`;
-  }, [lesson, index, count, record]);
+    document.title = `${lesson.steps[index]?.title ?? lesson.title} · ${lesson.title} · ${siteName}`;
+  }, [lesson, index, count, record, siteName]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -131,7 +135,7 @@ function LessonView({
   const stepIndexById = new Map(lesson.steps.map((s, i) => [s.id, i]));
   const nextStep = lesson.steps[index + 1];
 
-  const onBreak = (action: BreakAction) => {
+  const onBreak = (action: A) => {
     if (stageRef.current?.break(action)) {
       setBroken({ action, step: index });
       setPlaying(true);
@@ -169,20 +173,12 @@ function LessonView({
             </div>
           </div>
           <p className={styles.summary}>{lesson.summary}</p>
-          <MetricsStrip
-            metrics={metrics}
-            labels={{
-              users: t('metrics.users'),
-              requestsPerSec: t('metrics.rps'),
-              p95: t('metrics.p95'),
-              errorRate: t('metrics.errors'),
-              healthy: t('metrics.healthy'),
-              ms: t('metrics.ms'),
-            }}
-          />
+          {notice && <p className={styles.notice}>{notice}</p>}
+          <MetricsStrip tiles={config.metricTiles(metrics)} />
           <DiagramStage
             ref={stageRef}
             diagram={diagram}
+            engine={config.engine}
             step={index}
             playing={playing}
             reducedMotion={reducedMotion}
@@ -191,18 +187,12 @@ function LessonView({
           />
           <div className={styles.legendRow}>
             <ul className={styles.legend} aria-label={t('lesson.legend')}>
-              <li>
-                <span className={`${styles.swatch} ${styles.request}`} aria-hidden="true" />
-                {t('lesson.legendRequest')}
-              </li>
-              <li>
-                <span className={`${styles.swatch} ${styles.failed}`} aria-hidden="true" />
-                {t('lesson.legendFailed')}
-              </li>
-              <li>
-                <span className={`${styles.swatch} ${styles.check}`} aria-hidden="true" />
-                {t('lesson.legendCheck')}
-              </li>
+              {config.legend.map((item) => (
+                <li key={item.tone}>
+                  <span className={`${styles.swatch} ${styles[item.tone]}`} aria-hidden="true" />
+                  {item.label}
+                </li>
+              ))}
             </ul>
             <div className={styles.tools}>
               <Button
@@ -270,11 +260,7 @@ function LessonView({
                 replay: t('step.hintReplay'),
                 pause: t('step.hintPause'),
               },
-              actions: {
-                killServer: t('action.killServer'),
-                spikeTraffic: t('action.spikeTraffic'),
-                slowDatabase: t('action.slowDatabase'),
-              },
+              actions: config.actionLabels,
             }}
           />
         </div>

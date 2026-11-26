@@ -1,3 +1,4 @@
+import type { InfraAction, InfraMetrics } from '@ss/diagram-engine';
 import type { Lesson } from '@ss/lesson-engine';
 
 const APPS = ['app1', 'app2', 'app3', 'app4'];
@@ -10,7 +11,7 @@ const spread = (rate: number) =>
     ratePerSec: rate,
   }));
 
-const lesson: Lesson = {
+const lesson: Lesson<InfraMetrics, InfraAction> = {
   slug: 'vertical-vs-horizontal',
   chapter: 'Foundations',
   title: 'Vertical vs horizontal scaling',

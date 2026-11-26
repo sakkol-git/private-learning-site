@@ -1,4 +1,3 @@
-import type { BreakAction } from '@ss/diagram-engine';
 import type { Step, StepTag } from '@ss/lesson-engine';
 import { useEffect, useRef } from 'react';
 import { Button } from './Button';
@@ -15,18 +14,18 @@ export interface StepCardLabels {
   breakIt: string;
   reset: string;
   hint: { next: string; replay: string; pause: string };
-  actions: Record<BreakAction, string>;
+  actions: Record<string, string>;
 }
 
-interface StepCardProps {
-  step: Step;
+interface StepCardProps<A extends string> {
+  step: Step<unknown, A>;
   isFirst: boolean;
   nextShort: string | undefined;
   labels: StepCardLabels;
-  activeBreak: BreakAction | null;
+  activeBreak: A | null;
   onBack: () => void;
   onNext: () => void;
-  onBreak: (action: BreakAction) => void;
+  onBreak: (action: A) => void;
   onReset: () => void;
 }
 
@@ -39,7 +38,7 @@ const TAG_TONE: Record<StepTag, 'plain' | 'accent' | 'warn' | 'fail'> = {
   RECAP: 'accent',
 };
 
-export function StepCard({
+export function StepCard<A extends string>({
   step,
   isFirst,
   nextShort,
@@ -49,7 +48,7 @@ export function StepCard({
   onNext,
   onBreak,
   onReset,
-}: StepCardProps) {
+}: StepCardProps<A>) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
   useEffect(() => {
@@ -95,7 +94,7 @@ export function StepCard({
                 aria-pressed={activeBreak === action}
                 onClick={() => onBreak(action)}
               >
-                {labels.actions[action]}
+                {labels.actions[action] ?? action}
               </Button>
             ))}
             <Button size="small" icon="reset" onClick={onReset} disabled={activeBreak === null}>

@@ -1,0 +1,21 @@
+{
+  "home.kicker": "An interactive money course",
+  "home.title": "See where money goes, then test it against life.",
+  "home.intro": "Each lesson follows money as it moves between your job, your accounts and the world. Build a plan step by step, then throw a surprise bill or a lost job at it and watch what holds.",
+  "metrics.income": "Income / month",
+  "metrics.spending": "Spending / month",
+  "metrics.saved": "Saved / month",
+  "metrics.debt": "Debt",
+  "metrics.netWorth": "Net worth",
+  "action.surpriseExpense": "Surprise bill",
+  "action.loseIncome": "Lose your income",
+  "action.rateHike": "Rates rise 5%",
+  "action.marketDrop": "Market crash",
+  "action.newMoneyStops": "New money stops",
+  "legend.request": "Money moving",
+  "legend.response": "Interest or returns",
+  "legend.failed": "Money missing or lost",
+  "notice": "For learning only, not financial advice. Numbers are simplified examples.",
+  "step.breakIt": "Test it",
+  "lesson.diagram": "Money diagram"
+}

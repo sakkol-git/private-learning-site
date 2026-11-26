@@ -9,6 +9,14 @@ const TOKEN: Record<NodeKind, string> = {
   queue: 'queue',
   cdn: 'cdn',
   service: 'service',
+  person: 'person',
+  employer: 'employer',
+  bank: 'bank',
+  wallet: 'wallet',
+  jar: 'jar',
+  shop: 'shop',
+  scheme: 'scheme',
+  market: 'market',
 };
 
 export interface Palette {

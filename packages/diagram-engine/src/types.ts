@@ -1,5 +1,21 @@
+/** Infrastructure kinds (system design) and money kinds (financial education). */
 export type NodeKind =
-  'users' | 'loadBalancer' | 'server' | 'cache' | 'database' | 'queue' | 'cdn' | 'service';
+  | 'users'
+  | 'loadBalancer'
+  | 'server'
+  | 'cache'
+  | 'database'
+  | 'queue'
+  | 'cdn'
+  | 'service'
+  | 'person'
+  | 'employer'
+  | 'bank'
+  | 'wallet'
+  | 'jar'
+  | 'shop'
+  | 'scheme'
+  | 'market';
 
 export type Health = 'healthy' | 'degraded' | 'down';
 
@@ -13,8 +29,13 @@ export interface DiagramNode {
   y: number;
   z?: number;
   health?: Health;
-  /** Requests per second this node handles before it saturates. */
+  /**
+   * Throughput this node handles before it saturates (flows count against it),
+   * or, for a jar, the amount that counts as full.
+   */
   capacity?: number;
+  /** An amount shown in the node's stat pill, formatted by the stage's formatValue. */
+  value?: number;
 }
 
 export interface DiagramLink {
@@ -25,6 +46,10 @@ export interface DiagramLink {
   style?: 'solid' | 'dashed';
 }
 
+/**
+ * request: the main thing moving (requests, money). response: what comes back
+ * (responses, interest, returns). failed: bounces back. healthCheck: small muted pings.
+ */
 export type FlowKind = 'request' | 'response' | 'healthCheck' | 'failed';
 
 export interface TrafficFlow {
@@ -33,38 +58,27 @@ export interface TrafficFlow {
   ratePerSec: number;
 }
 
-export interface Metrics {
-  users: number;
-  requestsPerSec: number;
-  p95LatencyMs: number;
-  errorRatePct: number;
-  /** [healthy, total] servers */
-  healthy: [number, number];
-}
-
 export type NodeUpdate = Partial<DiagramNode> & { id: string };
 
 /** A step is a diff from the previous step, never a full redraw. */
-export interface StepChange {
+export interface StepChange<M> {
   add?: { nodes?: DiagramNode[]; links?: DiagramLink[] };
   remove?: { nodes?: string[]; links?: string[] };
   update?: { nodes?: NodeUpdate[] };
   /** Replaces the active flows when present; omitted keeps the previous flows. */
   flows?: TrafficFlow[];
-  metrics?: Partial<Metrics>;
+  metrics?: Partial<M>;
 }
 
-export type BreakAction = 'killServer' | 'spikeTraffic' | 'slowDatabase';
-
-export interface DiagramInitial {
+export interface DiagramInitial<M> {
   nodes: DiagramNode[];
   links: DiagramLink[];
-  metrics: Metrics;
+  metrics: M;
 }
 
-export interface DiagramState {
+export interface DiagramState<M> {
   nodes: DiagramNode[];
   links: DiagramLink[];
   flows: TrafficFlow[];
-  metrics: Metrics;
+  metrics: M;
 }

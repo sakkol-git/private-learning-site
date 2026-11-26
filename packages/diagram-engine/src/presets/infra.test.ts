@@ -1,8 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { computeLoads, createScenario, databaseShare, HEALTH_CHECK_DETECT_MS } from './simulation';
-import type { DiagramState } from './types';
+import { computeLoads } from '../scenario';
+import type { DiagramState } from '../types';
+import {
+  databaseShare,
+  HEALTH_CHECK_DETECT_MS,
+  infraScenarios,
+  type InfraAction,
+  type InfraMetrics,
+} from './infra';
 
-const base: DiagramState = {
+const createScenario = (action: InfraAction, state: DiagramState<InfraMetrics>) =>
+  infraScenarios[action](state);
+
+const base: DiagramState<InfraMetrics> = {
   nodes: [
     { id: 'users', kind: 'users', label: 'Users', x: 0, y: 4 },
     { id: 'lb', kind: 'loadBalancer', label: 'LB', x: 5, y: 4 },
@@ -97,7 +107,7 @@ describe('slowDatabase', () => {
 });
 
 describe('single server', () => {
-  const solo: DiagramState = {
+  const solo: DiagramState<InfraMetrics> = {
     ...base,
     nodes: base.nodes.filter((n) => n.id !== 'b' && n.id !== 'c'),
     flows: [{ route: ['users', 'lb', 'a', 'db'], kind: 'request', ratePerSec: 200 }],
@@ -112,7 +122,7 @@ describe('single server', () => {
 });
 
 describe('slow database behind a cache', () => {
-  const cached: DiagramState = {
+  const cached: DiagramState<InfraMetrics> = {
     ...base,
     flows: [
       { route: ['users', 'lb', 'a'], kind: 'request', ratePerSec: 960 },

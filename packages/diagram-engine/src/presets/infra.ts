@@ -1,49 +1,34 @@
 /**
- * A small deterministic simulation. Everything is a pure function of the
- * step state and elapsed scenario time, so tests can sample any moment.
+ * System design preset: request metrics and the infrastructure break-it scenarios.
  */
-import type { BreakAction, DiagramNode, DiagramState, Metrics, TrafficFlow } from './types';
+import {
+  clamp01,
+  computeLoads,
+  easeOut,
+  lerp,
+  round1,
+  withNodes,
+  type ActionNeeds,
+  type Scenario,
+  type Scenarios,
+} from '../scenario';
+import type { DiagramNode, DiagramState, TrafficFlow } from '../types';
 
-/** Utilisation (0..∞) of every node that declares a capacity. */
-export function computeLoads(state: DiagramState): Map<string, number> {
-  const rps = new Map<string, number>();
-  for (const flow of state.flows) {
-    if (flow.kind !== 'request') continue;
-    for (const id of flow.route) rps.set(id, (rps.get(id) ?? 0) + flow.ratePerSec);
-  }
-  const loads = new Map<string, number>();
-  for (const node of state.nodes) {
-    if (node.capacity && node.health !== 'down')
-      loads.set(node.id, (rps.get(node.id) ?? 0) / node.capacity);
-  }
-  return loads;
+export interface InfraMetrics {
+  users: number;
+  requestsPerSec: number;
+  p95LatencyMs: number;
+  errorRatePct: number;
+  /** [healthy, total] servers */
+  healthy: [number, number];
 }
 
-export interface Scenario {
-  action: BreakAction;
-  /** Discrete phase index at time t; the stage re-renders the diagram when it changes. */
-  phaseAt(t: number): number;
-  stateAt(t: number): DiagramState;
-  metricsAt(t: number): Metrics;
-}
-
-const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
-const easeOut = (x: number) => 1 - (1 - clamp01(x)) ** 3;
-const lerp = (a: number, b: number, k: number) => a + (b - a) * k;
-const round1 = (x: number) => Math.round(x * 10) / 10;
+export type InfraAction = 'killServer' | 'spikeTraffic' | 'slowDatabase';
 
 /** How long a dead server keeps receiving traffic before the health check notices. */
 export const HEALTH_CHECK_DETECT_MS = 3000;
 
-function withNodes(
-  base: DiagramState,
-  patch: (n: DiagramNode) => DiagramNode,
-  flows: TrafficFlow[],
-): DiagramState {
-  return { ...base, nodes: base.nodes.map(patch), flows };
-}
-
-function killServer(base: DiagramState): Scenario | null {
+function killServer(base: DiagramState<InfraMetrics>): Scenario<InfraMetrics> | null {
   const servers = base.nodes.filter((n) => n.kind === 'server' && n.health !== 'down');
   const target = servers[1] ?? servers[0];
   if (!target) return null;
@@ -83,7 +68,7 @@ function killServer(base: DiagramState): Scenario | null {
   const after = withNodes(base, down, [...rerouted, ...checks]);
   const healthy: [number, number] = [Math.max(0, m.healthy[0] - 1), m.healthy[1]];
   const settledLatency = m.p95LatencyMs * scale ** 1.3;
-  const failing = (t: number): Metrics => {
+  const failing = (t: number): InfraMetrics => {
     const k = easeOut(t / 300);
     return {
       ...m,
@@ -95,11 +80,10 @@ function killServer(base: DiagramState): Scenario | null {
 
   if (n === 1) {
     // Nothing left to reroute to: the health check notices, but every request still fails.
-    return { action: 'killServer', phaseAt: () => 0, stateAt: () => before, metricsAt: failing };
+    return { phaseAt: () => 0, stateAt: () => before, metricsAt: failing };
   }
 
   return {
-    action: 'killServer',
     phaseAt: (t) => (t < HEALTH_CHECK_DETECT_MS ? 0 : 1),
     stateAt: (t) => (t < HEALTH_CHECK_DETECT_MS ? before : after),
     metricsAt: (t) => {
@@ -118,7 +102,7 @@ function killServer(base: DiagramState): Scenario | null {
 const SPIKE_FACTOR = 5;
 const SPIKE_RAMP_MS = 1500;
 
-function spikeTraffic(base: DiagramState): Scenario {
+function spikeTraffic(base: DiagramState<InfraMetrics>): Scenario<InfraMetrics> {
   const m = base.metrics;
   const loads = computeLoads(base);
   const serverLoads = base.nodes
@@ -140,7 +124,6 @@ function spikeTraffic(base: DiagramState): Scenario {
   const latencyFactor = (rho: number) => (1 - Math.min(rho0, 0.95)) / (1 - Math.min(rho, 0.95));
 
   return {
-    action: 'spikeTraffic',
     phaseAt: (t) => (t < SPIKE_RAMP_MS * 0.6 ? 0 : 1),
     stateAt: (t) => (t < SPIKE_RAMP_MS * 0.6 ? busy : strained),
     metricsAt: (t) => {
@@ -164,7 +147,7 @@ const SLOW_DB_EXTRA_MS = 900;
  * Share of user requests that reach a database. p95 only moves when more than
  * about 1 in 20 requests is slow, which is why a good cache hides a slow database.
  */
-export function databaseShare(state: DiagramState): number {
+export function databaseShare(state: DiagramState<InfraMetrics>): number {
   const dbIds = new Set(state.nodes.filter((n) => n.kind === 'database').map((n) => n.id));
   const requests = state.flows.filter((f) => f.kind === 'request');
   const total = requests.reduce((sum, f) => sum + f.ratePerSec, 0);
@@ -175,7 +158,7 @@ export function databaseShare(state: DiagramState): number {
   return toDb / total;
 }
 
-function slowDatabase(base: DiagramState): Scenario | null {
+function slowDatabase(base: DiagramState<InfraMetrics>): Scenario<InfraMetrics> | null {
   if (!base.nodes.some((n) => n.kind === 'database')) return null;
   const m = base.metrics;
   const reach = clamp01((databaseShare(base) - 0.04) / 0.03);
@@ -186,7 +169,6 @@ function slowDatabase(base: DiagramState): Scenario | null {
     base.flows,
   );
   return {
-    action: 'slowDatabase',
     phaseAt: () => 0,
     stateAt: () => slow,
     metricsAt: (t) => ({
@@ -196,14 +178,27 @@ function slowDatabase(base: DiagramState): Scenario | null {
   };
 }
 
-/** Builds a break-it scenario on top of a step state, or null if it cannot apply. */
-export function createScenario(action: BreakAction, base: DiagramState): Scenario | null {
-  switch (action) {
-    case 'killServer':
-      return killServer(base);
-    case 'spikeTraffic':
-      return spikeTraffic(base);
-    case 'slowDatabase':
-      return slowDatabase(base);
-  }
+export const infraScenarios: Scenarios<InfraMetrics, InfraAction> = {
+  killServer,
+  spikeTraffic,
+  slowDatabase,
+};
+
+export const INFRA_ACTION_NEEDS: ActionNeeds<InfraAction> = {
+  killServer: ['server'],
+  spikeTraffic: ['server'],
+  slowDatabase: ['database'],
+};
+
+const fmt = (n: number) => Math.round(n).toLocaleString('en-US');
+
+/** Screen-reader summary of the diagram and its numbers. */
+export function summarizeInfra(state: DiagramState<InfraMetrics>, m: InfraMetrics): string {
+  const parts = state.nodes.map((n) =>
+    n.health && n.health !== 'healthy' ? `${n.label} (${n.health})` : n.label,
+  );
+  return (
+    `Diagram: ${parts.join(', ')}. ${fmt(m.users)} users, ${fmt(m.requestsPerSec)} requests per second, ` +
+    `p95 latency ${fmt(m.p95LatencyMs)} ms, ${m.errorRatePct}% errors, ${m.healthy[0]} of ${m.healthy[1]} servers healthy.`
+  );
 }

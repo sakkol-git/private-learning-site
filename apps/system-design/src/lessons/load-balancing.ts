@@ -1,3 +1,4 @@
+import type { InfraAction, InfraMetrics } from '@ss/diagram-engine';
 import type { Lesson } from '@ss/lesson-engine';
 
 const toServers = (a: number, b: number, c: number) => [
@@ -12,7 +13,7 @@ const healthChecks = ['a', 'b', 'c'].map((id) => ({
   ratePerSec: 1,
 }));
 
-const lesson: Lesson = {
+const lesson: Lesson<InfraMetrics, InfraAction> = {
   slug: 'load-balancing',
   chapter: 'Scaling',
   title: 'Load balancing',

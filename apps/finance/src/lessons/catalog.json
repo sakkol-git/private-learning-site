@@ -1,0 +1,274 @@
+[
+  {
+    "slug": "where-your-money-goes",
+    "chapter": "Everyday money",
+    "title": "Where your money goes",
+    "summary": "Follow one month of pay from payday to the last dollar, and find room to save.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "gone-by-the-20th",
+        "short": "Payday",
+        "title": "Paid on the 1st, broke by the 20th",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "follow-the-money",
+        "short": "Track",
+        "title": "Follow every dollar for one month",
+        "tag": "IDEA"
+      },
+      {
+        "id": "needs-and-wants",
+        "short": "Needs",
+        "title": "Split needs from wants",
+        "tag": "IDEA"
+      },
+      {
+        "id": "pay-yourself-first",
+        "short": "Save first",
+        "title": "Pay yourself first",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "surprise-bill",
+        "short": "Surprise",
+        "title": "A surprise bill arrives",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "small-leaks",
+        "short": "Leaks",
+        "title": "Small amounts are not small",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "A plan instead of a mystery",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "safety-net",
+    "chapter": "Everyday money",
+    "title": "Building a safety net",
+    "summary": "Why an emergency fund comes before almost everything else, and how big it should be.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "no-buffer",
+        "short": "No buffer",
+        "title": "Everything works, until it doesn’t",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "no-buffer-test",
+        "short": "Job loss",
+        "title": "What if the salary stops?",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "start-small",
+        "short": "One month",
+        "title": "Start with one month",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "how-big",
+        "short": "How big",
+        "title": "Aim for three to six months",
+        "tag": "IDEA"
+      },
+      {
+        "id": "test-again",
+        "short": "Test again",
+        "title": "Lose the job again, with a full fund",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "where-to-keep-it",
+        "short": "Where",
+        "title": "Keep it boring and close",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "A cushion between you and debt",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "borrowing-and-interest",
+    "chapter": "Borrowing and growing",
+    "title": "Borrowing and interest",
+    "summary": "What a loan really costs, why minimum payments are a trap, and which debt to clear first.",
+    "minutes": 9,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "a-loan",
+        "short": "A loan",
+        "title": "Borrow $10,000 for a car",
+        "tag": "IDEA"
+      },
+      {
+        "id": "interest",
+        "short": "Interest",
+        "title": "Interest is the price of borrowing",
+        "tag": "IDEA"
+      },
+      {
+        "id": "total-cost",
+        "short": "Total",
+        "title": "Add up what you really pay",
+        "tag": "IDEA"
+      },
+      {
+        "id": "minimum-payments",
+        "short": "Minimums",
+        "title": "The minimum payment trap",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "rates-rise",
+        "short": "Rates rise",
+        "title": "What if interest rates go up?",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "most-expensive-first",
+        "short": "Pay off",
+        "title": "Pay the most expensive debt first",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "good-and-bad",
+        "short": "Good debt?",
+        "title": "Not all debt is equal",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Borrow with your eyes open",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "growing-money",
+    "chapter": "Borrowing and growing",
+    "title": "Growing money over time",
+    "summary": "How small, steady investing compounds, why starting early matters most, and how to sit through a crash.",
+    "minutes": 8,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "start",
+        "short": "Start",
+        "title": "Invest $200 every month",
+        "tag": "IDEA"
+      },
+      {
+        "id": "growth-on-growth",
+        "short": "Compound",
+        "title": "Growth on top of growth",
+        "tag": "IDEA"
+      },
+      {
+        "id": "time",
+        "short": "30 years",
+        "title": "Time does most of the work",
+        "tag": "IDEA"
+      },
+      {
+        "id": "starting-late",
+        "short": "Late start",
+        "title": "Starting ten years later",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "crash",
+        "short": "Crash",
+        "title": "The market falls by a third",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "risk",
+        "short": "Risk",
+        "title": "Higher returns come with bumps",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Small, steady, and early",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "spotting-a-scheme",
+    "chapter": "Protecting yourself",
+    "title": "Spotting a Ponzi scheme",
+    "summary": "Follow the money inside a \"guaranteed returns\" club, and see why it must collapse.",
+    "minutes": 8,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "the-offer",
+        "short": "The offer",
+        "title": "A friend’s club pays 10% a month",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "it-pays",
+        "short": "It pays",
+        "title": "At first, it pays exactly as promised",
+        "tag": "IDEA"
+      },
+      {
+        "id": "where-from",
+        "short": "Source",
+        "title": "Where do the returns come from?",
+        "tag": "IDEA"
+      },
+      {
+        "id": "must-grow",
+        "short": "Must grow",
+        "title": "It has to keep getting bigger",
+        "tag": "IDEA"
+      },
+      {
+        "id": "collapse",
+        "short": "Collapse",
+        "title": "New money stops",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "warning-signs",
+        "short": "Signs",
+        "title": "The warning signs",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "check-first",
+        "short": "Check",
+        "title": "Check before you pay",
+        "tag": "IDEA"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Follow the money",
+        "tag": "RECAP"
+      }
+    ]
+  }
+]

@@ -16,7 +16,9 @@
     "format:check": "prettier --check .",
     "validate": "pnpm --filter @ss/tools validate",
     "lessons": "pnpm --filter @ss/tools validate --write",
-    "knip": "knip"
+    "knip": "knip",
+    "dev:finance": "turbo run dev --filter=@ss/finance",
+    "e2e": "pnpm --filter \"./apps/*\" e2e"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

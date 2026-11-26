@@ -1,5 +1,11 @@
 import { applyChange, findLinkBetween, initialState } from '@ss/diagram-engine';
+import type { NodeKind } from '@ss/diagram-engine';
 import type { Lesson } from './types';
+
+export interface ValidateOptions {
+  /** Node kinds each break action needs on stage. Unknown actions are reported. */
+  actionNeeds?: Readonly<Record<string, readonly NodeKind[]>>;
+}
 
 const STEP_TAGS = new Set(['PROBLEM', 'IDEA', 'SOLUTION', 'TRY IT', 'TRADE-OFF', 'RECAP']);
 const ALLOWED_MARKUP = /<\/?(b|code)>/g;
@@ -13,7 +19,10 @@ function duplicates(ids: string[]): string[] {
 }
 
 /** Returns every problem found in one lesson; an empty array means it is valid. */
-export function validateLesson(lesson: Lesson): string[] {
+export function validateLesson<M, A extends string>(
+  lesson: Lesson<M, A>,
+  options: ValidateOptions = {},
+): string[] {
   const issues: string[] = [];
   const at = (where: string) => (msg: string) => issues.push(`${lesson.slug} ${where}: ${msg}`);
   const top = at('lesson');
@@ -74,17 +83,26 @@ export function validateLesson(lesson: Lesson): string[] {
       }
     }
     for (const action of step.breakActions ?? []) {
-      const needs = action === 'slowDatabase' ? 'database' : 'server';
-      if (!state.nodes.some((n) => n.kind === needs))
-        report(`break action ${action} needs a ${needs}`);
+      if (!options.actionNeeds) continue;
+      const needs = options.actionNeeds[action];
+      if (!needs) {
+        report(`unknown break action "${action}"`);
+        continue;
+      }
+      if (!state.nodes.some((n) => needs.includes(n.kind))) {
+        report(`break action ${action} needs a ${needs.join(' or ')}`);
+      }
     }
   });
   return issues;
 }
 
 /** Validates every lesson plus rules that span lessons (unique slugs). */
-export function validateCatalog(lessons: Lesson[]): string[] {
-  const issues = lessons.flatMap(validateLesson);
+export function validateCatalog<M, A extends string>(
+  lessons: Lesson<M, A>[],
+  options: ValidateOptions = {},
+): string[] {
+  const issues = lessons.flatMap((lesson) => validateLesson(lesson, options));
   for (const slug of duplicates(lessons.map((l) => l.slug)))
     issues.push(`slug "${slug}" is used by more than one lesson`);
   return issues;

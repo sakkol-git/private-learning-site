@@ -1,12 +1,16 @@
 /**
- * Build-time check of every lesson in apps/system-design/src/lessons.
+ * Build-time check of every course in apps/<app>/src/lessons.
  *
- *   tsx validate-lessons.ts          validate, and fail if catalog.json is stale
- *   tsx validate-lessons.ts --write  validate and regenerate catalog.json
+ *   tsx validate-lessons.ts          validate, and fail if any catalog.json is stale
+ *   tsx validate-lessons.ts --write  validate and regenerate catalog.json files
+ *
+ * Each lessons folder has one file per lesson (default export) and a chapters.ts
+ * exporting CHAPTERS (the outline) and ACTION_NEEDS (from the course's engine preset).
  */
-import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { access, readdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import type { NodeKind } from '@ss/diagram-engine';
 import {
   orderCatalog,
   toCatalogEntry,
@@ -16,45 +20,61 @@ import {
   type Lesson,
 } from '@ss/lesson-engine';
 
-const dir = resolve(import.meta.dirname, '../apps/system-design/src/lessons');
-const catalogPath = join(dir, 'catalog.json');
+const appsDir = resolve(import.meta.dirname, '../apps');
 const NOT_LESSONS = new Set(['chapters.ts', 'index.ts']);
 const write = process.argv.includes('--write');
 
-function fail(lines: string[]): never {
-  for (const line of lines) console.error(line);
+const exists = (path: string) =>
+  access(path).then(
+    () => true,
+    () => false,
+  );
+
+async function checkCourse(app: string): Promise<string[]> {
+  const dir = join(appsDir, app, 'src/lessons');
+  const files = (await readdir(dir)).filter(
+    (f) => f.endsWith('.ts') && !NOT_LESSONS.has(f) && !f.endsWith('.test.ts'),
+  );
+  if (files.length === 0) return [`${app}: no lesson files in ${dir}`];
+
+  const issues: string[] = [];
+  const lessons: Lesson[] = [];
+  for (const file of files) {
+    const mod = (await import(pathToFileURL(join(dir, file)).href)) as { default?: Lesson };
+    if (!mod.default) issues.push(`${file}: no default export`);
+    else if (`${mod.default.slug}.ts` !== file) {
+      issues.push(`${file}: slug "${mod.default.slug}" must match the file name`);
+    } else lessons.push(mod.default);
+  }
+  const outline = (await import(pathToFileURL(join(dir, 'chapters.ts')).href)) as {
+    CHAPTERS: Chapter[];
+    ACTION_NEEDS?: Record<string, readonly NodeKind[]>;
+  };
+  issues.push(
+    ...validateCatalog(lessons, outline.ACTION_NEEDS ? { actionNeeds: outline.ACTION_NEEDS } : {}),
+    ...validateOutline(outline.CHAPTERS, lessons),
+  );
+  if (issues.length > 0) return issues.map((i) => `${app}: ${i}`);
+
+  const catalogPath = join(dir, 'catalog.json');
+  const catalog = `${JSON.stringify(orderCatalog(outline.CHAPTERS, lessons.map(toCatalogEntry)), null, 2)}\n`;
+  if (write) await writeFile(catalogPath, catalog);
+  else if ((await readFile(catalogPath, 'utf8').catch(() => '')) !== catalog) {
+    return [`${app}: catalog.json is out of date. Run: pnpm lessons`];
+  }
+  console.log(
+    `✓ ${app}: ${lessons.length} lesson(s) valid: ${lessons.map((l) => l.slug).join(', ')}`,
+  );
+  return [];
+}
+
+const apps: string[] = [];
+for (const app of await readdir(appsDir)) {
+  if (await exists(join(appsDir, app, 'src/lessons/chapters.ts'))) apps.push(app);
+}
+const issues = (await Promise.all(apps.map(checkCourse))).flat();
+if (issues.length > 0) {
+  console.error(`Lesson validation failed with ${issues.length} issue(s):`);
+  for (const issue of issues) console.error(`  • ${issue}`);
   process.exit(1);
 }
-
-const files = (await readdir(dir)).filter(
-  (f) => f.endsWith('.ts') && !NOT_LESSONS.has(f) && !f.endsWith('.test.ts'),
-);
-if (files.length === 0) fail([`No lesson files found in ${dir}`]);
-
-const lessons: Lesson[] = [];
-for (const file of files) {
-  const mod = (await import(pathToFileURL(join(dir, file)).href)) as { default?: Lesson };
-  if (!mod.default) fail([`${file}: no default export`]);
-  if (`${mod.default.slug}.ts` !== file)
-    fail([`${file}: slug "${mod.default.slug}" must match the file name`]);
-  lessons.push(mod.default);
-}
-const { CHAPTERS } = (await import(pathToFileURL(join(dir, 'chapters.ts')).href)) as {
-  CHAPTERS: Chapter[];
-};
-
-const issues = [...validateCatalog(lessons), ...validateOutline(CHAPTERS, lessons)];
-if (issues.length > 0)
-  fail([
-    `Lesson validation failed with ${issues.length} issue(s):`,
-    ...issues.map((i) => `  • ${i}`),
-  ]);
-
-const catalog = `${JSON.stringify(orderCatalog(CHAPTERS, lessons.map(toCatalogEntry)), null, 2)}\n`;
-if (write) {
-  await writeFile(catalogPath, catalog);
-} else {
-  const current = await readFile(catalogPath, 'utf8').catch(() => '');
-  if (current !== catalog) fail(['catalog.json is out of date. Run: pnpm lessons']);
-}
-console.log(`✓ ${lessons.length} lesson(s) valid: ${lessons.map((l) => l.slug).join(', ')}`);

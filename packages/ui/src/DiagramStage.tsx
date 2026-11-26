@@ -1,43 +1,41 @@
-import {
-  createStage,
-  type BreakAction,
-  type Metrics,
-  type Stage,
-  type StageDiagram,
-} from '@ss/diagram-engine';
+import { createStage, type Stage, type StageDiagram, type StageOptions } from '@ss/diagram-engine';
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
 import styles from './DiagramStage.module.css';
 
-export interface DiagramStageHandle {
-  break(action: BreakAction): boolean;
+export interface DiagramStageHandle<A extends string = string> {
+  break(action: A): boolean;
   reset(): void;
   replay(): void;
 }
 
-interface DiagramStageProps {
-  diagram: StageDiagram;
+interface DiagramStageProps<M, A extends string> {
+  diagram: StageDiagram<M>;
+  /** Scenarios, summary and value formatting for this course. Read once per diagram. */
+  engine: Pick<StageOptions<M, A>, 'scenarios' | 'summarize' | 'formatValue'>;
   step: number;
   playing: boolean;
   reducedMotion: boolean;
-  onMetrics: (metrics: Metrics) => void;
+  onMetrics: (metrics: M) => void;
   /** Accessible name of the scrollable diagram region. */
   label: string;
-  ref?: Ref<DiagramStageHandle>;
+  ref?: Ref<DiagramStageHandle<A>>;
 }
 
 /** The one React wrapper around the framework-agnostic diagram engine. */
-export function DiagramStage({
+export function DiagramStage<M, A extends string>({
   diagram,
+  engine,
   step,
   playing,
   reducedMotion,
   onMetrics,
   label,
   ref,
-}: DiagramStageProps) {
+}: DiagramStageProps<M, A>) {
   const svgRef = useRef<SVGSVGElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<Stage | null>(null);
+  const stageRef = useRef<Stage<M, A> | null>(null);
+  const engineRef = useRef(engine);
   const metricsCb = useRef(onMetrics);
   const stepRef = useRef(step);
   const [summary, setSummary] = useState('');
@@ -49,7 +47,7 @@ export function DiagramStage({
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg) return;
-    const stage = createStage(svg, diagram, { reducedMotion });
+    const stage = createStage<M, A>(svg, diagram, { ...engineRef.current, reducedMotion });
     stageRef.current = stage;
     stage.goToStep(stepRef.current);
     // On narrow screens the diagram scrolls sideways; start in the middle of it.

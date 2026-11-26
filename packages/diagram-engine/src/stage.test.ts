@@ -1,7 +1,8 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { createStage, type Scheduler, type StageDiagram } from './stage';
-import type { Metrics } from './types';
+import { formatMoney, type MoneyMetrics } from './presets/money';
+import { infraScenarios, summarizeInfra, type InfraMetrics } from './presets/infra';
 
 function manualScheduler() {
   let now = 0;
@@ -30,7 +31,7 @@ function manualScheduler() {
   };
 }
 
-const diagram: StageDiagram = {
+const diagram: StageDiagram<InfraMetrics> = {
   initial: {
     nodes: [
       { id: 'users', kind: 'users', label: 'Users', x: 0, y: 4 },
@@ -77,8 +78,13 @@ function setup(reducedMotion = false) {
   const clock = manualScheduler();
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   document.body.appendChild(svg);
-  const stage = createStage(svg, diagram, { reducedMotion, scheduler: clock.scheduler });
-  const seen: Metrics[] = [];
+  const stage = createStage(svg, diagram, {
+    reducedMotion,
+    scheduler: clock.scheduler,
+    scenarios: infraScenarios,
+    summarize: summarizeInfra,
+  });
+  const seen: InfraMetrics[] = [];
   stage.onMetrics((m) => seen.push(m));
   return { stage, svg, clock, seen };
 }
@@ -156,5 +162,32 @@ describe('stage', () => {
     stage.goToStep(1);
     clock.advance(1500);
     expect(svg.querySelectorAll('.ss-packet')).toHaveLength(0);
+  });
+
+  it('shows formatted values in stat pills and fills jars', () => {
+    const clock = manualScheduler();
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const money: StageDiagram<MoneyMetrics> = {
+      initial: {
+        nodes: [
+          { id: 'jar', kind: 'jar', label: 'Savings', x: 0, y: 0, value: 1250, capacity: 5000 },
+        ],
+        links: [],
+        metrics: { income: 0, spending: 0, saved: 0, debt: 0, netWorth: 1250 },
+      },
+      changes: [{ update: { nodes: [{ id: 'jar', value: 0 }] } }],
+    };
+    const stage = createStage(svg, money, { scheduler: clock.scheduler, formatValue: formatMoney });
+    expect(svg.querySelector('.ss-pill text')?.textContent).toBe('$1,250');
+    const filled = svg.querySelectorAll('.ss-node .ft').length;
+    stage.goToStep(0);
+    expect(svg.querySelector('.ss-pill text')?.textContent).toBe('$0');
+    expect(svg.querySelectorAll('.ss-node .ft').length).toBeLessThan(filled);
+  });
+
+  it('ignores actions the course does not offer', () => {
+    const { stage } = setup();
+    stage.goToStep(1);
+    expect(stage.break('slowDatabase')).toBe(false);
   });
 });

@@ -113,4 +113,16 @@ describe('validateLesson', () => {
       'slug "demo" is used by more than one lesson',
     ]);
   });
+
+  it('checks break actions against the course preset', () => {
+    const needs = { killServer: ['server'], slowDatabase: ['database'] } as const;
+    const withActions = (breakActions: string[]) => lesson({ steps: [{ ...STEP, breakActions }] });
+    expect(validateLesson(withActions(['killServer']), { actionNeeds: needs })).toEqual([]);
+    expect(validateLesson(withActions(['slowDatabase']), { actionNeeds: needs })).toEqual([
+      'demo step 1 (s1): break action slowDatabase needs a database',
+    ]);
+    expect(validateLesson(withActions(['teleport']), { actionNeeds: needs })).toEqual([
+      'demo step 1 (s1): unknown break action "teleport"',
+    ]);
+  });
 });

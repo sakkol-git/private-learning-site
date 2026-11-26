@@ -9,6 +9,12 @@ export const STAGE_CSS = `
   stroke: var(--f-outline); stroke-width: 1; stroke-linejoin: round;
   transition: fill 300ms cubic-bezier(.2,.7,.2,1), stroke 300ms cubic-bezier(.2,.7,.2,1);
 }
+.ss-stage .glass, .ss-stage .glass-top {
+  fill: var(--f-soft); stroke: var(--f-outline); stroke-width: 1; opacity: .55;
+  transition: fill 300ms cubic-bezier(.2,.7,.2,1);
+}
+.ss-stage .glass-top { opacity: .35; }
+.ss-stage .window { fill: var(--glyph); opacity: .8; }
 .ss-stage .detail { fill: none; stroke: var(--f-outline); stroke-width: 1; opacity: .55; }
 .ss-stage .glyph { fill: none; stroke: var(--glyph); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .ss-stage .glyph-fill { fill: var(--glyph); }
