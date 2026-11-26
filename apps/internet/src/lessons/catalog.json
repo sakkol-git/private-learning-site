@@ -1,0 +1,244 @@
+[
+  {
+    "slug": "packets-and-routes",
+    "chapter": "How data moves",
+    "title": "Packets and routes",
+    "summary": "How a web page crosses the world in small pieces, router by router, and finds a new way when one breaks.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "no-single-wire",
+        "short": "Far away",
+        "title": "There is no wire straight to the shop",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "packets",
+        "short": "Packets",
+        "title": "Split it into packets",
+        "tag": "IDEA"
+      },
+      {
+        "id": "routers",
+        "short": "Routers",
+        "title": "Each router only picks the next hop",
+        "tag": "IDEA"
+      },
+      {
+        "id": "router-fails",
+        "short": "Failure",
+        "title": "Router A goes dark",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "weakest-link",
+        "short": "Weak link",
+        "title": "Your end has no spare path",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Small pieces, many paths",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "finding-addresses",
+    "chapter": "How data moves",
+    "title": "Finding addresses with DNS",
+    "summary": "How a name like shop.example becomes a number your laptop can send packets to, and what breaks when that lookup fails.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "names",
+        "short": "Names",
+        "title": "You know the name, not the number",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "ask-dns",
+        "short": "Lookup",
+        "title": "Ask a DNS resolver",
+        "tag": "IDEA"
+      },
+      {
+        "id": "connect",
+        "short": "Connect",
+        "title": "Then go to the address",
+        "tag": "IDEA"
+      },
+      {
+        "id": "caching",
+        "short": "Cache",
+        "title": "Remember the answer",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "dns-down",
+        "short": "Outage",
+        "title": "The DNS resolver stops answering",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "ttl",
+        "short": "TTL",
+        "title": "Long memory or fresh answers",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Find the address, then the server",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "handshakes-and-distance",
+    "chapter": "Making it fast",
+    "title": "Handshakes and distance",
+    "summary": "Why a fast connection can still feel slow: light takes time, and every new connection starts with a few round trips.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "distance",
+        "short": "Distance",
+        "title": "Light is fast, the world is big",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "handshakes",
+        "short": "Handshakes",
+        "title": "Three round trips before the page",
+        "tag": "IDEA"
+      },
+      {
+        "id": "loss",
+        "short": "Loss",
+        "title": "A few lost packets",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "keep-alive",
+        "short": "Reuse",
+        "title": "Keep the connection open",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "protocols",
+        "short": "Fewer trips",
+        "title": "Newer protocols cut round trips",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Count the round trips",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "content-delivery",
+    "chapter": "Making it fast",
+    "title": "Content delivery networks",
+    "summary": "Keep copies of a site close to its visitors, so most requests never cross the ocean.",
+    "minutes": 6,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "far-away",
+        "short": "Far",
+        "title": "Every visitor crosses the ocean",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "edge",
+        "short": "Edge",
+        "title": "Put a copy nearby",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "what-to-cache",
+        "short": "What",
+        "title": "Copy what everyone sees",
+        "tag": "IDEA"
+      },
+      {
+        "id": "flood",
+        "short": "Flood",
+        "title": "A flood of fake traffic",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "stale",
+        "short": "Stale",
+        "title": "Copies can be out of date",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Bring the content to the people",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "denial-of-service",
+    "chapter": "Under attack",
+    "title": "Denial-of-service attacks",
+    "summary": "How a flood of fake requests knocks a site offline, and how scrubbing filters it out before it arrives.",
+    "minutes": 6,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "normal",
+        "short": "Normal",
+        "title": "A busy day for a ticket site",
+        "tag": "IDEA"
+      },
+      {
+        "id": "flood",
+        "short": "Flood",
+        "title": "The flood arrives",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "bigger",
+        "short": "Bigger?",
+        "title": "A bigger server is not enough",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "scrubbing",
+        "short": "Scrubbing",
+        "title": "Filter the traffic upstream",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "filtered",
+        "short": "Again",
+        "title": "The same flood, filtered",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "hard",
+        "short": "Hard",
+        "title": "Real or fake?",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Crowd control for the internet",
+        "tag": "RECAP"
+      }
+    ]
+  }
+]

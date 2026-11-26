@@ -1,23 +1,38 @@
+import { marketOf } from './market';
 import { generateSeries } from './series';
-import { evaluate } from './trading';
-import type { ChartChange, ChartInitial, ChartState, ForexMetrics } from './types';
+import type { AccountState, ChartChange, ChartInitial, ChartState } from './types';
 
 export function initialChartState(init: ChartInitial): ChartState {
+  const market = marketOf(init);
+  const account: AccountState =
+    init.market === 'fx'
+      ? { kind: 'fx', ...init.account, startBalance: init.account.balance }
+      : { kind: 'stock', ...init.account, startValue: init.account.cash };
   return {
-    pair: init.pair,
+    symbol: init.symbol,
+    company: init.market === 'stock' ? init.company : null,
     timeframe: init.timeframe,
-    pip: init.pip,
-    series: generateSeries(init),
+    tick: market.tick,
+    decimals: market.decimals,
+    series: generateSeries(init, init.bars, market),
+    others:
+      init.market === 'stock'
+        ? (init.others ?? []).map((spec) => ({
+            symbol: spec.symbol,
+            series: generateSeries(spec, init.bars, market),
+          }))
+        : [],
     reveal: init.reveal,
     style: init.style ?? 'candles',
     spread: init.spread,
     showSpread: false,
     showVolume: false,
+    compare: false,
     highlight: null,
     levels: [],
     notes: [],
     indicators: [],
-    account: { ...init.account, startBalance: init.account.balance },
+    account,
     position: null,
   };
 }
@@ -47,6 +62,33 @@ function addIds<T extends { id: string }>(
   return out;
 }
 
+function applyAccount(prev: AccountState, change: ChartChange, issues: string[]): AccountState {
+  if (prev.kind === 'fx') {
+    if (change.cash !== undefined || change.marginPct !== undefined)
+      issues.push('cash and marginPct are for stock charts');
+    return {
+      ...prev,
+      leverage: change.leverage ?? prev.leverage,
+      balance: change.balance ?? prev.balance,
+      startBalance: change.balance ?? prev.startBalance,
+    };
+  }
+  if (change.leverage !== undefined || change.balance !== undefined)
+    issues.push('leverage and balance are for forex charts');
+  return {
+    ...prev,
+    cash: change.cash ?? prev.cash,
+    startValue: change.cash ?? prev.startValue,
+    marginPct: change.marginPct ?? prev.marginPct,
+  };
+}
+
+/** The series a position trades in. */
+export function seriesFor(state: ChartState, symbol: string | undefined) {
+  if (!symbol || symbol === state.symbol) return state.series;
+  return state.others.find((o) => o.symbol === symbol)?.series ?? null;
+}
+
 /** Applies one step diff. Never throws; problems come back as issues for the validator. */
 export function applyChartChange(
   prev: ChartState,
@@ -64,12 +106,9 @@ export function applyChartChange(
     spread: change.spread ?? prev.spread,
     showSpread: change.showSpread ?? prev.showSpread,
     showVolume: change.showVolume ?? prev.showVolume,
+    compare: change.compare ?? prev.compare,
     highlight: change.highlight === undefined ? prev.highlight : change.highlight,
-    account: {
-      leverage: change.leverage ?? prev.account.leverage,
-      balance: change.balance ?? prev.account.balance,
-      startBalance: change.balance ?? prev.account.startBalance,
-    },
+    account: applyAccount(prev.account, change, issues),
     levels: addIds(
       removeIds(prev.levels, change.remove?.levels, 'level', issues),
       change.add?.levels,
@@ -91,6 +130,8 @@ export function applyChartChange(
     position:
       change.position === undefined ? prev.position : change.position && { ...change.position },
   };
+  if (state.compare && state.others.length === 0)
+    issues.push('compare needs other series to compare with');
   for (const note of change.add?.notes ?? []) {
     if (note.bar >= state.reveal)
       issues.push(`note "${note.id}" is on bar ${note.bar}, which is not revealed yet`);
@@ -102,10 +143,12 @@ export function applyChartChange(
   if (pos) {
     if (pos.openBar >= state.reveal)
       issues.push(`position opens on bar ${pos.openBar}, which is not revealed yet`);
-    if (pos.lots <= 0) issues.push('position lots must be positive');
-    if (pos.stopPips !== undefined && pos.stopPips <= 0) issues.push('stopPips must be positive');
-    if (pos.targetPips !== undefined && pos.targetPips <= 0)
-      issues.push('targetPips must be positive');
+    if (pos.size <= 0) issues.push('position size must be positive');
+    if (pos.stop !== undefined && pos.stop <= 0) issues.push('stop distance must be positive');
+    if (pos.target !== undefined && pos.target <= 0)
+      issues.push('target distance must be positive');
+    if (!seriesFor(state, pos.symbol))
+      issues.push(`position symbol "${pos.symbol ?? ''}" is not on the chart`);
   }
   return { state, issues };
 }
@@ -118,9 +161,4 @@ export function buildChartStates(init: ChartInitial, changes: ChartChange[]): Ch
     states.push(state);
   }
   return states;
-}
-
-/** The account numbers before the first step. */
-export function startingMetrics(init: ChartInitial): ForexMetrics {
-  return evaluate(initialChartState(init)).metrics;
 }

@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { applyChartChange, buildChartStates, initialChartState } from './scene';
+import { marketOf } from './market';
 import { generateSeries, sma } from './series';
-import { evaluate, tradeLevels } from './trading';
-import type { ChartInitial } from './types';
+import { evaluateFx as evaluate, tradeLevels } from './trading';
+import type { ChartInitial, FxInitial } from './types';
 
-const init: ChartInitial = {
-  pair: 'EUR/USD',
+const init: FxInitial = {
+  market: 'fx',
+  symbol: 'EUR/USD',
   timeframe: '1H',
   pip: 0.0001,
   seed: 42,
@@ -19,12 +21,16 @@ const init: ChartInitial = {
 
 describe('series', () => {
   it('is the same every time for the same seed', () => {
-    expect(generateSeries(init)).toEqual(generateSeries(init));
-    expect(generateSeries({ ...init, seed: 43 })).not.toEqual(generateSeries(init));
+    expect(generateSeries(init, init.bars, marketOf(init))).toEqual(
+      generateSeries(init, init.bars, marketOf(init)),
+    );
+    expect(generateSeries({ ...init, seed: 43 }, init.bars, marketOf(init))).not.toEqual(
+      generateSeries(init, init.bars, marketOf(init)),
+    );
   });
 
   it('keeps candles well formed and continuous', () => {
-    const s = generateSeries(init);
+    const s = generateSeries(init, init.bars, marketOf(init));
     s.forEach((bar, i) => {
       expect(bar.h).toBeGreaterThanOrEqual(Math.max(bar.o, bar.c));
       expect(bar.l).toBeLessThanOrEqual(Math.min(bar.o, bar.c));
@@ -33,10 +39,11 @@ describe('series', () => {
   });
 
   it('applies scripted shocks exactly', () => {
-    const s = generateSeries({ ...init, shocks: [{ bar: 10, pips: -40, wick: -15 }] });
+    const shocked: ChartInitial = { ...init, shocks: [{ bar: 10, move: -40, wick: -15 }] };
+    const s = generateSeries(shocked, init.bars, marketOf(shocked));
     const bar = s[10];
-    expect(bar && (bar.c - bar.o) / init.pip).toBeCloseTo(-40);
-    expect(bar && (bar.c - bar.l) / init.pip).toBeGreaterThanOrEqual(15);
+    expect(bar && (bar.c - bar.o) / 0.0001).toBeCloseTo(-40);
+    expect(bar && (bar.c - bar.l) / 0.0001).toBeGreaterThanOrEqual(15);
   });
 
   it('averages closes', () => {
@@ -58,7 +65,7 @@ describe('scene diffs', () => {
   it('reports notes and positions on bars that are not revealed', () => {
     const { issues } = applyChartChange(initialChartState(init), {
       add: { notes: [{ id: 'n', bar: 25, text: 'later' }] },
-      position: { side: 'buy', lots: 1, openBar: 30 },
+      position: { side: 'buy', size: 1, openBar: 30 },
     });
     expect(issues).toEqual([
       'note "n" is on bar 25, which is not revealed yet',
@@ -68,9 +75,9 @@ describe('scene diffs', () => {
 });
 
 describe('trading', () => {
-  const flatInit: ChartInitial = { ...init, volatility: 0.0001, spread: 2, shocks: [] };
+  const flatInit: FxInitial = { ...init, volatility: 0.0001, spread: 2, shocks: [] };
   const open = (change = {}) =>
-    buildChartStates(flatInit, [{ position: { side: 'buy', lots: 1, openBar: 19 }, ...change }])[0];
+    buildChartStates(flatInit, [{ position: { side: 'buy', size: 1, openBar: 19 }, ...change }])[0];
 
   it('buys at the ask and starts behind by the spread', () => {
     const state = open();
@@ -81,9 +88,9 @@ describe('trading', () => {
   });
 
   it('closes at the stop: 10 pips on 1 lot is $100', () => {
-    const shocked = { ...flatInit, shocks: [{ bar: 21, pips: -30 }] };
+    const shocked = { ...flatInit, shocks: [{ bar: 21, move: -30 }] };
     const states = buildChartStates(shocked, [
-      { position: { side: 'buy', lots: 1, openBar: 19, stopPips: 10 } },
+      { position: { side: 'buy', size: 1, openBar: 19, stop: 10 } },
       { reveal: 23 },
     ]);
     const e = evaluate(states[1] ?? initialChartState(shocked));
@@ -93,9 +100,9 @@ describe('trading', () => {
   });
 
   it('takes profit at the target', () => {
-    const rising = { ...flatInit, shocks: [{ bar: 21, pips: 40 }] };
+    const rising = { ...flatInit, shocks: [{ bar: 21, move: 40 }] };
     const states = buildChartStates(rising, [
-      { position: { side: 'buy', lots: 1, openBar: 19, stopPips: 20, targetPips: 30 } },
+      { position: { side: 'buy', size: 1, openBar: 19, stop: 20, target: 30 } },
       { reveal: 23 },
     ]);
     const e = evaluate(states[1] ?? initialChartState(rising));
@@ -108,10 +115,10 @@ describe('trading', () => {
     const crash = {
       ...flatInit,
       account: { balance: 1000, leverage: 500 },
-      shocks: [{ bar: 21, pips: -40 }],
+      shocks: [{ bar: 21, move: -40 }],
     };
     const states = buildChartStates(crash, [
-      { position: { side: 'buy', lots: 4, openBar: 19 } },
+      { position: { side: 'buy', size: 4, openBar: 19 } },
       { reveal: 23 },
     ]);
     const e = evaluate(states[1] ?? initialChartState(crash));

@@ -1,7 +1,7 @@
 import type { ChartLesson } from './index';
 
-const dip = Array.from({ length: 8 }, (_, i) => ({ bar: 30 + i, pips: -7 }));
-const rally = Array.from({ length: 10 }, (_, i) => ({ bar: 50 + i, pips: 9 }));
+const dip = Array.from({ length: 8 }, (_, i) => ({ bar: 30 + i, move: -7 }));
+const rally = Array.from({ length: 10 }, (_, i) => ({ bar: 50 + i, move: 9 }));
 
 const lesson: ChartLesson = {
   slug: 'stop-loss',
@@ -18,7 +18,8 @@ const lesson: ChartLesson = {
     { text: 'Why you can win less than half the time and still profit', stepId: 'win-rate' },
   ],
   initial: {
-    pair: 'EUR/USD',
+    market: 'fx',
+    symbol: 'EUR/USD',
     timeframe: '1H',
     pip: 0.0001,
     seed: 44,
@@ -41,7 +42,7 @@ const lesson: ChartLesson = {
         'Price falls for eight hours straight. The loss grows past <b>$500</b>, and with no exit there is nothing to stop it growing further.',
       ],
       keyIdea: 'Hope is not an exit. Without one, the market decides how much you lose.',
-      change: { position: { side: 'buy', lots: 1, openBar: 29 }, reveal: 40 },
+      change: { position: { side: 'buy', size: 1, openBar: 29 }, reveal: 40 },
     },
     {
       id: 'stop',
@@ -53,7 +54,7 @@ const lesson: ChartLesson = {
         'If price reaches it, the trade closes automatically. 30 pips × $10 = <b>$300</b>: the most this trade should cost. The red zone shows that risk.',
       ],
       keyIdea: 'A stop-loss turns an open-ended loss into a number you chose in advance.',
-      change: { position: { side: 'buy', lots: 1, openBar: 39, stopPips: 30 } },
+      change: { position: { side: 'buy', size: 1, openBar: 39, stop: 30 } },
     },
     {
       id: 'target',
@@ -65,7 +66,7 @@ const lesson: ChartLesson = {
         'Risking $300 to make $600 is a <b>1:2 risk-to-reward</b> ratio. The teal zone shows the reward.',
       ],
       keyIdea: 'Plan the exit on both sides before you enter.',
-      change: { position: { side: 'buy', lots: 1, openBar: 39, stopPips: 30, targetPips: 60 } },
+      change: { position: { side: 'buy', size: 1, openBar: 39, stop: 30, target: 60 } },
     },
     {
       id: 'let-it-run',
@@ -92,7 +93,7 @@ const lesson: ChartLesson = {
       change: {
         reveal: 66,
         balance: 10_600,
-        position: { side: 'buy', lots: 1, openBar: 65, stopPips: 25, targetPips: 50 },
+        position: { side: 'buy', size: 1, openBar: 65, stop: 25, target: 50 },
       },
       breakActions: ['weekendGap'],
     },

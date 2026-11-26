@@ -19,7 +19,11 @@
     "knip": "knip",
     "dev:finance": "turbo run dev --filter=@ss/finance",
     "e2e": "pnpm --filter \"./apps/*\" e2e",
-    "dev:forex": "turbo run dev --filter=@ss/forex"
+    "dev:forex": "turbo run dev --filter=@ss/forex",
+    "dev:stocks": "turbo run dev --filter=@ss/stocks",
+    "dev:internet": "turbo run dev --filter=@ss/internet",
+    "dev:security": "turbo run dev --filter=@ss/security",
+    "dev:business": "turbo run dev --filter=@ss/business"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

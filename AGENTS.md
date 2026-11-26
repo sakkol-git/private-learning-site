@@ -6,18 +6,23 @@ Guide for coding agents working in this repo. Read it fully before changing anyt
 
 A monorepo of **interactive course sites** that share one course shell and one UI, and plug in a visual engine. Each lesson is a short story told with an animated SVG scene: a problem appears, a technique fixes it, the numbers react, and the learner can break things on purpose.
 
-| App                  | Site name         | Topic                | Engine                           | Break-it actions                                                           |
-| -------------------- | ----------------- | -------------------- | -------------------------------- | -------------------------------------------------------------------------- |
-| `apps/system-design` | Systems, Sketched | System design        | isometric diagram (infra preset) | kill a server, spike traffic, slow the database                            |
-| `apps/finance`       | Money, Mapped     | Personal finance     | isometric diagram (money preset) | surprise bill, lose your income, rates rise, market crash, new money stops |
-| `apps/forex`         | Pips, Plotted     | Forex trading basics | price chart                      | price moves against you, news spike, weekend gap, spread widens            |
+| App                  | Site name         | Topic                  | Engine                              | Break-it actions                                                           |
+| -------------------- | ----------------- | ---------------------- | ----------------------------------- | -------------------------------------------------------------------------- |
+| `apps/system-design` | Systems, Sketched | System design          | isometric diagram (infra preset)    | kill a server, spike traffic, slow the database                            |
+| `apps/finance`       | Money, Mapped     | Personal finance       | isometric diagram (money preset)    | surprise bill, lose your income, rates rise, market crash, new money stops |
+| `apps/forex`         | Pips, Plotted     | Forex trading basics   | price chart                         | price moves against you, news spike, weekend gap, spread widens            |
+| `apps/stocks`        | Shares, Sketched  | Stock market basics    | price chart (stock market)          | earnings surprise, market sell-off, company collapses, short squeeze       |
+| `apps/internet`      | Wires, Sketched   | How the internet works | isometric diagram (network preset)  | a router fails, DNS goes down, packets get lost, DDoS attack               |
+| `apps/security`      | Locks, Sketched   | Everyday cybersecurity | isometric diagram (security preset) | a website leaks passwords, click the phishing link, ransomware strikes     |
+| `apps/business`      | Business, Mapped  | How a business runs    | isometric diagram (business preset) | supplier is late, demand spikes, customers pay late                        |
 
 - Static sites, **no backend** in v1. A Spring Boot API (accounts, synced progress) comes later. Do not add one.
 - Each site's name and author live only in its `src/config.ts` (`SITE_NAME`, `AUTHOR_NAME`).
-- **Finance and forex are education only.** Lessons teach general concepts with simplified or simulated numbers:
+- **Finance, forex and stocks are education only.** Lessons teach general concepts with simplified or simulated numbers:
   - never personal advice, signals, product or broker recommendations, real tickers or live data;
   - the `notice` disclaimer in each config must stay on every lesson;
-  - forex prices are always **simulated** from a seed.
+  - chart prices are always **simulated** from a seed, and companies, tickers and indexes are fictional;
+  - market rules (margin, maintenance, fees) are labelled as simplified international examples, not any one country's rules.
 
 ### Originality rule (non-negotiable)
 
@@ -27,21 +32,21 @@ Never copy text, lesson content, illustrations, colours, CSS or code from any ex
 
 Run from the repo root. Node 22+, pnpm 12.
 
-| Command                                            | Use                                                               |
-| -------------------------------------------------- | ----------------------------------------------------------------- |
-| `pnpm install`                                     | Install everything                                                |
-| `pnpm dev` · `pnpm dev:finance` · `pnpm dev:forex` | Dev servers at :5173 · :5174 · :5175                              |
-| `pnpm build`                                       | Production build of every app → `apps/<app>/dist`                 |
-| `pnpm test`                                        | Vitest in every package                                           |
-| `pnpm lint`                                        | ESLint (flat config, typescript-eslint strict, react-hooks)       |
-| `pnpm typecheck`                                   | `tsc` in every package and app                                    |
-| `pnpm knip`                                        | Unused files, dependencies and exports                            |
-| `pnpm format` / `pnpm format:check`                | Prettier                                                          |
-| `pnpm validate`                                    | Check every app's lessons and that each `catalog.json` is current |
-| `pnpm lessons`                                     | Validate **and regenerate** every `catalog.json`                  |
-| `pnpm e2e`                                         | Playwright smoke tests for every app (desktop + mobile)           |
+| Command                                                                         | Use                                                               |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `pnpm install`                                                                  | Install everything                                                |
+| `pnpm dev` · `dev:<app>` (finance, forex, stocks, internet, security, business) | Dev servers at :5173, then :5174–:5179 in that order              |
+| `pnpm build`                                                                    | Production build of every app → `apps/<app>/dist`                 |
+| `pnpm test`                                                                     | Vitest in every package                                           |
+| `pnpm lint`                                                                     | ESLint (flat config, typescript-eslint strict, react-hooks)       |
+| `pnpm typecheck`                                                                | `tsc` in every package and app                                    |
+| `pnpm knip`                                                                     | Unused files, dependencies and exports                            |
+| `pnpm format` / `pnpm format:check`                                             | Prettier                                                          |
+| `pnpm validate`                                                                 | Check every app's lessons and that each `catalog.json` is current |
+| `pnpm lessons`                                                                  | Validate **and regenerate** every `catalog.json`                  |
+| `pnpm e2e`                                                                      | Playwright smoke tests for every app (desktop + mobile)           |
 
-Single package: `pnpm --filter @ss/chart-engine test`. Names: `@ss/theme`, `@ss/ui`, `@ss/lesson-engine`, `@ss/diagram-engine`, `@ss/chart-engine`, `@ss/course`, `@ss/system-design`, `@ss/finance`, `@ss/forex`, `@ss/tools`.
+Single package: `pnpm --filter @ss/chart-engine test`. Names: `@ss/theme`, `@ss/ui`, `@ss/lesson-engine`, `@ss/diagram-engine`, `@ss/chart-engine`, `@ss/course`, `@ss/system-design`, `@ss/finance`, `@ss/forex`, `@ss/stocks`, `@ss/internet`, `@ss/security`, `@ss/business`, `@ss/tools`.
 
 ## Definition of done
 
@@ -71,9 +76,15 @@ packages/lesson-engine/      generic Lesson/Step types, validator, diagramScene 
 packages/diagram-engine/     isometric SVG renderer, step diffs, shape library
   src/presets/infra.ts       system design metrics, scenarios, summary
   src/presets/money.ts       money metrics, scenarios, summary, formatMoney
-packages/chart-engine/       price-chart SVG renderer, seeded prices, trading maths
-  src/forex.ts               forex break-it scenarios and what each needs
-  src/chart-scene.ts         chartScene lesson checks
+  src/presets/network.ts     page-load metrics; router, DNS, packet-loss and DDoS scenarios
+  src/presets/security.ts    account/file metrics; breach, phishing and ransomware scenarios
+  src/presets/business.ts    stock/cash metrics; supplier, demand and payment scenarios
+packages/chart-engine/       price-chart SVG renderer, seeded prices, trading maths for any market
+  src/market.ts              how moves become prices: pips (forex) or percent (stocks)
+  src/trading.ts             tradeLevels, evaluateFx, evaluateStock, stockOrderIssue
+  src/scenario.ts            playMoves: shared machinery for break-it scenarios
+  src/forex.ts · stocks.ts   each market's break-it scenarios and which need an open position
+  src/chart-scene.ts         chartScene(scenarios, needsPosition) lesson checks
 packages/theme/              tokens.css (light + dark), base.css, fonts, theme-mode.ts
 tools/validate-lessons.ts    checks every apps/*/src/lessons and writes catalogs
 ```
@@ -84,10 +95,10 @@ Packages export TypeScript source directly (`"exports": "./src/index.ts"`). Ther
 
 1. **Engines never import React** or anything from `ui`, `course` or apps. Each exposes an imperative stage with the same shape: `goToStep`, `play`, `pause`, `replay`, `break`, `reset`, `onMetrics`, `setReducedMotion`, `destroy` (see `EngineStage` in `packages/ui/src/SceneStage.tsx`).
    - Diagram: `createStage(svg, { initial, changes }, { scenarios, summarize, formatValue, reducedMotion, scheduler })`.
-   - Chart: `createChartStage(svg, { initial, changes }, { scenarios, reducedMotion, scheduler })`.
+   - Chart: `createChartStage(svg, { initial, changes }, { evaluate, describe, scenarios, reducedMotion, scheduler })`, where `evaluate` is `evaluateFx` or `evaluateStock`.
 2. Lessons are generic: `Lesson<I, C, A>`, where `I` is the engine's starting scene, `C` its step diff and `A` its action names.
    - Diagram courses use `DiagramLesson<M, A>`.
-   - Forex uses `ChartLesson` (`Lesson<ChartInitial, ChartChange, ForexAction>`).
+   - Forex uses `ChartLesson` (`Lesson<FxInitial, ChartChange, ForexAction>`), stocks `StockLesson` (`Lesson<StockInitial, ChartChange, StockAction>`).
 3. `packages/ui/src/SceneStage.tsx` is the **only** React wrapper around an engine. It takes a `create(svg, reducedMotion)` function, so it does not know which engine it runs. `ui` components take plain props and `labels`, with no course-specific strings or thresholds.
 4. `packages/course` is the whole site. An app only supplies a `CourseConfig<M, A, I, C>`:
    - content: catalog, chapters, `loadLesson`, home text;
@@ -125,32 +136,45 @@ Packages export TypeScript source directly (`"exports": "./src/index.ts"`). Ther
   - `rateHike` adds 5 percentage points a year on `debt`.
   - `marketDrop` takes the first market node down 35%, then recovers it to +12%.
   - `newMoneyStops` collapses the scheme. Net worth drops by the stake on the node with id **`you`**.
+- **Network preset:**
+  - `routerFails` takes down the busiest router the network can route around, or the busiest overall. Its requests fail for 2 s, then reroute along the shortest remaining path (`routeAround`); extra hops add round-trip and page-load time.
+  - `dnsOutage` fails every request that passes through a `dns` node.
+  - `packetLoss` degrades the busiest router: +4% loss and roughly double page load.
+  - `ddos` sends 20× all traffic from each `attacker` to the first `server`. A `shield` or `cdn` on the path absorbs it.
+- **Security preset** (conventions: accounts are `service` nodes; the same `tag` means the same password; a `shield` on the attacker's path is 2FA; the `inbox` resets linked accounts; backups are `database` nodes, and `tag: 'offline'` survives):
+  - `siteBreach` exposes the first tagged account, then every account with the same tag that the attacker reaches without a shield.
+  - `phishingClick` steals the inbox, then resets every account linked to it.
+  - `ransomware` locks devices and online backups. With an offline backup, files restore after 2.5 s and recovery is 1 day; without one, 30 days and a $1,500 ransom.
+- **Business preset** (one simulated day per second; request flows are goods per day, response flows are money per day; the `warehouse` `value` is stock):
+  - `supplierDelay` stops the first supplier for 6 days. Other suppliers send up to their `capacity`, and the warehouse drains and then misses orders.
+  - `demandSpike` multiplies sales 2.5× for 5 days, limited by stock.
+  - `latePayments` stops incoming money for 10 days, after which the backlog is paid.
 
 ## Chart engine facts
 
-- Prices: `generateSeries` is a seeded random walk (`seed`, `volatility` pips per bar, `trend`) plus scripted `shocks` (`{ bar, pips, wick }`), so lessons control key moves exactly. Bars never gap, except when a scenario adds one.
+- One engine, two markets. `ChartInitial` is `FxInitial` (`market: 'fx'`, `pip`, account `{ balance, leverage }`) or `StockInitial` (`market: 'stock'`, `company`, optional `others` tickers, account `{ cash, marginPct, maintenancePct, commission }`).
+- **Move units:** pips for forex, **percent** for stocks. Volatility, trend, shocks, stop and target distances, and scenario moves all use them. Spreads are in ticks: pips for forex, cents for stocks. Prices show 5 decimals (forex) or 2 (stocks).
+- Prices: `generateSeries` is a seeded random walk plus scripted `shocks` (`{ bar, move, wick }`), so lessons control key moves exactly. Bars never gap, except when a scenario adds one.
 - Steps are diffs:
-  - `reveal` (never goes backwards) and `style` (`candles` | `line`);
+  - `reveal` (never goes backwards), `style` (`candles` | `line`), `compare` (stocks: plot the main ticker and `others` as % change from the first bar);
   - `spread`, `showSpread`, `showVolume`, `highlight`;
   - `add`/`remove` for levels, notes and SMA indicators;
-  - `leverage`, and `balance` (which also resets the drawdown baseline);
-  - `position` (`{ side, lots, openBar, stopPips?, targetPips? }`, or `null`).
-- Trading maths (`trading.ts`), on EUR/USD with a USD account:
-  - Sizing: 1 lot = 100,000 units = $10 a pip.
-  - Entry: buys fill at the ask (close + half the spread), sells at the bid.
-  - Stops and targets are in pips from the entry. A stop gapped through fills at the bar's open.
-  - Margin is `units × entry ÷ leverage`, and the broker stops you out at a **50% margin level**.
-  - Every metric (balance, equity, open P&L, margin level, drawdown) is **computed** from the scene. Lessons never state metrics by hand.
+  - forex: `leverage`, `balance` (resets the drawdown baseline); stocks: `cash` (resets the baseline), `marginPct`;
+  - `position` (`{ side, size, openBar, stop?, target?, symbol? }`, or `null`). `size` is lots for forex and shares for stocks; `symbol` can pick one of `others`.
+- Trading maths (`trading.ts`):
+  - **Shared:** entry at the ask for buys and the bid for sells. Stops, targets and forced closes are checked bar by bar, and a level gapped through fills at the bar's open.
+  - **Forex** (EUR/USD, USD account): 1 lot = 100,000 units = $10 a pip. Margin = `units × entry ÷ leverage`, with a stop-out at a **50% margin level**.
+  - **Stocks:** a $`commission` is charged at open and at close.
+    - `marginPct` 100 is a cash account; 50 lets you borrow half. Cash goes negative when borrowing.
+    - Forced close when equity ÷ position value falls to `maintenancePct`: for longs on borrowed money, and for every short. Shorting needs a margin account.
+    - `stockOrderIssue` rejects positions the account cannot afford.
+  - Every metric is **computed** from the scene. Lessons never state metrics by hand. Forex: balance, equity, open P&L, margin level, drawdown. Stocks: portfolio value, cash, P&L, return, drawdown.
 - A bar can carry its own `spread`, so a spread spike only affects the bars it happens on.
-- Revealing bars animates one bar at a time. Scenarios append new bars after the revealed ones, one every `BAR_MS` (250 ms):
-  - `priceMovesAgainst`: about 98 pips against the trade over 14 bars.
-  - `newsSpike`: a 45-pip candle with a long wick.
-  - `weekendGap`: a 60-pip gap.
-  - `spreadWidens`: a 12-pip spread for 4 bars.
-
-  `FOREX_ACTION_NEEDS` says which need an open position.
-
-- The scale fits every step of the lesson (the chart never jumps between steps). It only grows when a scenario leaves the range. Price tags on the axis are pushed apart (`placeTags`) so they never overlap.
+- Revealing bars animates one bar at a time. Scenarios append new bars after the revealed ones, one every `BAR_MS` (250 ms); comparison series move too:
+  - **Forex:** `priceMovesAgainst` (about 98 pips against), `newsSpike` (a 45-pip candle with a long wick), `weekendGap` (a 60-pip gap), `spreadWidens` (a 12-pip spread for 4 bars).
+  - **Stocks:** `earningsGap` (a 20% overnight gap against the trade), `marketSelloff` (about −19% for the stock, −11% for the index), `companyCollapse` (about −88% for the stock, under 1% for the index), `shortSqueeze` (the price roughly doubles in 6 days).
+  - `FOREX_NEEDS_POSITION` / `STOCK_NEEDS_POSITION` say which need an open trade.
+- The scale fits every step of the lesson, with separate scales for price and comparison steps, so the chart never jumps between steps. It only grows when a scenario leaves the range. Price tags are pushed apart (`placeTags`) so they never overlap. Compare mode draws lines and % tags only, with no candles or trade lines.
 
 ## Writing or editing a lesson
 
@@ -172,7 +196,7 @@ Scene rules:
 - **Chart** (`chartScene`):
   - Reveals stay within the series and never go backwards.
   - Notes, highlights and positions sit on bars already revealed.
-  - Lots and pips are positive.
+  - Sizes and distances are positive; a stock account can afford each position, and shorts need a margin account.
   - Each break action is known, and actions that need one have an open position.
 
 Content style:
@@ -215,13 +239,17 @@ Content style:
 
 - **Diagram engine**: projection, depth sort, diffs, each preset's scenarios, and the stage with a manual `Scheduler` (happy-dom).
 - **Chart engine**:
-  - seeded series and shocks, scene diffs, trading maths (spread cost, stop, target, margin call);
+  - seeded series and shocks, scene diffs, forex and stock trading maths (spread, fees, stop, target, margin calls, shorts, affordability);
   - each scenario, `chartScene`, render helpers, and the stage with a manual `Scheduler`.
 - **Lesson engine**: validator, `diagramScene`, outline/catalog, progress, keyboard mapping. **Course**: `search.test.ts`.
-- **Playwright**, per app (previews on :4173 system design, :4175 finance, :4176 forex):
+- **Playwright**, per app (previews on :4173 system design, :4175 finance, :4176 forex, :4177 stocks, :4178 internet, :4179 security, :4180 business):
   - System design: kill a server → errors rise, then return to 0%; progress; ⌘K search.
   - Finance: lose your income → debt; the fund absorbs a bill; a scheme collapse removes your stake.
   - Forex: 500:1 leverage → margin call to $434; a planned trade hits its target for +$600; a spread spike stops out a tight stop.
+  - Stocks: a company collapse takes a single-stock holding to $1,577 but the index holding only to $9,936; an earnings gap stops out at −$256; a short squeeze ends in a −$5,911 margin call.
+  - Internet: a router failure drops to 0% and recovers to 100% with 5 hops; a DNS outage leaves 83.3%; a DDoS leaves 9.5% until scrubbing restores 100%.
+  - Security: a reused password loses all 4 accounts and $2,400; 2FA keeps 2 of 4 and $0; an offline backup restores files in 1 day.
+  - Business: lean stock misses every order and costs $2,500; a week of buffer ends with 20 units; a second supplier keeps 100% filled; late payments push cash to −$8,000.
   - Wait for the lesson heading before pressing keys, and use `exact: true` for button names.
 - Add or extend tests with every behaviour change.
 
@@ -230,7 +258,7 @@ Content style:
 - **TypeScript is pinned to `~6.0`** because typescript-eslint doesn't support TS 7 yet.
 - `catalog.json` is generated. Editing a lesson without running `pnpm lessons` fails `pnpm validate` in CI.
 - `LessonPage` keeps `targetRef` so quick repeated arrow presses aren't lost. Keep that pattern if you touch navigation.
-- In the stop-loss lesson, a closed trade's profit only carries into the next position if the step sets `balance`. Opening a new position replaces the old one.
+- A closed trade's profit only carries into the next position if the step sets `balance` (forex) or `cash` (stocks). Opening a new position replaces the old one.
 - Dev preview configs live in `.claude/launch.json`. A hidden browser pane pauses `requestAnimationFrame`, so check scenarios with Playwright when the pane is hidden.
 - Hosting: each app is a static SPA with its own `vercel.json` and `public/_redirects`. Deploying is a human decision; don't deploy without being asked.
 

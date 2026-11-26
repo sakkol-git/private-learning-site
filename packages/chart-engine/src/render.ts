@@ -2,9 +2,10 @@
  * Pure SVG markup for one chart frame. Colours come from theme CSS variables
  * (see chart-styles.ts), so light and dark themes need no code changes.
  */
+import { formatUsd } from './market';
 import { sma } from './series';
 import type { Evaluation } from './trading';
-import type { ChartState } from './types';
+import type { Candle, ChartState } from './types';
 
 export const WIDTH = 760;
 export const HEIGHT = 380;
@@ -18,65 +19,72 @@ const VOLUME = 54;
 /** Room kept on the right for bars that break-it scenarios add. */
 const SPARE_SLOTS = 16;
 
-/** The fixed scale for a lesson: bar slots across, and the price range down. */
+/** The fixed scale for a lesson: bar slots across, and the value range down (price, or % in compare mode). */
 export interface Frame {
   slots: number;
   low: number;
   high: number;
 }
 
+type TradeView = Pick<Evaluation<unknown>, 'trade' | 'closed'>;
+
 const esc = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const r = (n: number) => Math.round(n * 10) / 10;
 
-export function formatPrice(price: number, pip: number): string {
-  const decimals = Math.max(0, Math.round(-Math.log10(pip)) + 1);
-  return price.toFixed(decimals);
+/** Percent change of each close from the first bar, for compare mode. */
+function percentSeries(series: readonly Candle[], reveal: number): number[] {
+  const base = series[0]?.c ?? 1;
+  return series.slice(0, reveal).map((b) => (b.c / base - 1) * 100);
 }
 
-/** "+$300", "−$1,250". */
-export function formatUsd(value: number, signed = false): string {
-  const sign = value < 0 ? '−' : signed && value > 0 ? '+' : '';
-  return `${sign}$${Math.round(Math.abs(value)).toLocaleString('en-US')}`;
-}
-
-function priceRange(state: ChartState, e: Evaluation): [number, number] {
+function valueRange(state: ChartState, e: TradeView): [number, number] {
   let low = Infinity;
   let high = -Infinity;
+  const take = (v: number) => {
+    low = Math.min(low, v);
+    high = Math.max(high, v);
+  };
+  if (state.compare) {
+    for (const s of [state.series, ...state.others.map((o) => o.series)]) {
+      percentSeries(s, state.reveal).forEach(take);
+    }
+    take(0);
+    return [low, high];
+  }
   for (const bar of state.series.slice(0, state.reveal)) {
-    low = Math.min(low, bar.l);
-    high = Math.max(high, bar.h);
+    take(bar.l);
+    take(bar.h);
   }
   const extra = [
     ...state.levels.map((l) => l.price),
     ...(e.trade ? [e.trade.entry, e.trade.stop, e.trade.target] : []),
     ...(e.closed ? [e.closed.price] : []),
-  ].filter((p): p is number => p !== null);
-  for (const p of extra) {
-    low = Math.min(low, p);
-    high = Math.max(high, p);
-  }
+  ];
+  for (const p of extra) if (p !== null) take(p);
   return [low, high];
 }
 
-/** A scale that fits every step of the lesson, so the chart does not jump between steps. */
-export function frameFor(items: { state: ChartState; e: Evaluation }[]): Frame {
+/** A scale that fits every step of the lesson in the same mode, so the chart does not jump between steps. */
+export function frameFor(items: { state: ChartState; e: TradeView }[], compare: boolean): Frame {
   let low = Infinity;
   let high = -Infinity;
   let slots = 0;
   for (const { state, e } of items) {
-    const [l, h] = priceRange(state, e);
+    slots = Math.max(slots, state.reveal);
+    if (state.compare !== compare) continue;
+    const [l, h] = valueRange(state, e);
     low = Math.min(low, l);
     high = Math.max(high, h);
-    slots = Math.max(slots, state.reveal);
   }
-  const pad = (high - low) * 0.12 || 0.001;
+  if (!Number.isFinite(low)) return { slots: slots + SPARE_SLOTS, low: 0, high: 1 };
+  const pad = (high - low) * 0.12 || Math.abs(high) * 0.001 || 1;
   return { slots: slots + SPARE_SLOTS, low: low - pad, high: high + pad };
 }
 
-/** Grows the frame when a scenario pushes price or bars outside it. */
-export function fitFrame(frame: Frame, state: ChartState, e: Evaluation): Frame {
-  const [l, h] = priceRange(state, e);
+/** Grows the frame when a scenario pushes values or bars outside it. */
+export function fitFrame(frame: Frame, state: ChartState, e: TradeView): Frame {
+  const [l, h] = valueRange(state, e);
   // Generous room so notes and exit labels on new extremes stay inside the plot.
   const pad = (Math.max(frame.high, h) - Math.min(frame.low, l)) * 0.16;
   return {
@@ -93,27 +101,33 @@ function niceStep(range: number): number {
   return (norm < 1.5 ? 1 : norm < 3.5 ? 2 : norm < 7.5 ? 5 : 10) * mag;
 }
 
-export function renderChart(state: ChartState, e: Evaluation, frame: Frame): string {
+const signedPct = (v: number) =>
+  `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0)}%`;
+
+export function renderChart(state: ChartState, e: TradeView, frame: Frame): string {
   const right = WIDTH - AXIS;
-  const plotBottom = HEIGHT - BOTTOM - (state.showVolume ? VOLUME + 8 : 0);
+  const plotBottom = HEIGHT - BOTTOM - (state.showVolume && !state.compare ? VOLUME + 8 : 0);
   const slot = (right - LEFT) / frame.slots;
   const x = (i: number) => LEFT + (i + 0.5) * slot;
-  const y = (p: number) => TOP + ((frame.high - p) / (frame.high - frame.low)) * (plotBottom - TOP);
-  const price = (p: number) => formatPrice(p, state.pip);
+  const y = (v: number) => TOP + ((frame.high - v) / (frame.high - frame.low)) * (plotBottom - TOP);
+  const price = (p: number) => p.toFixed(state.decimals);
+  const fx = state.account.kind === 'fx';
   const bars = state.series.slice(0, state.reveal);
   const out: string[] = [];
   const tags: { cls: string; y: number; text: string }[] = [];
-  const tag = (cls: string, p: number, text: string) => tags.push({ cls, y: y(p), text });
+  const tag = (cls: string, v: number, text: string) => tags.push({ cls, y: y(v), text });
 
   // Header and grid
+  const title = state.company ? `${state.symbol} · ${state.company}` : state.symbol;
   out.push(
-    `<text class="cs-title" x="${LEFT}" y="18">${esc(state.pair)} · ${esc(state.timeframe)}</text>`,
+    `<text class="cs-title" x="${LEFT}" y="18">${esc(title)} · ${esc(state.timeframe)}</text>`,
   );
   const step = niceStep(frame.high - frame.low);
-  for (let p = Math.ceil(frame.low / step) * step; p <= frame.high; p += step) {
+  for (let v = Math.ceil(frame.low / step) * step; v <= frame.high; v += step) {
+    const label = state.compare ? signedPct(Math.round(v * 100) / 100) : price(v);
     out.push(
-      `<line class="cs-grid" x1="${LEFT}" x2="${right}" y1="${r(y(p))}" y2="${r(y(p))}"/>`,
-      `<text class="cs-axis" x="${right + 8}" y="${r(y(p) + 4)}">${price(p)}</text>`,
+      `<line class="cs-grid" x1="${LEFT}" x2="${right}" y1="${r(y(v))}" y2="${r(y(v))}"/>`,
+      `<text class="cs-axis" x="${right + 8}" y="${r(y(v) + 4)}">${label}</text>`,
     );
   }
 
@@ -121,6 +135,39 @@ export function renderChart(state: ChartState, e: Evaluation, frame: Frame): str
     out.push(
       `<rect class="cs-highlight" x="${r(x(state.highlight) - slot / 2)}" y="${TOP - 6}" width="${r(slot)}" height="${r(plotBottom - TOP + 12)}" rx="3"/>`,
     );
+  }
+
+  if (state.compare) {
+    const lines = [
+      { cls: 'cs-line', tagCls: 'cs-tagc-main', symbol: state.symbol, series: state.series },
+      ...state.others.map((o, i) => ({
+        cls: `cs-cmp cs-cmp-${i % 2}`,
+        tagCls: `cs-tagc-${i % 2}`,
+        symbol: o.symbol,
+        series: o.series,
+      })),
+    ];
+    for (const line of lines) {
+      const values = percentSeries(line.series, state.reveal);
+      out.push(
+        `<polyline class="${line.cls}" points="${values.map((v, i) => `${r(x(i))},${r(y(v))}`).join(' ')}"/>`,
+      );
+      const lastValue = values[values.length - 1];
+      if (lastValue !== undefined) {
+        tag(`cs-tag-cmp ${line.tagCls}`, lastValue, `${line.symbol} ${signedPct(lastValue)}`);
+      }
+    }
+    for (const note of state.notes) {
+      const v = percentSeries(state.series, state.reveal)[note.bar];
+      if (v === undefined) continue;
+      const above = note.at !== 'low';
+      const ty = y(v) + (above ? -18 : 26);
+      out.push(
+        `<g class="cs-note"><line x1="${r(x(note.bar))}" x2="${r(x(note.bar))}" y1="${r(y(v) + (above ? -3 : 3))}" y2="${r(ty + (above ? 4 : -12))}"/><text x="${r(x(note.bar))}" y="${r(ty)}">${esc(note.text)}</text></g>`,
+      );
+    }
+    out.push(...placedTags(tags, right, plotBottom));
+    return out.join('');
   }
 
   // Risk and reward zones of the trade
@@ -168,17 +215,16 @@ export function renderChart(state: ChartState, e: Evaluation, frame: Frame): str
 
   // Bid/ask band, drawn under labels and notes
   const latest = bars[bars.length - 1];
-  if (latest) {
-    const lastSpread = latest.spread ?? state.spread;
-    if (state.showSpread) {
-      const half = (lastSpread * state.pip) / 2;
-      const bid = latest.c - half;
-      const ask = latest.c + half;
-      out.push(
-        `<rect class="cs-spread" x="${r(x(bars.length - 1))}" y="${r(y(ask))}" width="${r(right - x(bars.length - 1))}" height="${r(Math.max(2, y(bid) - y(ask)))}"/>`,
-        `<text class="cs-spread-label" x="${right - 4}" y="18">Bid ${price(bid)} · Ask ${price(ask)} · Spread ${lastSpread} pips</text>`,
-      );
-    }
+  if (latest && state.showSpread) {
+    const spread = latest.spread ?? state.spread;
+    const half = (spread * state.tick) / 2;
+    const bid = latest.c - half;
+    const ask = latest.c + half;
+    const spreadText = fx ? `${spread} pips` : `$${(spread * state.tick).toFixed(2)}`;
+    out.push(
+      `<rect class="cs-spread" x="${r(x(bars.length - 1))}" y="${r(y(ask))}" width="${r(right - x(bars.length - 1))}" height="${r(Math.max(2, y(bid) - y(ask)))}"/>`,
+      `<text class="cs-spread-label" x="${right - 4}" y="18">Bid ${price(bid)} · Ask ${price(ask)} · Spread ${spreadText}</text>`,
+    );
   }
 
   state.indicators.forEach((ind, n) => {
@@ -208,7 +254,8 @@ export function renderChart(state: ChartState, e: Evaluation, frame: Frame): str
     if (t.stop !== null) out.push(line('cs-stop', t.stop));
     if (t.target !== null) out.push(line('cs-target', t.target));
     if (!e.closed) {
-      tag('cs-tag-entry', t.entry, `${t.side === 'buy' ? 'Buy' : 'Sell'} ${price(t.entry)}`);
+      const verb = t.side === 'buy' ? 'Buy' : fx ? 'Sell' : 'Short';
+      tag('cs-tag-entry', t.entry, `${verb} ${price(t.entry)}`);
       if (t.stop !== null) tag('cs-tag-stop', t.stop, `Stop ${price(t.stop)}`);
       if (t.target !== null) tag('cs-tag-target', t.target, `Target ${price(t.target)}`);
     }
@@ -220,9 +267,15 @@ export function renderChart(state: ChartState, e: Evaluation, frame: Frame): str
     const good = e.closed.pnl >= 0;
     const cx = x(e.closed.bar);
     const cy = y(e.closed.price);
-    const label = `${e.closed.reason === 'target' ? 'Target hit' : e.closed.reason === 'stop' ? 'Stopped out' : 'Margin call'} ${formatUsd(e.closed.pnl, true)}`;
+    const what =
+      e.closed.reason === 'target'
+        ? 'Target hit'
+        : e.closed.reason === 'stop'
+          ? 'Stopped out'
+          : 'Margin call';
+    // Losing exits are labelled on the left, where the chart is empty after a fall.
     out.push(
-      `<g class="cs-exit ${good ? 'cs-exit-good' : 'cs-exit-bad'}"><circle cx="${r(cx)}" cy="${r(cy)}" r="5"/><text x="${r(cx + 9)}" y="${r(cy + (good ? -9 : 17))}">${esc(label)}</text></g>`,
+      `<g class="cs-exit ${good ? 'cs-exit-good' : 'cs-exit-bad'}"><circle cx="${r(cx)}" cy="${r(cy)}" r="5"/><text x="${r(good ? cx + 9 : cx - 10)}" y="${r(good ? cy - 9 : cy + 4)}" text-anchor="${good ? 'start' : 'end'}">${esc(`${what} ${formatUsd(e.closed.pnl, true)}`)}</text></g>`,
     );
   }
 
@@ -238,16 +291,20 @@ export function renderChart(state: ChartState, e: Evaluation, frame: Frame): str
   }
 
   const last = bars[bars.length - 1];
-  if (last) {
-    tag('cs-tag-last', last.c, price(last.c));
-  }
-  out.push(
-    ...placeTags(tags, TOP, plotBottom).map(
-      (tg) =>
-        `<g class="cs-tag ${tg.cls}" transform="translate(${right + 4} ${r(tg.y)})"><rect x="0" y="-9" width="${TAG_W}" height="18" rx="4"/><text x="${TAG_W / 2}" y="3.5">${esc(tg.text)}</text></g>`,
-    ),
-  );
+  if (last) tag('cs-tag-last', last.c, price(last.c));
+  out.push(...placedTags(tags, right, plotBottom));
   return out.join('');
+}
+
+function placedTags(
+  tags: { cls: string; y: number; text: string }[],
+  right: number,
+  bottom: number,
+): string[] {
+  return placeTags(tags, TOP, bottom).map(
+    (tg) =>
+      `<g class="cs-tag ${tg.cls}" transform="translate(${right + 4} ${r(tg.y)})"><rect x="0" y="-9" width="${TAG_W}" height="18" rx="4"/><text x="${TAG_W / 2}" y="3.5">${esc(tg.text)}</text></g>`,
+  );
 }
 
 /** Pushes price tags apart so none overlap, keeping each as close to its price as possible. */

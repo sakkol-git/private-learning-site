@@ -1,4 +1,5 @@
-import type { Candle, ChartInitial } from './types';
+import type { Market } from './market';
+import type { Candle, SeriesSpec } from './types';
 
 /** Small, fast, seeded PRNG (mulberry32): the same seed always gives the same prices. */
 function seededRandom(seed: number): () => number {
@@ -12,57 +13,68 @@ function seededRandom(seed: number): () => number {
   };
 }
 
-/** Generates the lesson's whole price series: a seeded random walk plus scripted shocks. */
-export function generateSeries(init: ChartInitial): Candle[] {
-  const rand = seededRandom(init.seed);
-  const shocks = new Map((init.shocks ?? []).map((s) => [s.bar, s]));
+/** Generates a whole price series: a seeded random walk plus scripted shocks. */
+export function generateSeries(spec: SeriesSpec, bars: number, market: Market): Candle[] {
+  const rand = seededRandom(spec.seed);
+  const shocks = new Map((spec.shocks ?? []).map((s) => [s.bar, s]));
   const out: Candle[] = [];
-  let close = init.start;
-  for (let i = 0; i < init.bars; i++) {
+  let close = spec.start;
+  for (let i = 0; i < bars; i++) {
     const shock = shocks.get(i);
-    const noise = (rand() - 0.5) * 2 * init.volatility;
-    const move = shock ? shock.pips : noise + (init.trend ?? 0);
+    const noise = (rand() - 0.5) * 2 * spec.volatility;
+    const move = shock ? shock.move : noise + (spec.trend ?? 0);
     const o = close;
-    const c = o + move * init.pip;
-    const up = (rand() * 0.6 + 0.1) * init.volatility * init.pip;
-    const down = (rand() * 0.6 + 0.1) * init.volatility * init.pip;
+    const c = o + market.delta(o, move);
+    const up = market.delta(o, (rand() * 0.6 + 0.1) * spec.volatility);
+    const down = market.delta(o, (rand() * 0.6 + 0.1) * spec.volatility);
     let h = Math.max(o, c) + up;
     let l = Math.min(o, c) - down;
-    if (shock?.wick && shock.wick > 0) h += shock.wick * init.pip;
-    if (shock?.wick && shock.wick < 0) l += shock.wick * init.pip;
+    if (shock?.wick && shock.wick > 0) h += market.delta(o, shock.wick);
+    if (shock?.wick && shock.wick < 0) l += market.delta(o, shock.wick);
     out.push({
       o,
       h,
       l,
       c,
-      v: Math.min(1, 0.25 + Math.abs(move) / (init.volatility * 3) + rand() * 0.2),
+      v: Math.min(1, 0.25 + Math.abs(move) / (spec.volatility * 3) + rand() * 0.2),
     });
     close = c;
   }
   return out;
 }
 
-/** Appends bars that follow a list of close-to-close moves (used by break-it scenarios). */
+export interface Move {
+  move: number;
+  wick?: number;
+  /** Jump between the previous close and this bar's open. */
+  gap?: number;
+  /** Spread in ticks during this bar. */
+  spread?: number;
+}
+
+/** Appends bars that follow a list of moves (used by break-it scenarios). */
 export function extendSeries(
   from: Candle,
-  moves: { pips: number; wick?: number; gap?: number; spread?: number }[],
-  pip: number,
+  moves: readonly Move[],
+  market: Market,
+  pad: number,
 ): Candle[] {
   const out: Candle[] = [];
   let close = from.c;
   for (const m of moves) {
-    const o = close + (m.gap ?? 0) * pip;
-    const c = o + m.pips * pip;
-    let h = Math.max(o, c) + 1.5 * pip;
-    let l = Math.min(o, c) - 1.5 * pip;
-    if (m.wick && m.wick > 0) h += m.wick * pip;
-    if (m.wick && m.wick < 0) l += m.wick * pip;
+    const o = close + market.delta(close, m.gap ?? 0);
+    const c = o + market.delta(o, m.move);
+    const edge = market.delta(o, pad);
+    let h = Math.max(o, c) + edge;
+    let l = Math.min(o, c) - edge;
+    if (m.wick && m.wick > 0) h += market.delta(o, m.wick);
+    if (m.wick && m.wick < 0) l += market.delta(o, m.wick);
     out.push({
       o,
       h,
       l,
       c,
-      v: Math.min(1, 0.3 + Math.abs(m.pips + (m.gap ?? 0)) / 40),
+      v: Math.min(1, 0.3 + Math.abs(m.move + (m.gap ?? 0)) / (pad * 25)),
       ...(m.spread !== undefined ? { spread: m.spread } : {}),
     });
     close = c;

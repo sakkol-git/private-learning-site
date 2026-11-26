@@ -17,6 +17,16 @@ const TOKEN: Record<NodeKind, string> = {
   shop: 'shop',
   scheme: 'scheme',
   market: 'market',
+  device: 'device',
+  router: 'router',
+  dns: 'dns',
+  attacker: 'attacker',
+  inbox: 'inbox',
+  vault: 'vault',
+  shield: 'shield',
+  factory: 'factory',
+  warehouse: 'warehouse',
+  truck: 'truck',
 };
 
 export interface Palette {

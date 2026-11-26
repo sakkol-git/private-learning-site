@@ -1,0 +1,18 @@
+{
+  "home.kicker": "An interactive course on staying safe online",
+  "home.title": "See how attackers get in, then lock every door.",
+  "home.intro": "Each lesson maps your accounts, email and laptop as a small diagram. Then a website leaks its passwords, a convincing email arrives or ransomware strikes, and you see which defences hold.",
+  "metrics.safe": "Accounts safe",
+  "metrics.reused": "Passwords reused",
+  "metrics.locked": "Files locked",
+  "metrics.recovery": "Recovery",
+  "metrics.days": "days",
+  "metrics.lost": "Money lost",
+  "action.siteBreach": "A website leaks passwords",
+  "action.phishingClick": "Click the phishing link",
+  "action.ransomware": "Ransomware strikes",
+  "legend.request": "Attacker getting in",
+  "legend.failed": "Attack blocked",
+  "legend.response": "Files restored",
+  "notice": "For learning only. Simplified examples; follow your organisation's and providers' security guidance."
+}

@@ -1,0 +1,232 @@
+[
+  {
+    "slug": "how-goods-flow",
+    "chapter": "Moving goods",
+    "title": "How goods flow",
+    "summary": "Follow a bike from the factory to a customer, and the money back the other way.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "chain",
+        "short": "Chain",
+        "title": "From factory to front door",
+        "tag": "IDEA"
+      },
+      {
+        "id": "stock",
+        "short": "Stock",
+        "title": "Twenty bikes in, twenty bikes out",
+        "tag": "IDEA"
+      },
+      {
+        "id": "money",
+        "short": "Money",
+        "title": "Money flows the other way",
+        "tag": "IDEA"
+      },
+      {
+        "id": "rush",
+        "short": "Rush",
+        "title": "A sunny week",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "holding",
+        "short": "Holding",
+        "title": "Stock is money on a shelf",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Goods one way, money the other",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "safety-stock",
+    "chapter": "Moving goods",
+    "title": "Safety stock",
+    "summary": "How many days of stock to keep so a late delivery does not empty the shelves.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "lean",
+        "short": "Lean",
+        "title": "Running lean",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "lean-test",
+        "short": "Late",
+        "title": "The factory is six days late",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "buffer",
+        "short": "Buffer",
+        "title": "Keep a week in reserve",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "buffer-test",
+        "short": "Late again",
+        "title": "The same delay, covered",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "cost",
+        "short": "Cost",
+        "title": "What the buffer costs",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Buffer for the delays you expect",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "two-suppliers",
+    "chapter": "Planning for trouble",
+    "title": "A second supplier",
+    "summary": "Relying on one supplier is a single point of failure. A backup supplier keeps goods arriving when the main one stops.",
+    "minutes": 6,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "one-source",
+        "short": "One source",
+        "title": "Every bike from one factory",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "one-source-test",
+        "short": "Stop",
+        "title": "The factory stops",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "backup",
+        "short": "Backup",
+        "title": "Add a second, smaller supplier",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "backup-test",
+        "short": "Covered",
+        "title": "The main factory stops again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "cost",
+        "short": "Cost",
+        "title": "Paying for a spare",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Never depend on one door",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "demand-spikes",
+    "chapter": "Planning for trouble",
+    "title": "Planning for demand spikes",
+    "summary": "A big sale is only good news if the stock is there. Plan ahead, and beware of over-reacting.",
+    "minutes": 6,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "sale",
+        "short": "Sale",
+        "title": "Spring sale next week",
+        "tag": "IDEA"
+      },
+      {
+        "id": "unprepared",
+        "short": "Unready",
+        "title": "The sale with normal stock",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "prepared",
+        "short": "Stock up",
+        "title": "Build stock before the peak",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "prepared-test",
+        "short": "Ready",
+        "title": "The same sale, prepared",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "bullwhip",
+        "short": "Bullwhip",
+        "title": "The bullwhip effect",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Plan the peaks",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "cash-flow",
+    "chapter": "Money",
+    "title": "Cash flow",
+    "summary": "A business can be profitable and still run out of money. Watch cash, not just profit.",
+    "minutes": 7,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "profit-vs-cash",
+        "short": "Profit",
+        "title": "Profit is not cash",
+        "tag": "IDEA"
+      },
+      {
+        "id": "late",
+        "short": "Late",
+        "title": "Customers start paying late",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "buffer",
+        "short": "Buffer",
+        "title": "Keep a cash buffer",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "buffer-test",
+        "short": "Covered",
+        "title": "The same late payments, covered",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "terms",
+        "short": "Terms",
+        "title": "Payment terms are a lever",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Watch the bank balance",
+        "tag": "RECAP"
+      }
+    ]
+  }
+]

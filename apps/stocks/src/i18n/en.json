@@ -1,0 +1,21 @@
+{
+  "home.kicker": "An interactive stock market course",
+  "home.title": "Own a slice of a company, then see what can go wrong.",
+  "home.intro": "Each lesson builds a position on a simulated stock chart, step by step. Then an earnings surprise, a market sell-off or a company collapse hits it, and you watch your portfolio react.",
+  "metrics.value": "Portfolio value",
+  "metrics.cash": "Cash",
+  "metrics.pnl": "Total P&L",
+  "metrics.return": "Return",
+  "metrics.drawdown": "Drawdown",
+  "action.earningsGap": "Earnings surprise",
+  "action.marketSelloff": "Market sell-off",
+  "action.companyCollapse": "Company collapses",
+  "action.shortSqueeze": "Short squeeze",
+  "legend.up": "Closed higher",
+  "legend.down": "Closed lower",
+  "legend.stop": "Stop-loss",
+  "legend.target": "Take-profit",
+  "notice": "For learning only, not financial advice. Companies and prices are fictional. Rules shown are simplified examples and differ between countries and brokers.",
+  "step.breakIt": "Stress test",
+  "lesson.diagram": "Price chart"
+}

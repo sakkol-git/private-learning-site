@@ -1,0 +1,19 @@
+{
+  "home.kicker": "An interactive course on how the internet works",
+  "home.title": "Follow your data across the internet, then cut the cables.",
+  "home.intro": "Each lesson follows one page load from your laptop to a server and back. Then a router fails, DNS goes dark or a flood of fake traffic arrives, and you watch what still gets through.",
+  "metrics.pageLoad": "Page load",
+  "metrics.roundTrip": "Round trip",
+  "metrics.loss": "Packet loss",
+  "metrics.ok": "Requests answered",
+  "metrics.hops": "Hops",
+  "metrics.ms": "ms",
+  "action.routerFails": "A router fails",
+  "action.dnsOutage": "DNS goes down",
+  "action.packetLoss": "Packets get lost",
+  "action.ddos": "DDoS attack",
+  "legend.request": "Data travelling",
+  "legend.response": "Answer coming back",
+  "legend.failed": "Dropped or blocked",
+  "notice": "Simplified for learning: real networks have many more routers, protocols and safeguards."
+}

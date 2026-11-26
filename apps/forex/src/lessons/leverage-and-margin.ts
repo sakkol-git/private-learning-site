@@ -15,7 +15,8 @@ const lesson: ChartLesson = {
     { text: 'How to size a trade from risk, not leverage', stepId: 'size-from-risk' },
   ],
   initial: {
-    pair: 'EUR/USD',
+    market: 'fx',
+    symbol: 'EUR/USD',
     timeframe: '1H',
     pip: 0.0001,
     seed: 55,
@@ -37,7 +38,7 @@ const lesson: ChartLesson = {
         'With <b>30:1 leverage</b>, the broker only locks up 1/30 of that as <b>margin</b>: about $360. The rest is effectively borrowed.',
       ],
       keyIdea: 'Leverage lets a small deposit control a much larger position.',
-      change: { position: { side: 'buy', lots: 0.1, openBar: 29 } },
+      change: { position: { side: 'buy', size: 0.1, openBar: 29 } },
     },
     {
       id: 'margin-level',
@@ -57,11 +58,11 @@ const lesson: ChartLesson = {
       tag: 'PROBLEM',
       title: 'Some brokers offer 500:1',
       body: [
-        'At <b>500:1</b>, the same $1,000 can open 4 lots: over $430,000 of currency for about $870 of margin.',
+        'At <b>500:1</b>, the same $1,000 can open 4 size: over $430,000 of currency for about $870 of margin.',
         'Each pip is now worth <b>$40</b>. The margin level starts barely above 100%.',
       ],
       keyIdea: 'More leverage does not add money. It removes the room for being wrong.',
-      change: { leverage: 500, position: { side: 'buy', lots: 4, openBar: 33 } },
+      change: { leverage: 500, position: { side: 'buy', size: 4, openBar: 33 } },
     },
     {
       id: 'margin-call',
@@ -86,7 +87,7 @@ const lesson: ChartLesson = {
         'Leverage no longer matters much: the stop, not the broker, decides the worst case.',
       ],
       keyIdea: 'Risk per trade ÷ stop distance = position size.',
-      change: { leverage: 30, position: { side: 'buy', lots: 0.05, openBar: 33, stopPips: 20 } },
+      change: { leverage: 30, position: { side: 'buy', size: 0.05, openBar: 33, stop: 20 } },
     },
     {
       id: 'same-move',

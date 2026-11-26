@@ -1,0 +1,250 @@
+[
+  {
+    "slug": "reused-passwords",
+    "chapter": "Passwords",
+    "title": "One password, many doors",
+    "summary": "Why a leak at a site you barely use can empty your bank account, and the simple habit that stops it.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "one-password",
+        "short": "Habit",
+        "title": "The same password everywhere",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "leak",
+        "short": "Leak",
+        "title": "Sites get hacked all the time",
+        "tag": "IDEA"
+      },
+      {
+        "id": "stuffing",
+        "short": "Stuffing",
+        "title": "The attacker tries it everywhere",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "unique",
+        "short": "Unique",
+        "title": "A different password for every site",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "contained",
+        "short": "Contained",
+        "title": "Leak the forum again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "too-many",
+        "short": "Too many",
+        "title": "But who can remember them all?",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Separate keys for separate doors",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "password-managers",
+    "chapter": "Passwords",
+    "title": "Password managers",
+    "summary": "Let software remember a strong, different password for every site, so you only remember one.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "memory",
+        "short": "Memory",
+        "title": "Forty accounts, one brain",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "vault",
+        "short": "Vault",
+        "title": "Let a vault remember them",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "strong",
+        "short": "Strong",
+        "title": "Long beats clever",
+        "tag": "IDEA"
+      },
+      {
+        "id": "leak",
+        "short": "Leak",
+        "title": "A site leaks again",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "one-basket",
+        "short": "One basket",
+        "title": "All your eggs in one basket?",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "One strong key, many random ones",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "two-factor",
+    "chapter": "Logins",
+    "title": "Two-factor login",
+    "summary": "A second step at login means a stolen password alone is not enough to get in.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "two-things",
+        "short": "2 things",
+        "title": "Something you know, and something you have",
+        "tag": "IDEA"
+      },
+      {
+        "id": "turn-it-on",
+        "short": "Turn on",
+        "title": "Turn it on where it matters most",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "blocked",
+        "short": "Blocked",
+        "title": "The password leaks",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "which-kind",
+        "short": "Which kind",
+        "title": "Not all second factors are equal",
+        "tag": "IDEA"
+      },
+      {
+        "id": "backup-codes",
+        "short": "Backups",
+        "title": "Do not lock yourself out",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Two locks beat one",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "phishing",
+    "chapter": "Logins",
+    "title": "Phishing",
+    "summary": "A convincing email tricks you into typing your password on a fake page, and your email unlocks everything else.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "the-email",
+        "short": "Email",
+        "title": "\"Your mailbox is full\"",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "master-key",
+        "short": "Master key",
+        "title": "Your email resets everything",
+        "tag": "IDEA"
+      },
+      {
+        "id": "click",
+        "short": "Click",
+        "title": "Type the password into the fake page",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "spot-it",
+        "short": "Spot it",
+        "title": "Never log in from a link",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "protect-email",
+        "short": "Protect",
+        "title": "Put 2FA on your email",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "blocked",
+        "short": "Blocked",
+        "title": "Fall for it again, safely",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Guard the inbox",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "ransomware-and-backups",
+    "chapter": "Your files",
+    "title": "Ransomware and backups",
+    "summary": "Malware locks every file on your laptop and demands payment. Only the right kind of backup brings them back.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "one-copy",
+        "short": "One copy",
+        "title": "Everything lives on one laptop",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "locked",
+        "short": "Locked",
+        "title": "Ransomware strikes",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "sync",
+        "short": "Sync",
+        "title": "Cloud sync is not a backup",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "offline",
+        "short": "Offline",
+        "title": "Keep a copy the malware cannot reach",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "restored",
+        "short": "Restore",
+        "title": "Strike again, and restore",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "three-two-one",
+        "short": "3-2-1",
+        "title": "The 3-2-1 rule",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Copies that cannot be reached",
+        "tag": "RECAP"
+      }
+    ]
+  }
+]

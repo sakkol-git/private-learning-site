@@ -91,3 +91,33 @@ export function buildStepStates<M>(
 export function findLinkBetween<M>(state: DiagramState<M>, a: string, b: string) {
   return state.links.find((l) => (l.from === a && l.to === b) || (l.from === b && l.to === a));
 }
+
+/**
+ * Shortest path between two nodes along links (either direction), never passing
+ * through `avoid`. Used when traffic has to find its way around a failure.
+ */
+export function routeAround<M>(
+  state: DiagramState<M>,
+  from: string,
+  to: string,
+  avoid: ReadonlySet<string> = new Set(),
+): string[] | null {
+  const prev = new Map<string, string | null>([[from, null]]);
+  const queue = [from];
+  while (queue.length > 0) {
+    const id = queue.shift() as string;
+    if (id === to) {
+      const path: string[] = [];
+      for (let at: string | null | undefined = id; at; at = prev.get(at)) path.unshift(at);
+      return path;
+    }
+    for (const link of state.links) {
+      const next = link.from === id ? link.to : link.to === id ? link.from : null;
+      if (next && !prev.has(next) && !avoid.has(next)) {
+        prev.set(next, id);
+        queue.push(next);
+      }
+    }
+  }
+  return null;
+}

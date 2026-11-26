@@ -15,7 +15,17 @@ export type NodeKind =
   | 'jar'
   | 'shop'
   | 'scheme'
-  | 'market';
+  | 'market'
+  | 'device'
+  | 'router'
+  | 'dns'
+  | 'attacker'
+  | 'inbox'
+  | 'vault'
+  | 'shield'
+  | 'factory'
+  | 'warehouse'
+  | 'truck';
 
 export type Health = 'healthy' | 'degraded' | 'down';
 
@@ -36,6 +46,8 @@ export interface DiagramNode {
   capacity?: number;
   /** An amount shown in the node's stat pill, formatted by the stage's formatValue. */
   value?: number;
+  /** A free-form group key presets can use, for example which password an account shares. */
+  tag?: string;
 }
 
 export interface DiagramLink {

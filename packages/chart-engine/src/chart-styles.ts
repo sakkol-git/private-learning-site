@@ -9,6 +9,14 @@ export const CHART_CSS = `
 .cs-reward { fill: var(--accent-soft); opacity: .85; }
 .cs-volume { fill: var(--line-strong); }
 .cs-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.cs-cmp { fill: none; stroke-width: 2; stroke-linejoin: round; }
+.cs-cmp-0 { stroke: var(--node-users); }
+.cs-cmp-1 { stroke: var(--warn); }
+.cs-tag-cmp rect { fill: var(--card); stroke-width: 1.5; }
+.cs-tagc-main rect { stroke: var(--accent); }
+.cs-tagc-0 rect { stroke: var(--node-users); }
+.cs-tagc-1 rect { stroke: var(--warn); }
+.cs-tag-cmp text { fill: var(--ink); }
 .cs-candle line { stroke-width: 1.2; }
 .cs-up line, .cs-up rect { stroke: var(--accent); }
 .cs-up rect { fill: var(--card); stroke-width: 1.3; }

@@ -1,0 +1,302 @@
+[
+  {
+    "slug": "what-a-share-is",
+    "chapter": "Shares and prices",
+    "title": "What a share is",
+    "summary": "Owning a small slice of a company, what its price means, and how your holding moves with it.",
+    "minutes": 6,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "a-slice",
+        "short": "A slice",
+        "title": "A share is a slice of a company",
+        "tag": "IDEA"
+      },
+      {
+        "id": "daily-candles",
+        "short": "Daily",
+        "title": "One candle per trading day",
+        "tag": "IDEA"
+      },
+      {
+        "id": "buying",
+        "short": "Buy",
+        "title": "Buy 100 shares",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "owning",
+        "short": "Own it",
+        "title": "Your money now moves with the company",
+        "tag": "IDEA"
+      },
+      {
+        "id": "sell-off",
+        "short": "Sell-off",
+        "title": "When the whole market falls",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "price-and-value",
+        "short": "Price",
+        "title": "Price and value are not the same",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "A slice of a business",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "orders-and-costs",
+    "chapter": "Shares and prices",
+    "title": "What a trade really costs",
+    "summary": "The bid, the ask and the fee, why small companies cost more to trade, and why overnight news cannot be stopped.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "bid-ask",
+        "short": "Bid/ask",
+        "title": "Two prices for every share",
+        "tag": "IDEA"
+      },
+      {
+        "id": "fees",
+        "short": "Fees",
+        "title": "Every trade starts slightly behind",
+        "tag": "IDEA"
+      },
+      {
+        "id": "small-caps",
+        "short": "Small caps",
+        "title": "Small companies cost more to trade",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "overnight",
+        "short": "Overnight",
+        "title": "News arrives while the market is closed",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "trading-often",
+        "short": "Costs",
+        "title": "Trading often adds up",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Know the toll before you trade",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "trends-and-averages",
+    "chapter": "Reading the chart",
+    "title": "Trends and moving averages",
+    "summary": "Zoom out to a year of prices and use two moving averages to see the direction under the noise.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "zoom-out",
+        "short": "Zoom out",
+        "title": "Thirty weeks of ups and downs",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "fifty-day",
+        "short": "50-day",
+        "title": "The 50-day average",
+        "tag": "IDEA"
+      },
+      {
+        "id": "two-hundred-day",
+        "short": "200-day",
+        "title": "The 200-day average",
+        "tag": "IDEA"
+      },
+      {
+        "id": "reading-the-trend",
+        "short": "Read it",
+        "title": "Price, fast line, slow line",
+        "tag": "IDEA"
+      },
+      {
+        "id": "sell-off",
+        "short": "Sell-off",
+        "title": "A sudden fall through the lines",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "lag",
+        "short": "Lag",
+        "title": "Smooth means late",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "See the direction, respect the lag",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "earnings-day",
+    "chapter": "Reading the chart",
+    "title": "Earnings day and position size",
+    "summary": "Companies report results a few times a year. Learn to size a position so a bad surprise stays survivable.",
+    "minutes": 7,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "results-due",
+        "short": "Results",
+        "title": "Results are due tonight",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "stop",
+        "short": "Stop",
+        "title": "Plan the exit first",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "size-from-risk",
+        "short": "Size",
+        "title": "Size the position from the risk",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "surprise",
+        "short": "Surprise",
+        "title": "The results disappoint",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "through-results",
+        "short": "Choices",
+        "title": "Hold through results, or not?",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Size for the gap, not just the stop",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "one-stock-vs-index",
+    "chapter": "Managing risk",
+    "title": "One stock vs the whole index",
+    "summary": "Compare betting everything on one company with owning a slice of hundreds, then watch one company fail.",
+    "minutes": 8,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "an-index",
+        "short": "Index",
+        "title": "An index is a basket of companies",
+        "tag": "IDEA"
+      },
+      {
+        "id": "all-in",
+        "short": "All in",
+        "title": "Everything in one company",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "collapse",
+        "short": "Collapse",
+        "title": "The company collapses",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "own-the-index",
+        "short": "Index fund",
+        "title": "Own the whole index instead",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "collapse-again",
+        "short": "Again",
+        "title": "Same collapse, different result",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "trade-off",
+        "short": "Give up",
+        "title": "You also give up the jackpot",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Do not bet the account on one name",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "margin-and-shorting",
+    "chapter": "Managing risk",
+    "title": "Margin and short selling",
+    "summary": "Borrowing to buy more, and borrowing shares to bet on a fall, and how both can end in a forced sale.",
+    "minutes": 9,
+    "level": "advanced",
+    "steps": [
+      {
+        "id": "margin",
+        "short": "Margin",
+        "title": "Borrow to buy more",
+        "tag": "IDEA"
+      },
+      {
+        "id": "margin-sell-off",
+        "short": "Sell-off",
+        "title": "A fall, twice as painful",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "short",
+        "short": "Short",
+        "title": "Short selling: betting on a fall",
+        "tag": "IDEA"
+      },
+      {
+        "id": "no-ceiling",
+        "short": "No ceiling",
+        "title": "A short has no ceiling on losses",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "squeeze",
+        "short": "Squeeze",
+        "title": "The short squeeze",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "most-never-need",
+        "short": "Do you?",
+        "title": "Most investors never need either",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Borrowed money, borrowed time",
+        "tag": "RECAP"
+      }
+    ]
+  }
+]

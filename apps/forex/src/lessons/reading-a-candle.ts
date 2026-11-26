@@ -14,7 +14,8 @@ const lesson: ChartLesson = {
     { text: 'Why a moving average smooths the noise', stepId: 'zoom-out' },
   ],
   initial: {
-    pair: 'EUR/USD',
+    market: 'fx',
+    symbol: 'EUR/USD',
     timeframe: '1H',
     pip: 0.0001,
     seed: 11,
@@ -24,8 +25,8 @@ const lesson: ChartLesson = {
     volatility: 5,
     trend: 0.4,
     shocks: [
-      { bar: 32, pips: 6 },
-      { bar: 33, pips: 3, wick: -30 },
+      { bar: 32, move: 6 },
+      { bar: 33, move: 3, wick: -30 },
     ],
     style: 'line',
     spread: 1,

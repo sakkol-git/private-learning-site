@@ -15,7 +15,8 @@ const lesson: ChartLesson = {
     { text: 'How fast a move against you adds up', stepId: 'against-you' },
   ],
   initial: {
-    pair: 'EUR/USD',
+    market: 'fx',
+    symbol: 'EUR/USD',
     timeframe: '1H',
     pip: 0.0001,
     seed: 21,
@@ -50,7 +51,7 @@ const lesson: ChartLesson = {
         'You buy <b>0.1 lots</b>. Now every pip the price moves is worth <b>$1</b> to you, up or down.',
       ],
       keyIdea: 'On EUR/USD: 1 lot ≈ $10 per pip, 0.1 lot ≈ $1 per pip.',
-      change: { highlight: null, position: { side: 'buy', lots: 0.1, openBar: 29 } },
+      change: { highlight: null, position: { side: 'buy', size: 0.1, openBar: 29 } },
     },
     {
       id: 'it-moves',
@@ -74,7 +75,7 @@ const lesson: ChartLesson = {
         'The profit tile is ten times bigger. So is every loss. The market did not change; only your exposure did.',
       ],
       keyIdea: 'Size multiplies results in both directions.',
-      change: { position: { side: 'buy', lots: 1, openBar: 29 } },
+      change: { position: { side: 'buy', size: 1, openBar: 29 } },
     },
     {
       id: 'against-you',

@@ -14,7 +14,8 @@ const lesson: ChartLesson = {
     { text: 'What slippage on a gap costs', stepId: 'gap' },
   ],
   initial: {
-    pair: 'EUR/USD',
+    market: 'fx',
+    symbol: 'EUR/USD',
     timeframe: '1H',
     pip: 0.0001,
     seed: 33,
@@ -48,7 +49,7 @@ const lesson: ChartLesson = {
         'So the trade opens at <b>−$12</b>: 1.2 pips × $10. Price has to rise 1.2 pips just to break even.',
       ],
       keyIdea: 'The spread is a cost you pay on every trade, win or lose.',
-      change: { position: { side: 'buy', lots: 1, openBar: 39 } },
+      change: { position: { side: 'buy', size: 1, openBar: 39 } },
     },
     {
       id: 'thin-market',
@@ -72,7 +73,7 @@ const lesson: ChartLesson = {
         'Press <b>Spread widens</b>. Price barely moves, but the spread jumps to 12 pips for a few hours. The bid falls through your stop and the trade closes about <b>$66</b> down.',
       ],
       keyIdea: 'A stop can be hit by the spread alone. Very tight stops are fragile.',
-      change: { spread: 1.2, position: { side: 'buy', lots: 1, openBar: 39, stopPips: 5 } },
+      change: { spread: 1.2, position: { side: 'buy', size: 1, openBar: 39, stop: 5 } },
       breakActions: ['spreadWidens'],
     },
     {
@@ -85,7 +86,7 @@ const lesson: ChartLesson = {
         'The market is closed over the weekend. On Monday it opens 60 pips lower. There was no price at your stop to sell at, so you are filled at the open, for a loss of about <b>$600</b>.',
       ],
       keyIdea: 'A stop becomes a market order. In a gap it fills at the next available price.',
-      change: { position: { side: 'buy', lots: 1, openBar: 39, stopPips: 20 } },
+      change: { position: { side: 'buy', size: 1, openBar: 39, stop: 20 } },
       breakActions: ['weekendGap'],
     },
     {

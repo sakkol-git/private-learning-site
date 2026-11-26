@@ -1,12 +1,13 @@
 import {
   createChartStage,
+  evaluateFx,
   forexScenarios,
   formatUsd,
   startingMetrics,
   type ChartChange,
-  type ChartInitial,
   type ForexAction,
   type ForexMetrics,
+  type FxInitial,
 } from '@ss/chart-engine';
 import { createCourseApp, type CourseConfig } from '@ss/course';
 import en from './i18n/en.json';
@@ -18,7 +19,7 @@ const SITE_NAME = 'Pips, Plotted';
 /** Shown in the top bar credit. */
 const AUTHOR_NAME = 'Your Name';
 
-const config: CourseConfig<ForexMetrics, ForexAction, ChartInitial, ChartChange> = {
+const config: CourseConfig<ForexMetrics, ForexAction, FxInitial, ChartChange> = {
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,
@@ -28,8 +29,13 @@ const config: CourseConfig<ForexMetrics, ForexAction, ChartInitial, ChartChange>
   messages: { 'step.breakIt': en['step.breakIt'], 'lesson.diagram': en['lesson.diagram'] },
   notice: en.notice,
   createStage: (svg, scene, reducedMotion) =>
-    createChartStage(svg, scene, { scenarios: forexScenarios, reducedMotion }),
-  initialMetrics: startingMetrics,
+    createChartStage(svg, scene, {
+      evaluate: evaluateFx,
+      describe: (m) => `balance ${formatUsd(m.balance)}, equity ${formatUsd(m.equity)}`,
+      scenarios: forexScenarios,
+      reducedMotion,
+    }),
+  initialMetrics: (initial) => startingMetrics(initial, evaluateFx),
   metricTiles: (m) => [
     { key: 'balance', label: en['metrics.balance'], value: formatUsd(m.balance), status: 'ok' },
     {

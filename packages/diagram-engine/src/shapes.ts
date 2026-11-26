@@ -354,6 +354,154 @@ function market(): string {
   return out;
 }
 
+// ---------- network, security and business kinds ----------
+
+/** A laptop: thin base and an upright screen. */
+function device(): string {
+  const screen = boxFaces(0, -0.42, 1.2, 0.08, 0.08, 0.78);
+  const glass: [number, number, number][] = [
+    [-0.5, -0.38, 0.78],
+    [0.5, -0.38, 0.78],
+    [0.5, -0.38, 0.2],
+    [-0.5, -0.38, 0.2],
+  ];
+  return (
+    box(0, 0.05, 1.3, 0.9, 0, 0.08) +
+    poly('fl', screen.left) +
+    poly('fr', screen.right) +
+    poly('ft', screen.top) +
+    `<polygon class="window" points="${points(glass.map((p) => project(...p)))}"/>`
+  );
+}
+
+/** A router: a low box with antennas and status lights. */
+function router(): string {
+  let out = box(0, 0, 1.4, 1, 0, 0.32);
+  for (const x of [-0.45, 0, 0.45]) out += cylinder(x, -0.3, 0.05, 0.32, 0.55);
+  for (const y of [-0.25, 0.05, 0.35]) {
+    const p = project(0.7, y, 0.16);
+    out += `<circle class="led" cx="${round(p.sx)}" cy="${round(p.sy)}" r="1.7"/>`;
+  }
+  return out;
+}
+
+/** A DNS directory: a box with list lines on top. */
+function dns(): string {
+  const h = 0.75;
+  let out = box(0, 0, 1.25, 1.25, 0, h);
+  for (const y of [-0.35, -0.05, 0.25]) out += line('glyph', [-0.4, y, h], [0.4, y, h]);
+  return out;
+}
+
+/** An attacker: the person figure, coloured by its own token. */
+function attacker(): string {
+  return person();
+}
+
+/** An inbox tray with an envelope on top. */
+function inbox(): string {
+  const h = 0.35;
+  const env: [number, number, number][] = [
+    [-0.45, -0.3, h + 0.01],
+    [0.45, -0.3, h + 0.01],
+    [0.45, 0.3, h + 0.01],
+    [-0.45, 0.3, h + 0.01],
+  ];
+  return (
+    box(0, 0, 1.4, 1.1, 0, h) +
+    `<polygon class="glyph-fill" points="${points(env.map((p) => project(...p)))}"/>` +
+    line('detail', [-0.45, -0.3, h + 0.01], [0, 0.05, h + 0.01]) +
+    line('detail', [0.45, -0.3, h + 0.01], [0, 0.05, h + 0.01])
+  );
+}
+
+/** A safe with a dial on its front. */
+function vault(): string {
+  const s = 1.2;
+  const dial = project(s / 2, 0, 0.6);
+  const handle = line('glyph', [s / 2, 0.3, 0.6], [s / 2, 0.45, 0.6]);
+  return (
+    box(0, 0, s, s, 0, s) +
+    `<circle class="glyph" cx="${round(dial.sx)}" cy="${round(dial.sy)}" r="${round(0.2 * UNIT)}"/>` +
+    handle
+  );
+}
+
+/** A wall standing across the path, with a check mark: 2FA, a firewall, a filter. */
+function shield(): string {
+  const wall = box(0, 0, 0.35, 1.5, 0, 1.25);
+  const tick: [number, number, number][] = [
+    [0.18, -0.35, 0.65],
+    [0.18, -0.08, 0.4],
+    [0.18, 0.38, 0.95],
+  ];
+  return wall + `<polyline class="glyph" points="${points(tick.map((p) => project(...p)))}"/>`;
+}
+
+/** A factory: a hall with a sawtooth roof and a chimney. */
+function factory(): string {
+  const w = 1.8;
+  const d = 1.2;
+  const h = 0.7;
+  let out = box(0, 0, w, d, 0, h);
+  const teeth = 3;
+  for (let i = 0; i < teeth; i++) {
+    const x0 = -w / 2 + (i * w) / teeth;
+    const x1 = x0 + w / teeth;
+    const side: [number, number, number][] = [
+      [x1, -d / 2, h],
+      [x1, d / 2, h],
+      [x1, d / 2, h + 0.35],
+      [x1, -d / 2, h + 0.35],
+    ];
+    const slope: [number, number, number][] = [
+      [x0, -d / 2, h],
+      [x1, -d / 2, h + 0.35],
+      [x1, d / 2, h + 0.35],
+      [x0, d / 2, h],
+    ];
+    out += `<polygon class="ft" points="${points(slope.map((p) => project(...p)))}"/>`;
+    out += `<polygon class="fr" points="${points(side.map((p) => project(...p)))}"/>`;
+  }
+  out += cylinder(-0.55, -0.3, 0.13, h, 0.75);
+  return out;
+}
+
+/** A warehouse: a wide shed with a pitched roof and a roller door. */
+function warehouse(): string {
+  const w = 2;
+  const d = 1.4;
+  const h = 0.8;
+  let out = box(0, 0, w, d, 0, h);
+  const ridge = h + 0.4;
+  const slope: [number, number, number][] = [
+    [-w / 2, 0, ridge],
+    [w / 2, 0, ridge],
+    [w / 2, d / 2, h],
+    [-w / 2, d / 2, h],
+  ];
+  const gable: [number, number, number][] = [
+    [w / 2, -d / 2, h],
+    [w / 2, d / 2, h],
+    [w / 2, 0, ridge],
+  ];
+  out += `<polygon class="ft" points="${points(slope.map((p) => project(...p)))}"/>`;
+  out += `<polygon class="fr" points="${points(gable.map((p) => project(...p)))}"/>`;
+  for (const z of [0.15, 0.3, 0.45, 0.6]) out += line('detail', [-0.4, d / 2, z], [0.3, d / 2, z]);
+  return out;
+}
+
+/** A truck: a cargo box, a cab and wheels. */
+function truck(): string {
+  let out = box(-0.25, 0, 1.4, 0.8, 0.15, 0.75);
+  out += box(0.72, 0, 0.45, 0.75, 0.15, 0.5);
+  for (const x of [-0.65, 0.15, 0.75]) {
+    const p = project(x, 0.42, 0.13);
+    out += `<circle class="fl" cx="${round(p.sx)}" cy="${round(p.sy)}" r="${round(0.13 * UNIT)}"/>`;
+  }
+  return out;
+}
+
 export const SHAPES: Record<NodeKind, ShapeSpec> = {
   server: { hw: 0.75, hd: 0.75, height: 3 * SLAB_H + 2 * SLAB_GAP, draw: server },
   loadBalancer: { hw: 1.1, hd: 0.75, height: 0.5, draw: loadBalancer },
@@ -371,4 +519,14 @@ export const SHAPES: Record<NodeKind, ShapeSpec> = {
   shop: { hw: 0.75, hd: 0.65, height: 0.95, draw: shop },
   scheme: { hw: 0.85, hd: 0.85, height: 1.5, draw: scheme },
   market: { hw: 0.95, hd: 0.7, height: 1.35, draw: market },
+  device: { hw: 0.65, hd: 0.5, height: 0.86, draw: device },
+  router: { hw: 0.7, hd: 0.5, height: 0.87, draw: router },
+  dns: { hw: 0.63, hd: 0.63, height: 0.75, draw: dns },
+  attacker: { hw: 0.6, hd: 0.6, height: 1.2, draw: attacker },
+  inbox: { hw: 0.7, hd: 0.55, height: 0.36, draw: inbox },
+  vault: { hw: 0.6, hd: 0.6, height: 1.2, draw: vault },
+  shield: { hw: 0.2, hd: 0.75, height: 1.25, draw: shield },
+  factory: { hw: 0.9, hd: 0.6, height: 1.45, draw: factory },
+  warehouse: { hw: 1, hd: 0.7, height: 1.2, draw: warehouse },
+  truck: { hw: 0.95, hd: 0.42, height: 0.9, draw: truck },
 };

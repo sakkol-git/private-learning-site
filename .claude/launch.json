@@ -18,6 +18,30 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@ss/forex", "dev", "--port", "5175", "--strictPort"],
       "port": 5175
+    },
+    {
+      "name": "stocks",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ss/stocks", "dev", "--port", "5176", "--strictPort"],
+      "port": 5176
+    },
+    {
+      "name": "internet",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ss/internet", "dev", "--port", "5177", "--strictPort"],
+      "port": 5177
+    },
+    {
+      "name": "security",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ss/security", "dev", "--port", "5178", "--strictPort"],
+      "port": 5178
+    },
+    {
+      "name": "business",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ss/business", "dev", "--port", "5179", "--strictPort"],
+      "port": 5179
     }
   ]
 }

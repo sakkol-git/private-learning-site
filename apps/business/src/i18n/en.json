@@ -1,0 +1,18 @@
+{
+  "home.kicker": "An interactive course on how a business runs",
+  "home.title": "Watch goods and cash move, then make a supplier late.",
+  "home.intro": "Each lesson follows products from a supplier to a warehouse, a shop and a customer, and the money flowing back. Then a supplier is late, demand jumps or customers pay late, and you watch the shelves and the bank balance.",
+  "metrics.stock": "Stock",
+  "metrics.units": "units",
+  "metrics.filled": "Orders filled",
+  "metrics.days": "Days of stock",
+  "metrics.cash": "Cash",
+  "metrics.profit": "Profit / day",
+  "action.supplierDelay": "Supplier is late",
+  "action.demandSpike": "Demand spikes",
+  "action.latePayments": "Customers pay late",
+  "legend.request": "Goods moving",
+  "legend.response": "Money coming in",
+  "legend.failed": "Missed order or payment",
+  "notice": "For learning only. Simplified example business with round numbers."
+}

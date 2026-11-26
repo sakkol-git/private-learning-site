@@ -1,18 +1,10 @@
 import { CHART_CSS } from './chart-styles';
-import type { ChartScenario } from './forex';
-import {
-  formatPrice,
-  formatUsd,
-  fitFrame,
-  frameFor,
-  HEIGHT,
-  renderChart,
-  WIDTH,
-  type Frame,
-} from './render';
+import { formatUsd } from './market';
+import { fitFrame, frameFor, HEIGHT, renderChart, WIDTH, type Frame } from './render';
+import type { ChartScenario } from './scenario';
 import { buildChartStates, initialChartState } from './scene';
-import { evaluate, type Evaluation } from './trading';
-import type { ChartChange, ChartInitial, ChartState, ForexMetrics } from './types';
+import type { Evaluation } from './trading';
+import type { ChartChange, ChartInitial, ChartState } from './types';
 
 /** Frame clock; injectable so tests can drive time deterministically. */
 export interface Scheduler {
@@ -21,22 +13,26 @@ export interface Scheduler {
   cancel(id: number): void;
 }
 
-export interface ChartStageOptions<A extends string> {
+export interface ChartStageOptions<M, A extends string> {
+  /** The market's account maths: forex (evaluateFx) or stocks (evaluateStock). */
+  evaluate: (state: ChartState) => Evaluation<M>;
+  /** One sentence about the account for screen readers, for example "balance $10,000". */
+  describe: (metrics: M) => string;
+  scenarios?: Partial<Record<A, (base: ChartState) => ChartScenario | null>>;
   reducedMotion?: boolean;
   scheduler?: Scheduler;
-  scenarios?: Partial<Record<A, (base: ChartState) => ChartScenario | null>>;
 }
 
-export interface ChartStage<A extends string> {
+export interface ChartStage<M, A extends string> {
   goToStep(index: number): void;
   play(): void;
   pause(): void;
   replay(): void;
   break(action: A): boolean;
   reset(): void;
-  onMetrics(cb: (metrics: ForexMetrics, summary: string) => void): () => void;
+  onMetrics(cb: (metrics: M, summary: string) => void): () => void;
   /** The chart as currently shown, including any break-it scenario. */
-  current(): { state: ChartState; evaluation: Evaluation };
+  current(): { state: ChartState; evaluation: Evaluation<M> };
   setReducedMotion(reduced: boolean): void;
   destroy(): void;
 }
@@ -51,41 +47,49 @@ const defaultScheduler: Scheduler = {
   cancel: (id) => cancelAnimationFrame(id),
 };
 
-function summarizeChart(state: ChartState, e: Evaluation): string {
+function summarizeChart<M>(state: ChartState, e: Evaluation<M>, account: string): string {
   const last = state.series[state.reveal - 1];
-  const p = (n: number) => formatPrice(n, state.pip);
+  const p = (n: number) => n.toFixed(state.decimals);
+  const kind = state.compare
+    ? `comparison of ${[state.symbol, ...state.others.map((o) => o.symbol)].join(' and ')}`
+    : state.style === 'line'
+      ? 'line chart'
+      : 'candlestick chart';
   const parts = [
-    `${state.pair} ${state.timeframe} ${state.style === 'line' ? 'line chart' : 'candlestick chart'}, ${state.reveal} bars`,
+    `${state.symbol} ${state.timeframe} ${kind}, ${state.reveal} bars`,
     last ? `last price ${p(last.c)}` : '',
   ];
   if (e.trade && !e.closed) {
-    const lots = e.trade.units / 100_000;
+    const fx = state.account.kind === 'fx';
+    const size = fx ? `${e.trade.units / 100_000} lots` : `${e.trade.units} shares`;
     parts.push(
-      `${e.trade.side} ${lots} lot${lots === 1 ? '' : 's'} from ${p(e.trade.entry)}` +
+      `${e.trade.side === 'buy' ? 'bought' : fx ? 'sold' : 'shorted'} ${size} at ${p(e.trade.entry)}` +
         (e.trade.stop !== null ? `, stop ${p(e.trade.stop)}` : '') +
         (e.trade.target !== null ? `, target ${p(e.trade.target)}` : ''),
     );
   }
-  if (e.closed)
+  if (e.closed) {
     parts.push(
       `trade closed by ${e.closed.reason} at ${p(e.closed.price)}, ${formatUsd(e.closed.pnl, true)}`,
     );
-  parts.push(`balance ${formatUsd(e.metrics.balance)}, equity ${formatUsd(e.metrics.equity)}`);
+  }
+  parts.push(account);
   return `${parts.filter(Boolean).join('. ')}.`;
 }
 
-export function createChartStage<A extends string = string>(
+export function createChartStage<M, A extends string = string>(
   svg: SVGSVGElement,
   scene: { initial: ChartInitial; changes: ChartChange[] },
-  options: ChartStageOptions<A> = {},
-): ChartStage<A> {
+  options: ChartStageOptions<M, A>,
+): ChartStage<M, A> {
+  const { evaluate, describe } = options;
   const scheduler = options.scheduler ?? defaultScheduler;
   let reduced = options.reducedMotion ?? false;
   const start = initialChartState(scene.initial);
   const states = buildChartStates(scene.initial, scene.changes);
-  const baseFrame: Frame = frameFor(
-    [start, ...states].map((state) => ({ state, e: evaluate(state) })),
-  );
+  const items = [start, ...states].map((state) => ({ state, e: evaluate(state) }));
+  const priceFrame: Frame = frameFor(items, false);
+  const compareFrame: Frame = frameFor(items, true);
 
   svg.classList.add('cs-stage');
   svg.setAttribute('role', 'img');
@@ -97,7 +101,7 @@ export function createChartStage<A extends string = string>(
   const layer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
   svg.append(style, layer);
 
-  const listeners = new Set<(m: ForexMetrics, summary: string) => void>();
+  const listeners = new Set<(m: M, summary: string) => void>();
   let stepIndex = -1;
   let target: ChartState = start;
   let shownReveal = start.reveal;
@@ -112,7 +116,7 @@ export function createChartStage<A extends string = string>(
   let destroyed = false;
   let drawn = '';
   let lastEmitted = '';
-  let current: { state: ChartState; evaluation: Evaluation } = {
+  let current: { state: ChartState; evaluation: Evaluation<M> } = {
     state: start,
     evaluation: evaluate(start),
   };
@@ -127,9 +131,13 @@ export function createChartStage<A extends string = string>(
     current = { state, evaluation: e };
     if (key !== drawn) {
       drawn = key;
-      layer.innerHTML = renderChart(state, e, fitFrame(baseFrame, state, e));
+      layer.innerHTML = renderChart(
+        state,
+        e,
+        fitFrame(state.compare ? compareFrame : priceFrame, state, e),
+      );
     }
-    const summary = summarizeChart(state, e);
+    const summary = summarizeChart(state, e, describe(e.metrics));
     const emitKey = JSON.stringify(e.metrics) + summary;
     if (emitKey !== lastEmitted) {
       lastEmitted = emitKey;
@@ -139,10 +147,7 @@ export function createChartStage<A extends string = string>(
   }
 
   const animating = () => !scenario && shownReveal < target.reveal;
-
-  function needsFrames() {
-    return playing && (animating() || scenario !== null);
-  }
+  const needsFrames = () => playing && (animating() || scenario !== null);
 
   function kick() {
     if (frame || destroyed || !needsFrames()) return;
@@ -210,8 +215,7 @@ export function createChartStage<A extends string = string>(
     },
     break(action) {
       const factory = options.scenarios?.[action];
-      const settled = { ...target, reveal: target.reveal };
-      const next = factory ? factory(settled) : null;
+      const next = factory ? factory(target) : null;
       if (!next) return false;
       shownReveal = target.reveal;
       scenario = next;
@@ -228,7 +232,10 @@ export function createChartStage<A extends string = string>(
     },
     onMetrics(cb) {
       listeners.add(cb);
-      cb(current.evaluation.metrics, summarizeChart(current.state, current.evaluation));
+      cb(
+        current.evaluation.metrics,
+        summarizeChart(current.state, current.evaluation, describe(current.evaluation.metrics)),
+      );
       return () => listeners.delete(cb);
     },
     current: () => current,
@@ -247,4 +254,12 @@ export function createChartStage<A extends string = string>(
       svg.replaceChildren();
     },
   };
+}
+
+/** The account numbers before the first step, for the page's first paint. */
+export function startingMetrics<M>(
+  initial: ChartInitial,
+  evaluate: (state: ChartState) => Evaluation<M>,
+): M {
+  return evaluate(initialChartState(initial)).metrics;
 }

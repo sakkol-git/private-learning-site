@@ -1,4 +1,4 @@
-import { chartScene } from '@ss/chart-engine';
+import { chartScene, FOREX_NEEDS_POSITION, forexScenarios } from '@ss/chart-engine';
 
 /** Course outline. Lesson order here is the order learners see. */
 export const CHAPTERS: readonly { id: string; title: string; lessons: readonly string[] }[] = [
@@ -11,4 +11,4 @@ export const CHAPTERS: readonly { id: string; title: string; lessons: readonly s
 ];
 
 /** Engine-specific lesson checks, including which break actions need an open position. */
-export const validateScene = chartScene();
+export const validateScene = chartScene(forexScenarios, FOREX_NEEDS_POSITION);

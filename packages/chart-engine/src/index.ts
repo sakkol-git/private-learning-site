@@ -1,19 +1,18 @@
 export type {
-  Candle,
   ChartChange,
   ChartInitial,
   ChartNote,
-  ChartState,
   ForexMetrics,
-  Indicator,
+  FxInitial,
   Position,
-  PriceLine,
-  PriceShock,
+  StockInitial,
+  StockMetrics,
 } from './types';
-export { createChartStage } from './stage';
-export { startingMetrics } from './scene';
-export type { ChartStage, ChartStageOptions } from './stage';
-export { forexScenarios } from './forex';
+export { createChartStage, startingMetrics } from './stage';
+export { evaluateFx, evaluateStock } from './trading';
+export { forexScenarios, FOREX_NEEDS_POSITION } from './forex';
 export type { ForexAction } from './forex';
+export { stockScenarios, STOCK_NEEDS_POSITION } from './stocks';
+export type { StockAction } from './stocks';
 export { chartScene } from './chart-scene';
-export { formatUsd } from './render';
+export { formatUsd } from './market';

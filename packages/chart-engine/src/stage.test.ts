@@ -1,6 +1,8 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
-import { BAR_MS, forexScenarios, type ForexAction } from './forex';
+import { forexScenarios, type ForexAction } from './forex';
+import { BAR_MS } from './scenario';
+import { evaluateFx } from './trading';
 import { createChartStage, type Scheduler } from './stage';
 import type { ChartChange, ChartInitial, ForexMetrics } from './types';
 
@@ -32,7 +34,8 @@ function manualScheduler() {
 }
 
 const initial: ChartInitial = {
-  pair: 'EUR/USD',
+  market: 'fx',
+  symbol: 'EUR/USD',
   timeframe: '1H',
   pip: 0.0001,
   seed: 9,
@@ -46,16 +49,18 @@ const initial: ChartInitial = {
 
 const changes: ChartChange[] = [
   { style: 'candles', add: { notes: [{ id: 'n', bar: 5, text: 'A <b>note</b>' }] } },
-  { reveal: 40, position: { side: 'buy', lots: 1, openBar: 30, stopPips: 25, targetPips: 50 } },
+  { reveal: 40, position: { side: 'buy', size: 1, openBar: 30, stop: 25, target: 50 } },
 ];
 
 function setup(reducedMotion = false) {
   const clock = manualScheduler();
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const stage = createChartStage<ForexAction>(
+  const stage = createChartStage<ForexMetrics, ForexAction>(
     svg,
     { initial, changes },
     {
+      evaluate: evaluateFx,
+      describe: (m) => `balance ${m.balance}`,
       scheduler: clock.scheduler,
       reducedMotion,
       scenarios: forexScenarios,

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { formatPrice, formatUsd, placeTags } from './render';
+import { formatUsd } from './market';
+import { placeTags } from './render';
 
 describe('render helpers', () => {
-  it('formats prices to the pipette and money with a sign', () => {
-    expect(formatPrice(1.0850123, 0.0001)).toBe('1.08501');
+  it('formats money with a sign', () => {
     expect(formatUsd(-1250)).toBe('−$1,250');
     expect(formatUsd(300, true)).toBe('+$300');
   });
