@@ -1,0 +1,67 @@
+.strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+
+.tile {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-bottom-width: 3px;
+  border-radius: var(--radius-tile);
+  padding: 9px 12px 8px;
+  min-width: 0;
+  transition:
+    border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease);
+}
+
+.warn {
+  border-bottom-color: var(--warn);
+  background: color-mix(in srgb, var(--warn-soft) 55%, var(--card));
+}
+
+.fail {
+  border-bottom-color: var(--fail);
+  background: color-mix(in srgb, var(--fail-soft) 55%, var(--card));
+}
+
+.label {
+  font: 600 10.5px/1.2 var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.value {
+  margin: 4px 0 0;
+  font: 700 19px/1.2 var(--font-mono);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.warn .value {
+  color: var(--warn-text);
+}
+
+.fail .value {
+  color: var(--fail-text);
+}
+
+.unit {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+@media (max-width: 640px) {
+  .strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,41 @@
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 10px;
+  align-items: start;
+  font-size: 14.5px;
+  color: var(--ink-2);
+}
+
+.box {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  display: grid;
+  place-items: center;
+  color: transparent;
+  background: var(--card);
+  transition:
+    background var(--dur) var(--ease),
+    color var(--dur) var(--ease);
+}
+
+.done .box {
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: var(--on-accent);
+}
+
+.done {
+  color: var(--ink);
+}

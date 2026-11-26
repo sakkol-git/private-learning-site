@@ -1,0 +1,18 @@
+.scroller {
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: var(--radius-tile);
+  border: 1px solid var(--line);
+  background-color: var(--stage);
+  background-image: radial-gradient(var(--stage-dot) 1.2px, transparent 1.3px);
+  background-size: 20px 20px;
+  overscroll-behavior-x: contain;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  min-width: 620px;
+  height: auto;
+  padding: 10px;
+}

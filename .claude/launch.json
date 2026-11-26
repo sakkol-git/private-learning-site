@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "system-design",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@ss/system-design", "dev", "--port", "5173", "--strictPort"],
+      "port": 5173
+    }
+  ]
+}
