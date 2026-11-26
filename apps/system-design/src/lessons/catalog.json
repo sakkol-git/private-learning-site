@@ -1,5 +1,127 @@
 [
   {
+    "slug": "how-a-request-travels",
+    "chapter": "Foundations",
+    "title": "How a request travels",
+    "summary": "Follow one page load from the address bar to the database and back, and see where the time goes.",
+    "minutes": 7,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "find-address",
+        "short": "DNS",
+        "title": "First, find the address",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "connect",
+        "short": "Connect",
+        "title": "Open a connection",
+        "tag": "IDEA"
+      },
+      {
+        "id": "server-work",
+        "short": "Server",
+        "title": "The server runs your code",
+        "tag": "IDEA"
+      },
+      {
+        "id": "query",
+        "short": "Database",
+        "title": "Ask the database",
+        "tag": "IDEA"
+      },
+      {
+        "id": "respond",
+        "short": "Response",
+        "title": "The answer travels back",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "slow-db",
+        "short": "Slow DB",
+        "title": "What if the database is slow?",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "where-time-goes",
+        "short": "Time",
+        "title": "Most of the wait is travel",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "One click, five hops",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "vertical-vs-horizontal",
+    "chapter": "Foundations",
+    "title": "Vertical vs horizontal scaling",
+    "summary": "Buy a bigger machine, or run more of them? Each answer breaks in a different way.",
+    "minutes": 8,
+    "level": "beginner",
+    "steps": [
+      {
+        "id": "growth",
+        "short": "Growth",
+        "title": "Traffic tripled this month",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "bigger-box",
+        "short": "Scale up",
+        "title": "Scale up: buy a bigger machine",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "one-box-dies",
+        "short": "One box",
+        "title": "Now pull its plug",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "ceiling",
+        "short": "Ceiling",
+        "title": "Bigger gets expensive, then impossible",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "many-boxes",
+        "short": "Scale out",
+        "title": "Scale out: run many small machines",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "lose-one",
+        "short": "Lose one",
+        "title": "Lose a machine, keep the site",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "stateless",
+        "short": "Stateless",
+        "title": "Copies must not remember things",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "data-tier",
+        "short": "Data tier",
+        "title": "The database is still one machine",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Up first, then out",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
     "slug": "load-balancing",
     "chapter": "Scaling",
     "title": "Load balancing",
@@ -71,6 +193,152 @@
         "id": "recap",
         "short": "Recap",
         "title": "What you built",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "caching",
+    "chapter": "Scaling",
+    "title": "Caching",
+    "summary": "Answer repeat questions from memory, and learn the three ways a cache can bite back.",
+    "minutes": 9,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "db-strain",
+        "short": "Strain",
+        "title": "The database answers the same question all day",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "repeat-reads",
+        "short": "Repeats",
+        "title": "Most requests ask for the same few things",
+        "tag": "IDEA"
+      },
+      {
+        "id": "cache-aside",
+        "short": "Cache-aside",
+        "title": "Check the cache first",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "hit-rate",
+        "short": "Hit rate",
+        "title": "Hit rate is the number that matters",
+        "tag": "IDEA"
+      },
+      {
+        "id": "slow-db",
+        "short": "Slow DB",
+        "title": "Slow the database down",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "ttl",
+        "short": "TTL",
+        "title": "Cached data goes stale",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "invalidate",
+        "short": "Invalidate",
+        "title": "Delete the entry when the data changes",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "stampede",
+        "short": "Stampede",
+        "title": "A popular entry expires",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "single-flight",
+        "short": "Fix it",
+        "title": "Let one request refill the entry",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "Fast, mostly fresh, and protected",
+        "tag": "RECAP"
+      }
+    ]
+  },
+  {
+    "slug": "database-replication",
+    "chapter": "Scaling",
+    "title": "Database replication",
+    "summary": "Keep copies of your data to serve more reads and survive a dead primary.",
+    "minutes": 10,
+    "level": "intermediate",
+    "steps": [
+      {
+        "id": "reads-pile-up",
+        "short": "Overload",
+        "title": "One database, 900 queries a second",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "copies",
+        "short": "Copies",
+        "title": "Keep live copies of the data",
+        "tag": "IDEA"
+      },
+      {
+        "id": "read-scaling",
+        "short": "Split reads",
+        "title": "Writes to the primary, reads to replicas",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "lag",
+        "short": "Lag",
+        "title": "Replicas are always a little behind",
+        "tag": "IDEA"
+      },
+      {
+        "id": "read-your-writes",
+        "short": "Stale read",
+        "title": "You saved it, but it is not there",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "route-writers",
+        "short": "Fix reads",
+        "title": "Read your own writes from the primary",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "try-it",
+        "short": "Break it",
+        "title": "Push the databases",
+        "tag": "TRY IT"
+      },
+      {
+        "id": "primary-dies",
+        "short": "Primary dies",
+        "title": "The primary goes down",
+        "tag": "PROBLEM"
+      },
+      {
+        "id": "failover",
+        "short": "Failover",
+        "title": "Promote a replica",
+        "tag": "SOLUTION"
+      },
+      {
+        "id": "sync-async",
+        "short": "Sync?",
+        "title": "Wait for replicas, or not?",
+        "tag": "TRADE-OFF"
+      },
+      {
+        "id": "recap",
+        "short": "Recap",
+        "title": "More copies, more choices",
         "tag": "RECAP"
       }
     ]

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeLoads, createScenario, HEALTH_CHECK_DETECT_MS } from './simulation';
+import { computeLoads, createScenario, databaseShare, HEALTH_CHECK_DETECT_MS } from './simulation';
 import type { DiagramState } from './types';
 
 const base: DiagramState = {
@@ -93,5 +93,41 @@ describe('slowDatabase', () => {
         nodes: base.nodes.filter((n) => n.kind !== 'database'),
       }),
     ).toBeNull();
+  });
+});
+
+describe('single server', () => {
+  const solo: DiagramState = {
+    ...base,
+    nodes: base.nodes.filter((n) => n.id !== 'b' && n.id !== 'c'),
+    flows: [{ route: ['users', 'lb', 'a', 'db'], kind: 'request', ratePerSec: 200 }],
+    metrics: { ...base.metrics, healthy: [1, 1] },
+  };
+
+  it('keeps failing every request when no server is left', () => {
+    const s = createScenario('killServer', solo);
+    expect(s?.metricsAt(HEALTH_CHECK_DETECT_MS + 5000).errorRatePct).toBe(100);
+    expect(s?.metricsAt(HEALTH_CHECK_DETECT_MS + 5000).healthy).toEqual([0, 1]);
+  });
+});
+
+describe('slow database behind a cache', () => {
+  const cached: DiagramState = {
+    ...base,
+    flows: [
+      { route: ['users', 'lb', 'a'], kind: 'request', ratePerSec: 960 },
+      { route: ['users', 'lb', 'a', 'db'], kind: 'request', ratePerSec: 40 },
+    ],
+  };
+
+  it('measures the share of requests that reach the database', () => {
+    expect(databaseShare(cached)).toBeCloseTo(0.04);
+    expect(databaseShare(base)).toBe(1);
+  });
+
+  it('barely moves p95 when fewer than 1 in 20 requests reach it', () => {
+    expect(createScenario('slowDatabase', cached)?.metricsAt(2000).p95LatencyMs).toBe(
+      base.metrics.p95LatencyMs,
+    );
   });
 });

@@ -59,6 +59,7 @@
   --floor-grid: #ddd6ca;
   --packet-health: #8f897f;
   --glyph: #fbf9f5;
+  --link: #8a8173;
   --led: #a6f0d4;
 }
 
@@ -106,6 +107,7 @@
     --floor-grid: #36322b;
     --packet-health: #8a857b;
     --glyph: #1c1a17;
+    --link: #7a7262;
     --led: #c4f7e3;
   }
 }
@@ -153,5 +155,6 @@
   --floor-grid: #36322b;
   --packet-health: #8a857b;
   --glyph: #1c1a17;
+  --link: #7a7262;
   --led: #c4f7e3;
 }

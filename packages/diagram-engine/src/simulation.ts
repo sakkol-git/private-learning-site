@@ -83,21 +83,27 @@ function killServer(base: DiagramState): Scenario | null {
   const after = withNodes(base, down, [...rerouted, ...checks]);
   const healthy: [number, number] = [Math.max(0, m.healthy[0] - 1), m.healthy[1]];
   const settledLatency = m.p95LatencyMs * scale ** 1.3;
+  const failing = (t: number): Metrics => {
+    const k = easeOut(t / 300);
+    return {
+      ...m,
+      healthy,
+      errorRatePct: round1(lerp(m.errorRatePct, Math.min(100, m.errorRatePct + share), k)),
+      p95LatencyMs: Math.round(lerp(m.p95LatencyMs, m.p95LatencyMs * 1.15, k)),
+    };
+  };
+
+  if (n === 1) {
+    // Nothing left to reroute to: the health check notices, but every request still fails.
+    return { action: 'killServer', phaseAt: () => 0, stateAt: () => before, metricsAt: failing };
+  }
 
   return {
     action: 'killServer',
     phaseAt: (t) => (t < HEALTH_CHECK_DETECT_MS ? 0 : 1),
     stateAt: (t) => (t < HEALTH_CHECK_DETECT_MS ? before : after),
     metricsAt: (t) => {
-      if (t < HEALTH_CHECK_DETECT_MS) {
-        const k = easeOut(t / 300);
-        return {
-          ...m,
-          healthy,
-          errorRatePct: round1(lerp(m.errorRatePct, m.errorRatePct + share, k)),
-          p95LatencyMs: Math.round(lerp(m.p95LatencyMs, m.p95LatencyMs * 1.15, k)),
-        };
-      }
+      if (t < HEALTH_CHECK_DETECT_MS) return failing(t);
       const k = easeOut((t - HEALTH_CHECK_DETECT_MS) / 600);
       return {
         ...m,
@@ -154,9 +160,25 @@ function spikeTraffic(base: DiagramState): Scenario {
 
 export const SLOW_DB_EXTRA_MS = 900;
 
+/**
+ * Share of user requests that reach a database. p95 only moves when more than
+ * about 1 in 20 requests is slow, which is why a good cache hides a slow database.
+ */
+export function databaseShare(state: DiagramState): number {
+  const dbIds = new Set(state.nodes.filter((n) => n.kind === 'database').map((n) => n.id));
+  const requests = state.flows.filter((f) => f.kind === 'request');
+  const total = requests.reduce((sum, f) => sum + f.ratePerSec, 0);
+  if (total === 0) return 1;
+  const toDb = requests
+    .filter((f) => f.route.some((id) => dbIds.has(id)))
+    .reduce((sum, f) => sum + f.ratePerSec, 0);
+  return toDb / total;
+}
+
 function slowDatabase(base: DiagramState): Scenario | null {
   if (!base.nodes.some((n) => n.kind === 'database')) return null;
   const m = base.metrics;
+  const reach = clamp01((databaseShare(base) - 0.04) / 0.03);
   const slow = withNodes(
     base,
     (node) =>
@@ -169,7 +191,7 @@ function slowDatabase(base: DiagramState): Scenario | null {
     stateAt: () => slow,
     metricsAt: (t) => ({
       ...m,
-      p95LatencyMs: Math.round(m.p95LatencyMs + SLOW_DB_EXTRA_MS * easeOut(t / 1000)),
+      p95LatencyMs: Math.round(m.p95LatencyMs + SLOW_DB_EXTRA_MS * reach * easeOut(t / 1000)),
     }),
   };
 }

@@ -22,10 +22,10 @@ export const STAGE_CSS = `
 .ss-stage .ss-floor-right { fill: color-mix(in srgb, var(--floor-edge) 88%, #000); }
 .ss-stage .ss-floor-grid { stroke: var(--floor-grid); stroke-width: 1; }
 
-.ss-stage .ss-link { fill: none; stroke: var(--line-strong); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 300ms, opacity 250ms; }
+.ss-stage .ss-link { fill: none; stroke: var(--link); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke 300ms, opacity 250ms; }
 .ss-stage .ss-link.is-dashed { stroke-dasharray: 6 5; }
 .ss-stage .ss-link.is-failing { stroke: var(--fail); stroke-dasharray: 5 5; }
-.ss-stage .ss-arrow { fill: var(--line-strong); transition: fill 300ms, opacity 250ms; }
+.ss-stage .ss-arrow { fill: var(--link); transition: fill 300ms, opacity 250ms; }
 .ss-stage .ss-arrow.is-failing { fill: var(--fail); }
 .ss-stage .ss-link-label { font: 600 11.5px var(--font-mono); fill: var(--muted); text-anchor: middle; }
 
