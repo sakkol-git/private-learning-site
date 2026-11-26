@@ -1,0 +1,17 @@
+{
+  "name": "@ss/tools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "validate": "tsx validate-lessons.ts"
+  },
+  "dependencies": {
+    "@ss/lesson-engine": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.10",
+    "tsx": "^4.23.15"
+  }
+}
