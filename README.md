@@ -50,3 +50,5 @@ See [AGENTS.md](AGENTS.md) for the full engine, preset and lesson rules, includi
 
 - Set `AUTHOR_NAME` (and `SITE_NAME` if renaming) in each `apps/<app>/src/config.ts`.
 - Deploy each app as its own static site. `vercel.json` (Vercel) and `public/_redirects` (Cloudflare Pages) already route every path to `index.html`.
+- To enable cross-course navigation, set the same `VITE_COURSE_ORIGINS` build environment variable on each deployed project and rebuild. Its value is a JSON object mapping course IDs (`system-design`, `finance`, `forex`, `stocks`, `internet`, `security`, `business`) to their public origins. For example, `{"finance":"https://finance.example.org","business":"https://business.example.org"}` enables that pair after you substitute your domains. Unlisted destinations are omitted in production.
+- To try switching locally, run `pnpm exec turbo run dev --parallel` from the root. The drawer uses the seven apps’ development ports by default. A shared comparison link includes the lesson step and the selected frame, for example `/lesson/safety-net/5?frame=5#experiment`.

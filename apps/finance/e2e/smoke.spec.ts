@@ -43,3 +43,23 @@ test('when new money stops, the scheme collapses and takes your stake', async ({
   await page.getByRole('button', { name: 'New money stops', exact: true }).click();
   await expect(tile(page, 'netWorth')).toHaveText('$4,000', { timeout: 5000 });
 });
+
+test('the fourth month without income crosses from savings into debt', async ({ page }) => {
+  await page.goto('/lesson/safety-net/5');
+  const comparison = page
+    .locator('figure')
+    .filter({ hasText: 'When does the emergency fund run out?' });
+  await expect(comparison.locator('dd')).toHaveText(['5,100 USD', '0 USD']);
+  await comparison.getByRole('combobox').selectOption({ label: 'Month 4' });
+  await expect(comparison.locator('dd')).toHaveText(['0 USD', '1,700 USD']);
+});
+
+test('a comparison link restores the shared month after a reload', async ({ page }) => {
+  await page.goto('/lesson/safety-net/5?frame=5#experiment');
+  const month = page.getByRole('combobox', { name: 'Time without income' });
+  await expect(month).toHaveValue('4');
+  await month.selectOption({ label: 'Month 2' });
+  await page.reload();
+  await expect(month).toHaveValue('2');
+  await expect(page.locator('figure dd')).toHaveText(['1,700 USD', '0 USD']);
+});

@@ -1,3 +1,5 @@
+import { BAR_MS, buildChartStates, evaluateStock, stockScenarios } from '@ss/chart-engine';
+import { experimentState } from '@ss/lesson-engine';
 import type { StockLesson } from './index';
 
 const lesson: StockLesson = {
@@ -103,6 +105,38 @@ const lesson: StockLesson = {
       change: {},
     },
   ],
+};
+
+const gap = stockScenarios.earningsGap(experimentState(lesson, 'surprise', buildChartStates));
+if (!gap) throw new Error('Earnings comparison requires a position');
+lesson.experiment = {
+  stepId: 'surprise',
+  title: 'What happens to the stop overnight?',
+  control: 'Trading session',
+  unit: 'USD per share',
+  frames: [
+    { label: 'Before results', bar: 1 },
+    { label: 'Opening gap', bar: 2 },
+  ].map(({ label, bar }) => {
+    const state = gap.stateAt(bar * BAR_MS);
+    const { trade, closed } = evaluateStock(state);
+    const candle = state.series[state.reveal - 1];
+    if (!trade || trade.stop === null || !candle)
+      throw new Error('Missing earnings trade or quote');
+    return {
+      label,
+      rows: [
+        { label: 'Planned drop from entry to stop', value: trade.entry - trade.stop },
+        {
+          label: closed ? 'Drop from entry to fill' : 'Drop from entry to close',
+          value: trade.entry - (closed?.price ?? candle.c),
+        },
+      ],
+      caption: closed
+        ? `The opening price skipped the stop. The simulated exit filled at $${closed.price.toFixed(2)} per share.`
+        : `The stop is $${trade.stop.toFixed(2)}. The market closes before the results arrive.`,
+    };
+  }),
 };
 
 export default lesson;

@@ -33,10 +33,16 @@ export const STAGE_CSS = `
 .ss-stage .ss-link.is-failing { stroke: var(--fail); stroke-dasharray: 5 5; }
 .ss-stage .ss-arrow { fill: var(--link); transition: fill 300ms, opacity 250ms; }
 .ss-stage .ss-arrow.is-failing { fill: var(--fail); }
-.ss-stage .ss-link-label { font: 600 11.5px var(--font-mono); fill: var(--muted); text-anchor: middle; }
+.ss-stage .ss-link.ss-changed { stroke-width: 3.5; }
+.ss-stage .ss-link-label { paint-order: stroke; stroke: var(--floor-top); stroke-width: 3px; font: 600 11.5px var(--font-mono); fill: var(--muted); text-anchor: middle; }
 
 .ss-stage .ss-label { font: 600 13.5px var(--font-mono); fill: var(--ink); text-anchor: middle;
   paint-order: stroke; stroke: var(--floor-top); stroke-width: 4px; stroke-linejoin: round; }
+.ss-stage [data-node] { cursor: pointer; }
+.ss-stage [data-inspected] .ss-label { fill: var(--ink); font-weight: 700; text-decoration: underline double; }
+.ss-stage .ss-link[data-traced] { stroke: var(--accent); stroke-width: 5; }
+.ss-stage .ss-link[data-traced].is-failing { stroke: var(--fail); }
+.ss-stage .ss-label.ss-changed { text-decoration: underline; font-weight: 700; }
 .ss-stage .ss-sublabel { font: 500 12px var(--font-mono); fill: var(--muted); text-anchor: middle;
   paint-order: stroke; stroke: var(--floor-top); stroke-width: 4px; stroke-linejoin: round; }
 .ss-stage .ss-pill rect { fill: var(--card); stroke: var(--line-strong); stroke-width: 1; transition: stroke 300ms; }

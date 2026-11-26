@@ -1,3 +1,5 @@
+import { BAR_MS, buildChartStates, forexScenarios } from '@ss/chart-engine';
+import { experimentState } from '@ss/lesson-engine';
 import type { ChartLesson } from './index';
 
 const lesson: ChartLesson = {
@@ -114,6 +116,36 @@ const lesson: ChartLesson = {
       change: {},
     },
   ],
+};
+
+const widening = forexScenarios.spreadWidens(
+  experimentState(lesson, 'tight-stop', buildChartStates),
+);
+if (!widening) throw new Error('Spread comparison requires a quote');
+lesson.experiment = {
+  stepId: 'tight-stop',
+  title: 'How far apart are the bid and ask?',
+  control: 'Quote',
+  unit: 'pips',
+  frames: [
+    { label: 'Before the spike', bar: 0 },
+    { label: 'Spread widens', bar: 1 },
+    { label: 'Spread returns', bar: 5 },
+  ].map(({ label, bar }) => {
+    const state = widening.stateAt(bar * BAR_MS);
+    const candle = state.series[state.reveal - 1];
+    if (!candle) throw new Error('Missing spread quote');
+    const spread = candle.spread ?? state.spread;
+    const half = (spread * state.tick) / 2;
+    return {
+      label,
+      rows: [
+        { label: 'Bid below midpoint', value: -spread / 2 },
+        { label: 'Ask above midpoint', value: spread / 2 },
+      ],
+      caption: `Bid ${(candle.c - half).toFixed(state.decimals)} · Ask ${(candle.c + half).toFixed(state.decimals)}. Crossing this quote costs ${spread} pips.`,
+    };
+  }),
 };
 
 export default lesson;

@@ -1,3 +1,5 @@
+import { buildStepStates, moneyScenarios, MONTH_MS } from '@ss/diagram-engine';
+import { experimentState } from '@ss/lesson-engine';
 import type { MoneyAction, MoneyMetrics } from '@ss/diagram-engine';
 import type { DiagramLesson } from '@ss/lesson-engine';
 
@@ -137,6 +139,33 @@ const lesson: DiagramLesson<MoneyMetrics, MoneyAction> = {
       change: {},
     },
   ],
+};
+
+const incomeLoss = moneyScenarios.loseIncome(
+  experimentState(lesson, 'test-again', buildStepStates),
+);
+if (!incomeLoss) throw new Error('Safety net requires an income source');
+lesson.experiment = {
+  stepId: 'test-again',
+  title: 'When does the emergency fund run out?',
+  control: 'Time without income',
+  unit: 'USD',
+  frames: [0, 1, 2, 3, 4].map((month) => {
+    const time = month * MONTH_MS;
+    const jar = incomeLoss.stateAt(time).nodes.find((n) => n.kind === 'jar');
+    const { debt, spending } = incomeLoss.metricsAt(time);
+    return {
+      label: month === 0 ? 'Income stops' : 'Month ' + month,
+      rows: [
+        { label: 'Cash left in the fund', value: jar?.value ?? 0 },
+        { label: 'Debt outstanding', value: debt },
+      ],
+      caption:
+        'Monthly bills are $' +
+        spending.toLocaleString('en-US') +
+        '. Borrowing begins once the fund can no longer cover them.',
+    };
+  }),
 };
 
 export default lesson;

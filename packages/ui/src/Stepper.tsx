@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { Icon } from './Icon';
 import styles from './Stepper.module.css';
 
 interface StepperProps {
@@ -22,6 +23,17 @@ export function Stepper({
   const currentStep = steps[current];
   return (
     <div className={styles.wrap}>
+      <label className={styles.picker}>
+        {countLabel}
+        <select value={current} onChange={(e) => onSelect(Number(e.target.value))}>
+          {steps.map((s, i) => (
+            <option value={i} key={s.id}>
+              {i !== current && i <= furthest ? '✓ ' : ''}
+              {i + 1} · {s.title}
+            </option>
+          ))}
+        </select>
+      </label>
       <div className={styles.rail} style={{ '--k': pct / 100 } as CSSProperties}>
         <span className={styles.track} aria-hidden="true" />
         <span className={styles.fill} aria-hidden="true" />
@@ -37,7 +49,7 @@ export function Stepper({
                   aria-current={i === current ? 'step' : undefined}
                   onClick={() => onSelect(i)}
                 >
-                  {i + 1}
+                  {i !== current && i <= furthest ? <Icon name="check" size={16} /> : i + 1}
                 </button>
               </li>
             );

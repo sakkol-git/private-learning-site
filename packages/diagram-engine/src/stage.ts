@@ -48,7 +48,16 @@ export interface StageOptions<M, A extends string> {
 
 type MetricsListener<M> = (metrics: M, summary: string) => void;
 
+interface Inspection {
+  kind: 'diagram';
+  options: { id: string; label: string }[];
+  selected: string;
+  detail: string;
+}
+
 export interface Stage<M, A extends string> {
+  inspect(id: string): void;
+  onInspection(cb: (view: Inspection) => void): () => void;
   goToStep(index: number): void;
   play(): void;
   pause(): void;
@@ -209,6 +218,54 @@ export function createStage<M, A extends string = string>(
   let lastTime = 0;
   let destroyed = false;
 
+  let selected = '';
+  const inspectionListeners = new Set<(view: Inspection) => void>();
+  function updateInspection() {
+    const options = shown.nodes.map((n) => ({ id: 'node:' + n.id, label: n.label }));
+    const node = shown.nodes.find((n) => 'node:' + n.id === selected);
+    let detail = node
+      ? [
+          node.label,
+          node.sublabel,
+          node.health ?? 'healthy',
+          node.value === undefined ? null : formatValue(node.value, node),
+        ]
+          .filter(Boolean)
+          .join(' · ')
+      : '';
+    const routeLinks = new Set<string>();
+    const routeNodes = new Set<string>();
+    if (node) routeNodes.add(node.id);
+    for (const flow of shown.flows) {
+      const id = JSON.stringify([flow.kind, flow.route]);
+      if (options.some((option) => option.id === id)) continue;
+      const route = flow.route.map((id) => nodeViews.get(id)?.node.label ?? id).join(' → ');
+      options.push({ id, label: flow.kind + ' · ' + route });
+      if (id !== selected) continue;
+      detail = route;
+      flow.route.forEach((id, index) => {
+        routeNodes.add(id);
+        const previous = flow.route[index - 1];
+        const link = previous && findLinkBetween(shown, previous, id);
+        if (link) routeLinks.add(link.id);
+      });
+    }
+    if (!options.some((option) => option.id === selected)) selected = '';
+    for (const [id, v] of nodeViews) v.label.toggleAttribute('data-inspected', routeNodes.has(id));
+    for (const [id, v] of linkViews) v.path.toggleAttribute('data-traced', routeLinks.has(id));
+    const view: Inspection = { kind: 'diagram', options, selected, detail };
+    for (const cb of inspectionListeners) cb(view);
+    return view;
+  }
+  function inspect(id: string) {
+    selected = id;
+    updateInspection();
+  }
+  function pickNode(event: Event) {
+    const id = (event.target as Element).closest('[data-node]')?.getAttribute('data-node');
+    if (id) inspect('node:' + id);
+  }
+  svg.addEventListener('click', pickNode);
   drawFloor();
 
   // ---------- floor & framing ----------
@@ -337,6 +394,7 @@ export function createStage<M, A extends string = string>(
     const badge = make('g', { class: 'ss-badge' }, labelLayer);
     make('circle', { r: 9 }, badge);
     make('path', { d: 'M-3.5,-3.5L3.5,3.5M3.5,-3.5L-3.5,3.5' }, badge);
+    for (const el of [g, label, pill, badge]) el.setAttribute('data-node', node.id);
     return {
       node,
       pos: { x: node.x, y: node.y },
@@ -750,7 +808,20 @@ export function createStage<M, A extends string = string>(
     shown = state;
     syncNodes(state, animate && !reduced);
     syncLinks(state, animate && !reduced);
+    const change = scenario ? undefined : diagram.changes[stepIndex];
+    const changedNodes = new Set([
+      ...(change?.add?.nodes ?? []).map((n) => n.id),
+      ...(change?.update?.nodes ?? []).map((n) => n.id),
+    ]);
+    const changedLinks = new Set(change?.add?.links?.map((link) => link.id));
+    for (const [id, view] of nodeViews) {
+      view.title.classList.toggle('ss-changed', changedNodes.has(id));
+    }
+    for (const [id, view] of linkViews) {
+      view.path.classList.toggle('ss-changed', changedLinks.has(id));
+    }
     syncFlows(state);
+    updateInspection();
     kick();
   }
 
@@ -773,7 +844,14 @@ export function createStage<M, A extends string = string>(
   emit(start.metrics);
 
   return {
+    inspect,
+    onInspection(cb) {
+      cb(updateInspection());
+      inspectionListeners.add(cb);
+      return () => inspectionListeners.delete(cb);
+    },
     goToStep(index) {
+      selected = '';
       const target = Math.max(-1, Math.min(states.length - 1, index));
       scenario = null;
       stepIndex = target;
@@ -829,6 +907,8 @@ export function createStage<M, A extends string = string>(
     destroy() {
       destroyed = true;
       if (frame) scheduler.cancel(frame);
+      svg.removeEventListener('click', pickNode);
+      inspectionListeners.clear();
       listeners.clear();
       svg.replaceChildren();
     },

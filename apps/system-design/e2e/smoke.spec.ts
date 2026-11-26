@@ -93,3 +93,52 @@ test('⌘K search jumps to a step', async ({ page, browserName }) => {
   await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/lesson\/caching\/8$/);
 });
+
+test('experiment keeps the starting values until reset', async ({ page }) => {
+  await page.goto('/lesson/load-balancing/5');
+  const healthy = page.locator('[data-metric="healthy"]');
+  await page.getByRole('button', { name: 'Kill a server', exact: true }).click();
+  await expect(healthy.locator('dt')).toContainText('Before 3/3');
+  await expect(healthy.locator('dd')).toHaveText('2/3');
+  await page.getByRole('button', { name: 'Reset', exact: true }).click();
+  await expect(healthy.locator('dt')).not.toContainText('Before');
+  await expect(healthy.locator('dd')).toHaveText('3/3');
+});
+
+test('chapter navigation jumps to the chosen chapter', async ({ page, isMobile }) => {
+  await page.goto('/');
+  const nav = page.getByRole('navigation', { name: 'Chapters', exact: true });
+  if (isMobile) {
+    await nav.getByRole('combobox').selectOption('chapter-case-studies');
+  } else {
+    await nav.getByRole('link', { name: /Case studies/ }).click();
+  }
+  await expect(page.locator('#chapter-case-studies')).toBeInViewport();
+});
+
+test('mobile scene view and step picker', async ({ page, isMobile }) => {
+  test.skip(!isMobile);
+  await page.goto('/lesson/load-balancing/5');
+  const region = page.getByRole('region', { name: 'System diagram' });
+  await expect(region).toBeVisible();
+  const overflow = () => region.evaluate((el) => el.scrollWidth - el.clientWidth);
+  expect(await overflow()).toBeLessThanOrEqual(1);
+  await page.getByRole('button', { name: 'Detail', exact: true }).click();
+  expect(await overflow()).toBeGreaterThan(0);
+  await page.getByRole('button', { name: 'Fit', exact: true }).click();
+  expect(await overflow()).toBeLessThanOrEqual(1);
+  await page.getByRole('combobox', { name: /Step 5 of/ }).selectOption('0');
+  await expect(page).toHaveURL(/\/lesson\/load-balancing\/1$/);
+});
+
+test('inspect a server and follow a request with reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/lesson/load-balancing/1');
+  const picker = page.getByLabel('Inspect a node or trace a route');
+  await picker.selectOption({ label: 'Server A' });
+  await expect(page.locator('output')).toContainText('Server A');
+  await picker.selectOption({ label: 'request · Shoppers → Server A → Orders DB' });
+  await expect(page.locator('[data-traced]')).toHaveCount(2);
+  await picker.press('Home');
+  await expect(page.locator('[data-traced]')).toHaveCount(0);
+});

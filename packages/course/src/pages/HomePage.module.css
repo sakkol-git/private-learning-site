@@ -181,3 +181,75 @@
     padding: 24px 18px;
   }
 }
+
+.chapterList {
+  display: grid;
+  gap: 36px;
+  min-width: 0;
+}
+.withRail {
+  display: grid;
+  grid-template-columns: minmax(170px, 220px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.chapterNav {
+  position: sticky;
+  top: 78px;
+  max-height: calc(100dvh - 90px);
+  overflow: auto;
+  background: var(--sheet);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-panel);
+  padding: 14px;
+}
+.chapterNav h2 {
+  font-size: 16px;
+}
+.chapterNav ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+}
+.chapterNav a {
+  display: grid;
+  padding: 7px 4px;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+}
+.chapterNav a:hover {
+  color: var(--accent);
+}
+.chapterNav small {
+  color: var(--muted);
+  font-weight: 400;
+}
+.chapterNav select {
+  display: none;
+}
+.chapterTitle {
+  scroll-margin-top: 86px;
+}
+@media (max-width: 899px) {
+  .withRail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chapterNav {
+    position: static;
+  }
+  .chapterNav ul,
+  .chapterNav h2 {
+    display: none;
+  }
+  .chapterNav select {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line-strong);
+    font: inherit;
+  }
+}

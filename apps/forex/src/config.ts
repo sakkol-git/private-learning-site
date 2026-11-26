@@ -20,6 +20,7 @@ const SITE_NAME = 'Pips, Plotted';
 const AUTHOR_NAME = 'Your Name';
 
 const config: CourseConfig<ForexMetrics, ForexAction, FxInitial, ChartChange> = {
+  id: 'forex',
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,

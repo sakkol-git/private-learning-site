@@ -11,10 +11,7 @@ export interface StepCardLabels {
   back: string;
   next: (short: string) => string;
   finish: string;
-  breakIt: string;
-  reset: string;
   hint: { next: string; replay: string; pause: string };
-  actions: Record<string, string>;
 }
 
 interface StepCardProps<A extends string> {
@@ -22,11 +19,8 @@ interface StepCardProps<A extends string> {
   isFirst: boolean;
   nextShort: string | undefined;
   labels: StepCardLabels;
-  activeBreak: A | null;
   onBack: () => void;
   onNext: () => void;
-  onBreak: (action: A) => void;
-  onReset: () => void;
 }
 
 const TAG_TONE: Record<StepTag, 'plain' | 'accent' | 'warn' | 'fail'> = {
@@ -43,11 +37,8 @@ export function StepCard<A extends string>({
   isFirst,
   nextShort,
   labels,
-  activeBreak,
   onBack,
   onNext,
-  onBreak,
-  onReset,
 }: StepCardProps<A>) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
@@ -81,28 +72,6 @@ export function StepCard<A extends string>({
           </p>
         ))}
       </div>
-      {step.breakActions && step.breakActions.length > 0 && (
-        <div className={styles.break} role="group" aria-label={labels.breakIt}>
-          <span className={styles.breakLabel}>{labels.breakIt}</span>
-          <div className={styles.breakButtons}>
-            {step.breakActions.map((action) => (
-              <Button
-                key={action}
-                variant="danger"
-                size="small"
-                icon="bolt"
-                aria-pressed={activeBreak === action}
-                onClick={() => onBreak(action)}
-              >
-                {labels.actions[action] ?? action}
-              </Button>
-            ))}
-            <Button size="small" icon="reset" onClick={onReset} disabled={activeBreak === null}>
-              {labels.reset}
-            </Button>
-          </div>
-        </div>
-      )}
       {step.keyIdea && (
         <p className={styles.key}>
           <span className={styles.keyLabel}>{labels.keyIdea}</span>

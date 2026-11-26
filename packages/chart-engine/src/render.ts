@@ -104,7 +104,12 @@ function niceStep(range: number): number {
 const signedPct = (v: number) =>
   `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0)}%`;
 
-export function renderChart(state: ChartState, e: TradeView, frame: Frame): string {
+export function renderChart(
+  state: ChartState,
+  e: TradeView,
+  frame: Frame,
+  previousReveal = state.reveal,
+): string {
   const right = WIDTH - AXIS;
   const plotBottom = HEIGHT - BOTTOM - (state.showVolume && !state.compare ? VOLUME + 8 : 0);
   const slot = (right - LEFT) / frame.slots;
@@ -128,6 +133,12 @@ export function renderChart(state: ChartState, e: TradeView, frame: Frame): stri
     out.push(
       `<line class="cs-grid" x1="${LEFT}" x2="${right}" y1="${r(y(v))}" y2="${r(y(v))}"/>`,
       `<text class="cs-axis" x="${right + 8}" y="${r(y(v) + 4)}">${label}</text>`,
+    );
+  }
+
+  if (bars.length > previousReveal) {
+    out.push(
+      `<line class="cs-new-bars" x1="${r(LEFT + previousReveal * slot)}" x2="${r(LEFT + bars.length * slot)}" y1="${plotBottom + 2}" y2="${plotBottom + 2}"/>`,
     );
   }
 
@@ -208,7 +219,7 @@ export function renderChart(state: ChartState, e: TradeView, frame: Frame): stri
       const top = y(Math.max(b.o, b.c));
       const height = Math.max(1, Math.abs(y(b.o) - y(b.c)));
       out.push(
-        `<g class="cs-candle ${up ? 'cs-up' : 'cs-down'}"><line x1="${r(x(i))}" x2="${r(x(i))}" y1="${r(y(b.h))}" y2="${r(y(b.l))}"/><rect x="${r(x(i) - body / 2)}" y="${r(top)}" width="${r(body)}" height="${r(height)}"/></g>`,
+        `<g data-bar="${i + 1}" class="cs-candle ${up ? 'cs-up' : 'cs-down'}"><line x1="${r(x(i))}" x2="${r(x(i))}" y1="${r(y(b.h))}" y2="${r(y(b.l))}"/><rect x="${r(x(i) - body / 2)}" y="${r(top)}" width="${r(body)}" height="${r(height)}"/></g>`,
       );
     });
   }

@@ -1,3 +1,5 @@
+export { buildChartStates } from './scene';
+export { BAR_MS } from './scenario';
 export type {
   ChartChange,
   ChartInitial,

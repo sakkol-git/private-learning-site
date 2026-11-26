@@ -25,6 +25,7 @@ const config: CourseConfig<
   DiagramInitial<NetworkMetrics>,
   StepChange<NetworkMetrics>
 > = {
+  id: 'internet',
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,

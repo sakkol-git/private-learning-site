@@ -1,3 +1,4 @@
+import { courseDirectory } from './directory';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { AppShell } from './components/AppShell';
 import { CourseContext, type CourseConfig, type CourseInfo } from './config';
@@ -9,6 +10,11 @@ import { LessonPage } from './pages/LessonPage';
 /** Builds the whole site (shell, home, lessons, search) for one course. */
 export function createCourseApp<M, A extends string, I, C>(config: CourseConfig<M, A, I, C>) {
   const info: CourseInfo = {
+    id: config.id,
+    directory: courseDirectory(
+      import.meta.env.VITE_COURSE_ORIGINS,
+      import.meta.env.DEV ? window.location.hostname : undefined,
+    ),
     siteName: config.siteName,
     authorName: config.authorName,
     catalog: config.catalog,
@@ -26,7 +32,10 @@ export function createCourseApp<M, A extends string, I, C>(config: CourseConfig<
           <BrowserRouter>
             <Routes>
               <Route element={<AppShell />}>
-                <Route index element={<HomePage />} />
+                <Route
+                  index
+                  element={<HomePage chapterNavigation={config.chapterNavigation ?? false} />}
+                />
                 <Route path="lesson/:slug" element={<Navigate to="1" replace />} />
                 <Route path="lesson/:slug/:step" element={<LessonPage config={config} />} />
                 <Route path="*" element={<Navigate to="/" replace />} />

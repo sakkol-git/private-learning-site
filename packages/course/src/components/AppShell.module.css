@@ -280,3 +280,22 @@
     font-size: 14px;
   }
 }
+
+.courseMenu {
+  margin: 8px 18px;
+}
+.courseMenu summary,
+.courseMenu a {
+  padding: 10px 0;
+  font: 600 14px var(--font-mono);
+}
+.courseMenu summary {
+  cursor: pointer;
+}
+.courseMenu nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.courseMenu a {
+  color: var(--ink);
+}

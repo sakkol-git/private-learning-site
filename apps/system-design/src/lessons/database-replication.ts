@@ -1,6 +1,8 @@
 import type { InfraAction, InfraMetrics } from '@ss/diagram-engine';
 import type { DiagramLesson } from '@ss/lesson-engine';
 
+const replicaLag = [40, 120] as const;
+
 const writes = (to: string, rate = 90) => ({
   route: ['users', 'app', to],
   kind: 'request' as const,
@@ -169,8 +171,8 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       change: {
         update: {
           nodes: [
-            { id: 'r1', sublabel: 'lag 40 ms' },
-            { id: 'r2', sublabel: 'lag 120 ms' },
+            { id: 'r1', sublabel: `lag ${replicaLag[0]} ms` },
+            { id: 'r2', sublabel: `lag ${replicaLag[1]} ms` },
           ],
         },
       },
@@ -198,7 +200,7 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       ],
       keyIdea: 'Route by who is asking. Fresh data for writers, cheap reads for everyone else.',
       change: {
-        update: { nodes: [{ id: 'r2', sublabel: 'lag 120 ms' }] },
+        update: { nodes: [{ id: 'r2', sublabel: `lag ${replicaLag[1]} ms` }] },
         flows: [
           reads('r1', 385),
           reads('r2', 385),
@@ -316,6 +318,26 @@ const lesson: DiagramLesson<InfraMetrics, InfraAction> = {
       change: {},
     },
   ],
+};
+
+lesson.experiment = {
+  stepId: 'lag',
+  title: 'When can each replica serve the new name?',
+  control: 'Time after the primary confirms',
+  unit: 'ms',
+  frames: [0, 20, ...replicaLag].map((time) => ({
+    label: time + ' ms',
+    rows: [
+      { label: 'Replica 1 · wait remaining', value: Math.max(0, replicaLag[0] - time) },
+      { label: 'Replica 2 · wait remaining', value: Math.max(0, replicaLag[1] - time) },
+    ],
+    caption:
+      time < replicaLag[0]
+        ? 'Both replicas still return the old name. The primary already has the write.'
+        : time < replicaLag[1]
+          ? 'Replica 1 can serve the new name. Replica 2 still returns the old one.'
+          : 'Both replicas have applied the write.',
+  })),
 };
 
 export default lesson;

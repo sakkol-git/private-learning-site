@@ -48,6 +48,8 @@
 }
 
 .circle {
+  display: grid;
+  place-items: center;
   width: var(--dot);
   height: var(--dot);
   border-radius: 50%;
@@ -97,29 +99,30 @@
   white-space: nowrap;
 }
 
+.picker {
+  display: none;
+}
 @media (max-width: 640px) {
-  .wrap {
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .rail {
-    width: 100%;
-  }
-
+  .rail,
   .count {
-    order: -1;
-    align-self: flex-end;
-    line-height: 1;
-    margin-top: -30px;
+    display: none;
   }
-
-  .rail {
-    --dot: 24px;
+  .picker {
+    display: grid;
+    width: 100%;
+    gap: 6px;
+    color: var(--ink-2);
+    font: 600 12px var(--font-mono);
   }
-
-  .circle {
-    font-size: 10.5px;
-    box-shadow: 0 1px 0 var(--line-strong);
+  .picker select {
+    min-width: 0;
+    width: 100%;
+    min-height: 44px;
+    padding: 8px;
+    background: var(--card);
+    color: var(--ink);
+    font: inherit;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-control);
   }
 }

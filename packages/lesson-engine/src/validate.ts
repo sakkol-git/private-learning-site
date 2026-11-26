@@ -47,6 +47,16 @@ export function validateLesson<I, C, A extends string>(
 
   for (const id of duplicates(lesson.steps.map((s) => s.id))) top(`step id "${id}" repeats`);
   const stepIds = new Set(lesson.steps.map((s) => s.id));
+  const experiment = lesson.experiment;
+  if (experiment) {
+    if (!stepIds.has(experiment.stepId)) top('experiment points at a missing step');
+    if (experiment.frames.length < 2) top('experiment needs at least two comparison frames');
+    for (const frame of experiment.frames) {
+      if (!frame.rows.length || frame.rows.some((row) => !Number.isFinite(row.value))) {
+        top(`experiment frame "${frame.label}" needs finite chart values`);
+      }
+    }
+  }
   for (const item of lesson.youWillLearn) {
     if (!stepIds.has(item.stepId)) {
       top(`youWillLearn "${item.text}" points at missing step "${item.stepId}"`);

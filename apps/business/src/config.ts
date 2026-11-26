@@ -27,6 +27,7 @@ const config: CourseConfig<
   DiagramInitial<BusinessMetrics>,
   StepChange<BusinessMetrics>
 > = {
+  id: 'business',
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,

@@ -26,6 +26,7 @@ const config: CourseConfig<
   DiagramInitial<SecurityMetrics>,
   StepChange<SecurityMetrics>
 > = {
+  id: 'security',
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,

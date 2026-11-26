@@ -191,3 +191,20 @@ describe('stage', () => {
     expect(stage.break('slowDatabase')).toBe(false);
   });
 });
+
+it('inspects nodes and traces the selected flow without animation', () => {
+  const { stage, svg } = setup(true);
+  stage.goToStep(1);
+  let route = '';
+  let detail = '';
+  stage.onInspection((view) => {
+    route = view.options.find((o) => o.label.includes('Users → LB → Server A'))?.id ?? '';
+    detail = view.detail;
+  });
+  stage.inspect('node:a');
+  expect(detail).toContain('Server A');
+  stage.inspect(route);
+  expect(svg.querySelectorAll('[data-traced]')).toHaveLength(2);
+  stage.goToStep(0);
+  expect(svg.querySelectorAll('[data-traced]')).toHaveLength(0);
+});

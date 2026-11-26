@@ -25,10 +25,12 @@ const config: CourseConfig<
   DiagramInitial<InfraMetrics>,
   StepChange<InfraMetrics>
 > = {
+  id: 'system-design',
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,
   chapters: CHAPTERS,
+  chapterNavigation: true,
   loadLesson,
   home: { kicker: en['home.kicker'], title: en['home.title'], intro: en['home.intro'] },
   createStage: (svg, scene, reducedMotion) =>

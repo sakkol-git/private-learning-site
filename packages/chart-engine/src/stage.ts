@@ -23,7 +23,16 @@ export interface ChartStageOptions<M, A extends string> {
   scheduler?: Scheduler;
 }
 
+interface Inspection {
+  kind: 'chart';
+  options: { id: string; label: string }[];
+  selected: string;
+  detail: string;
+}
+
 export interface ChartStage<M, A extends string> {
+  inspect(id: string): void;
+  onInspection(cb: (view: Inspection) => void): () => void;
   goToStep(index: number): void;
   play(): void;
   pause(): void;
@@ -121,11 +130,54 @@ export function createChartStage<M, A extends string = string>(
     evaluation: evaluate(start),
   };
 
+  let inspectedBar = 0;
+  let available = start.reveal;
+  const inspectionListeners = new Set<(view: Inspection) => void>();
+  function inspection(): Inspection {
+    const { state } = current;
+    const candle = inspectedBar ? state.series[inspectedBar - 1] : undefined;
+    const p = (v: number) => v.toFixed(state.decimals);
+    return {
+      kind: 'chart',
+      options: Array.from({ length: available }, (_, i) => ({
+        id: String(i + 1),
+        label: String(i + 1),
+      })),
+      selected: inspectedBar ? String(inspectedBar) : '',
+      detail: candle
+        ? `${state.symbol} · Open ${p(candle.o)} · High ${p(candle.h)} · Low ${p(candle.l)} · Close ${p(candle.c)}`
+        : '',
+    };
+  }
+  function inspect(id: string) {
+    const bar = Number(id);
+    if (!Number.isInteger(bar) || bar < 0 || bar > available) return;
+    inspectedBar = bar;
+    revealFrom = shownReveal;
+    revealStart = scheduler.now();
+    drawn = '';
+    draw();
+    kick();
+  }
+  function pickBar(event: Event) {
+    const id = (event.target as Element).closest('[data-bar]')?.getAttribute('data-bar');
+    if (id) inspect(id);
+  }
+  svg.addEventListener('click', pickBar);
+
   function draw() {
     const base = scenario ? scenario.stateAt(scenarioT) : target;
-    const state = scenario
-      ? base
-      : { ...base, reveal: Math.min(base.reveal, Math.floor(shownReveal)) };
+    available = base.reveal;
+    const state = inspectedBar
+      ? {
+          ...base,
+          reveal: inspectedBar,
+          highlight: inspectedBar - 1,
+          position: base.position && base.position.openBar < inspectedBar ? base.position : null,
+        }
+      : scenario
+        ? base
+        : { ...base, reveal: Math.min(base.reveal, Math.floor(shownReveal)) };
     const key = `${scenarioPhase}|${state.reveal}|${stepIndex}|${scenario ? 1 : 0}`;
     const e = evaluate(state);
     current = { state, evaluation: e };
@@ -135,7 +187,12 @@ export function createChartStage<M, A extends string = string>(
         state,
         e,
         fitFrame(state.compare ? compareFrame : priceFrame, state, e),
+        scenario ? target.reveal : stepState(stepIndex - 1).reveal,
       );
+      if (inspectionListeners.size) {
+        const view = inspection();
+        for (const cb of inspectionListeners) cb(view);
+      }
     }
     const summary = summarizeChart(state, e, describe(e.metrics));
     const emitKey = JSON.stringify(e.metrics) + summary;
@@ -147,7 +204,7 @@ export function createChartStage<M, A extends string = string>(
   }
 
   const animating = () => !scenario && shownReveal < target.reveal;
-  const needsFrames = () => playing && (animating() || scenario !== null);
+  const needsFrames = () => playing && !inspectedBar && (animating() || scenario !== null);
 
   function kick() {
     if (frame || destroyed || !needsFrames()) return;
@@ -159,7 +216,7 @@ export function createChartStage<M, A extends string = string>(
     frame = 0;
     const dt = Math.min(250, Math.max(0, time - lastTime));
     lastTime = time;
-    if (playing) {
+    if (playing && !inspectedBar) {
       if (scenario) {
         scenarioT += dt;
         scenarioPhase = scenario.phaseAt(scenarioT);
@@ -174,6 +231,7 @@ export function createChartStage<M, A extends string = string>(
   }
 
   function show(next: ChartState, animate: boolean) {
+    inspectedBar = 0;
     scenario = null;
     const from = Math.min(Math.floor(shownReveal), next.reveal);
     target = next;
@@ -194,6 +252,12 @@ export function createChartStage<M, A extends string = string>(
   show(start, false);
 
   return {
+    inspect,
+    onInspection(cb) {
+      inspectionListeners.add(cb);
+      cb(inspection());
+      return () => inspectionListeners.delete(cb);
+    },
     goToStep(index) {
       stepIndex = Math.max(-1, Math.min(states.length - 1, index));
       show(stepState(stepIndex), true);
@@ -218,6 +282,7 @@ export function createChartStage<M, A extends string = string>(
       const next = factory ? factory(target) : null;
       if (!next) return false;
       shownReveal = target.reveal;
+      inspectedBar = 0;
       scenario = next;
       scenarioT = reduced ? 60_000 : 0;
       scenarioPhase = next.phaseAt(scenarioT);
@@ -250,6 +315,8 @@ export function createChartStage<M, A extends string = string>(
     destroy() {
       destroyed = true;
       if (frame) scheduler.cancel(frame);
+      svg.removeEventListener('click', pickBar);
+      inspectionListeners.clear();
       listeners.clear();
       svg.replaceChildren();
     },

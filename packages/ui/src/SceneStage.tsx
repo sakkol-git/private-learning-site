@@ -1,8 +1,18 @@
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from 'react';
+import { Button } from './Button';
 import styles from './SceneStage.module.css';
+
+interface Inspection {
+  kind: 'diagram' | 'chart';
+  options: { id: string; label: string }[];
+  selected: string;
+  detail: string;
+}
 
 /** What every visual engine (diagram, chart, …) exposes to the page. */
 export interface EngineStage<M, A extends string> {
+  inspect(id: string): void;
+  onInspection(cb: (view: Inspection) => void): () => void;
   goToStep(index: number): void;
   play(): void;
   pause(): void;
@@ -24,6 +34,14 @@ interface SceneStageProps<M, A extends string> {
   /** Builds the engine on the SVG. Called again only when `sceneKey` changes. */
   create: (svg: SVGSVGElement, reducedMotion: boolean) => EngineStage<M, A>;
   sceneKey: unknown;
+  inspectionLabels: {
+    diagram: string;
+    chart: string;
+    live: string;
+    previous: string;
+    next: string;
+  };
+  detail: boolean;
   step: number;
   playing: boolean;
   reducedMotion: boolean;
@@ -36,7 +54,9 @@ interface SceneStageProps<M, A extends string> {
 /** The one React wrapper around the framework-agnostic visual engines. */
 export function SceneStage<M, A extends string>({
   create,
+  inspectionLabels,
   sceneKey,
+  detail,
   step,
   playing,
   reducedMotion,
@@ -50,6 +70,7 @@ export function SceneStage<M, A extends string>({
   const createRef = useRef(create);
   const metricsCb = useRef(onMetrics);
   const stepRef = useRef(step);
+  const [inspection, setInspection] = useState<Inspection | null>(null);
   const [summary, setSummary] = useState('');
 
   useEffect(() => {
@@ -70,6 +91,7 @@ export function SceneStage<M, A extends string>({
     const scroller = scrollerRef.current;
     if (scroller) scroller.scrollLeft = (scroller.scrollWidth - scroller.clientWidth) / 2;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    const offInspection = stage.onInspection(setInspection);
     const off = stage.onMetrics((m, text) => {
       metricsCb.current(m);
       clearTimeout(timer);
@@ -77,6 +99,7 @@ export function SceneStage<M, A extends string>({
     });
     return () => {
       clearTimeout(timer);
+      offInspection();
       off();
       stage.destroy();
       stageRef.current = null;
@@ -109,18 +132,57 @@ export function SceneStage<M, A extends string>({
     [],
   );
 
+  const inspect = (id: string) => stageRef.current?.inspect(id);
+  const index = inspection?.options.findIndex((option) => option.id === inspection.selected) ?? -1;
   return (
-    <div
-      ref={scrollerRef}
-      className={styles.scroller}
-      tabIndex={0}
-      role="region"
-      aria-label={label}
-    >
-      <svg ref={svgRef} className={styles.svg} />
-      <p className="visually-hidden" aria-live="polite">
-        {summary}
-      </p>
-    </div>
+    <>
+      <div
+        ref={scrollerRef}
+        className={styles.scroller}
+        tabIndex={0}
+        data-detail={detail}
+        role="region"
+        aria-label={label}
+      >
+        <svg ref={svgRef} className={styles.svg} />
+        <p className="visually-hidden" aria-live="polite">
+          {summary}
+        </p>
+      </div>
+      {inspection && (
+        <div className={styles.inspector}>
+          <label>
+            {inspectionLabels[inspection.kind]}
+            <select value={inspection.selected} onChange={(e) => inspect(e.target.value)}>
+              <option value="">{inspectionLabels.live}</option>
+              {inspection.options.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          {inspection.kind === 'chart' && (
+            <>
+              <Button
+                size="small"
+                disabled={index <= 0}
+                onClick={() => inspect(inspection.options[index - 1]?.id ?? '')}
+              >
+                {inspectionLabels.previous}
+              </Button>
+              <Button
+                size="small"
+                disabled={index + 1 >= inspection.options.length}
+                onClick={() => inspect(inspection.options[index + 1]?.id ?? '')}
+              >
+                {inspectionLabels.next}
+              </Button>
+            </>
+          )}
+          {inspection.detail && <output>{inspection.detail}</output>}
+        </div>
+      )}
+    </>
   );
 }

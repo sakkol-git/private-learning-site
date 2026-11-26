@@ -12,7 +12,7 @@ const LEVEL_KEY = {
   advanced: 'lesson.level.advanced',
 } as const;
 
-export function HomePage() {
+export function HomePage({ chapterNavigation }: { chapterNavigation: boolean }) {
   const { t, siteName, catalog, chapters, home } = useCourse();
   const { progress } = useProgress();
   useEffect(() => {
@@ -47,48 +47,89 @@ export function HomePage() {
           )
         )}
       </section>
-      {chapters.map((chapter, ci) => (
-        <section
-          key={chapter.id}
-          className={styles.chapter}
-          aria-labelledby={`chapter-${chapter.id}`}
-        >
-          <h2 id={`chapter-${chapter.id}`} className={styles.chapterTitle}>
-            <span className={styles.chapterNo}>
-              {t('home.chapter', { n: String(ci + 1).padStart(2, '0') })}
-            </span>
-            {chapter.title}
-          </h2>
-          <ul className={styles.grid}>
-            {chapter.lessons.map((slug) => {
-              const entry = catalog.find((e) => e.slug === slug);
-              if (!entry) return null;
-              const pct = Math.round(completion(progress.lessons[slug]) * 100);
-              return (
-                <li key={slug}>
-                  <Link to={`/lesson/${slug}/1`} className={styles.card}>
-                    <h3 className={styles.cardTitle}>{entry.title}</h3>
-                    <p className={styles.cardSummary}>{entry.summary}</p>
-                    <div className={styles.cardMeta}>
-                      <Chip>{t('lesson.minutes', { n: entry.minutes })}</Chip>
-                      <Chip>{t(LEVEL_KEY[entry.level])}</Chip>
-                      <Chip>{t('lesson.steps', { n: entry.steps.length })}</Chip>
-                    </div>
-                    <div className={styles.progress}>
-                      <span className={styles.bar} aria-hidden="true">
-                        <span style={{ width: `${pct}%` }} />
-                      </span>
-                      <span className={styles.pct}>
-                        {pct > 0 ? t('home.progress', { pct }) : t('home.notStarted')}
-                      </span>
-                    </div>
-                  </Link>
+      <div className={chapterNavigation ? styles.withRail : undefined}>
+        {chapterNavigation && (
+          <nav className={styles.chapterNav} aria-label={t('home.chapters')}>
+            <h2>{t('home.chapters')}</h2>
+            <select
+              aria-label={t('home.jump')}
+              value=""
+              onChange={(e) => {
+                document.getElementById(e.target.value)?.focus();
+              }}
+            >
+              <option value="" disabled>
+                {t('home.jump')}
+              </option>
+              {chapters.map((ch) => (
+                <option key={ch.id} value={'chapter-' + ch.id}>
+                  {ch.title}
+                </option>
+              ))}
+            </select>
+            <ul>
+              {chapters.map((ch) => (
+                <li key={ch.id}>
+                  <a href={'#chapter-' + ch.id}>
+                    {ch.title}
+                    <small>
+                      {t('home.chapterDone', {
+                        done: ch.lessons.filter((slug) => completion(progress.lessons[slug]) === 1)
+                          .length,
+                        total: ch.lessons.length,
+                      })}
+                    </small>
+                  </a>
                 </li>
-              );
-            })}
-          </ul>
-        </section>
-      ))}
+              ))}
+            </ul>
+          </nav>
+        )}
+        <div className={styles.chapterList}>
+          {chapters.map((chapter, ci) => (
+            <section
+              key={chapter.id}
+              className={styles.chapter}
+              aria-labelledby={`chapter-${chapter.id}`}
+            >
+              <h2 tabIndex={-1} id={`chapter-${chapter.id}`} className={styles.chapterTitle}>
+                <span className={styles.chapterNo}>
+                  {t('home.chapter', { n: String(ci + 1).padStart(2, '0') })}
+                </span>
+                {chapter.title}
+              </h2>
+              <ul className={styles.grid}>
+                {chapter.lessons.map((slug) => {
+                  const entry = catalog.find((e) => e.slug === slug);
+                  if (!entry) return null;
+                  const pct = Math.round(completion(progress.lessons[slug]) * 100);
+                  return (
+                    <li key={slug}>
+                      <Link to={`/lesson/${slug}/1`} className={styles.card}>
+                        <h3 className={styles.cardTitle}>{entry.title}</h3>
+                        <p className={styles.cardSummary}>{entry.summary}</p>
+                        <div className={styles.cardMeta}>
+                          <Chip>{t('lesson.minutes', { n: entry.minutes })}</Chip>
+                          <Chip>{t(LEVEL_KEY[entry.level])}</Chip>
+                          <Chip>{t('lesson.steps', { n: entry.steps.length })}</Chip>
+                        </div>
+                        <div className={styles.progress}>
+                          <span className={styles.bar} aria-hidden="true">
+                            <span style={{ width: `${pct}%` }} />
+                          </span>
+                          <span className={styles.pct}>
+                            {pct > 0 ? t('home.progress', { pct }) : t('home.notStarted')}
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

@@ -18,9 +18,18 @@ export interface Step<C = unknown, A extends string = string> {
   breakActions?: A[];
 }
 
+export interface LessonExperiment {
+  stepId: string;
+  title: string;
+  control: string;
+  unit: string;
+  frames: { label: string; caption: string; rows: { label: string; value: number }[] }[];
+}
+
 /** I is the engine's starting scene, C its step diff, A the break-it action names. */
 export interface Lesson<I = unknown, C = unknown, A extends string = string> {
   slug: string;
+  experiment?: LessonExperiment;
   chapter: string;
   title: string;
   summary: string;

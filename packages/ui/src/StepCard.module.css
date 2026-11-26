@@ -43,28 +43,6 @@
   font-weight: 600;
 }
 
-.break {
-  border: 1px dashed var(--line-strong);
-  border-radius: var(--radius-tile);
-  padding: 12px;
-  display: grid;
-  gap: 10px;
-  background: var(--sheet);
-}
-
-.breakLabel {
-  font: 600 11px/1 var(--font-mono);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fail-text);
-}
-
-.breakButtons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
 .key {
   border-left: 3px solid var(--accent);
   background: var(--accent-soft);

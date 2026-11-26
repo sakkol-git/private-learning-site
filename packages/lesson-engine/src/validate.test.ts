@@ -144,3 +144,19 @@ describe('validateLesson', () => {
     ]);
   });
 });
+
+it('rejects an unreachable experiment or a value that breaks the chart scale', () => {
+  const issues = validateLesson(
+    lesson({
+      experiment: {
+        stepId: 'missing',
+        title: 'Comparison',
+        control: 'Period',
+        unit: 'ms',
+        frames: [{ label: 'Start', caption: '', rows: [{ label: 'Wait', value: NaN }] }],
+      },
+    }),
+  );
+  expect(issues).toContain('demo lesson: experiment points at a missing step');
+  expect(issues).toContain('demo lesson: experiment frame "Start" needs finite chart values');
+});

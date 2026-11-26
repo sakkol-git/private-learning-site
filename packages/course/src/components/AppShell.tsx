@@ -12,7 +12,7 @@ import { SearchDialog } from './SearchDialog';
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
 export function AppShell() {
-  const { t, authorName } = useCourse();
+  const { t, authorName, id, directory } = useCourse();
   const [drawer, setDrawer] = useState(false);
   const [searching, setSearching] = useState(false);
   const [theme, toggleTheme] = useTheme();
@@ -93,6 +93,20 @@ export function AppShell() {
             onClick={() => setDrawer(false)}
           />
         </div>
+        {directory.some((course) => course.id !== id) && (
+          <details className={styles.courseMenu}>
+            <summary>{t('nav.courses')}</summary>
+            <nav aria-label={t('nav.courses')}>
+              {directory
+                .filter((course) => course.id !== id)
+                .map((course) => (
+                  <a href={course.origin} key={course.id}>
+                    {t(`course.${course.id}`)}
+                  </a>
+                ))}
+            </nav>
+          </details>
+        )}
         <LessonList {...(slug ? { current: slug } : {})} onNavigate={() => setDrawer(false)} />
       </Dialog>
       <SearchDialog open={searching} onClose={() => setSearching(false)} />

@@ -1,3 +1,5 @@
+import { buildStepStates } from '@ss/diagram-engine';
+import { experimentState } from '@ss/lesson-engine';
 import type { CourseLesson } from './index';
 
 const lookup = (rate: number) => [
@@ -152,6 +154,34 @@ const lesson: CourseLesson = {
       change: {},
     },
   ],
+};
+
+lesson.experiment = {
+  stepId: 'caching',
+  title: 'Which requests still need DNS?',
+  control: 'Resolver cache',
+  unit: 'requests/s',
+  frames: [
+    { label: 'Cold cache', id: 'connect' },
+    { label: 'Warm cache', id: 'caching' },
+  ].map(({ label, id }) => {
+    const state = experimentState(lesson, id, buildStepStates);
+    const rate = (target: string) =>
+      state.flows
+        .filter((f) => f.kind === 'request' && f.route.at(-1) === target)
+        .reduce((sum, f) => sum + f.ratePerSec, 0);
+    return {
+      label,
+      rows: [
+        { label: 'To the resolver', value: rate('dns') },
+        { label: 'To the web server', value: rate('web') },
+      ],
+      caption:
+        'Simulated page load: ' +
+        state.metrics.pageLoadMs +
+        ' ms. Remembering the address saves a lookup on a repeat visit.',
+    };
+  }),
 };
 
 export default lesson;

@@ -120,3 +120,21 @@ describe('chart stage', () => {
     expect(stage.break('teleport' as ForexAction)).toBe(false);
   });
 });
+
+it('steps through inspected candles with reduced motion and restores the full trade', () => {
+  const { stage, svg } = setup(true);
+  stage.goToStep(1);
+  let detail = '';
+  stage.onInspection((view) => {
+    detail = view.detail;
+  });
+  stage.inspect('5');
+  expect(svg.querySelectorAll('.cs-candle')).toHaveLength(5);
+  expect(detail).toContain('Open');
+  expect(stage.current().evaluation.trade).toBeNull();
+  stage.inspect('6');
+  expect(svg.querySelectorAll('.cs-candle')).toHaveLength(6);
+  stage.inspect('');
+  expect(stage.current().state.reveal).toBe(40);
+  expect(stage.current().evaluation.trade?.side).toBe('buy');
+});

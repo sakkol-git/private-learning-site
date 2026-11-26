@@ -2,6 +2,8 @@
 export const CHART_CSS = `
 .cs-stage { font-family: var(--font-mono); }
 .cs-title { font: 600 12px var(--font-mono); fill: var(--muted); letter-spacing: .04em; }
+.cs-new-bars { stroke: var(--accent); stroke-width: 3; }
+.cs-axis, .cs-tag text { font-variant-numeric: tabular-nums; }
 .cs-grid { stroke: var(--line); stroke-width: 1; }
 .cs-axis { font: 500 10.5px var(--font-mono); fill: var(--muted); }
 .cs-highlight { fill: var(--accent-soft); opacity: .8; }
@@ -17,6 +19,7 @@ export const CHART_CSS = `
 .cs-tagc-0 rect { stroke: var(--node-users); }
 .cs-tagc-1 rect { stroke: var(--warn); }
 .cs-tag-cmp text { fill: var(--ink); }
+.cs-candle { cursor: pointer; }
 .cs-candle line { stroke-width: 1.2; }
 .cs-up line, .cs-up rect { stroke: var(--accent); }
 .cs-up rect { fill: var(--card); stroke-width: 1.3; }

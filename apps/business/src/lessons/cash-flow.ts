@@ -1,3 +1,5 @@
+import { buildStepStates, businessScenarios, DAY_MS } from '@ss/diagram-engine';
+import { experimentState } from '@ss/lesson-engine';
 import type { CourseLesson } from './index';
 
 const lesson: CourseLesson = {
@@ -115,6 +117,32 @@ const lesson: CourseLesson = {
       change: {},
     },
   ],
+};
+
+const thin = businessScenarios.latePayments(experimentState(lesson, 'late', buildStepStates));
+const buffered = businessScenarios.latePayments(
+  experimentState(lesson, 'buffer-test', buildStepStates),
+);
+if (!thin || !buffered) throw new Error('Late payments requires customer receipts');
+lesson.experiment = {
+  stepId: 'buffer-test',
+  title: 'Can the shop cover the same payment delay?',
+  control: 'Payment timeline',
+  unit: 'USD',
+  frames: [1, 5, 9, 10, 11].map((day) => {
+    const time = day * DAY_MS - 1; // End of the selected simulated day.
+    return {
+      label: 'Day ' + day,
+      rows: [
+        { label: 'Cash with the original reserve', value: thin.metricsAt(time).cash },
+        { label: 'Cash with the larger reserve', value: buffered.metricsAt(time).cash },
+      ],
+      caption:
+        day < 11
+          ? 'Customers still owe the shop. A bar to the left of zero means bills exceed available cash.'
+          : 'The customers pay their overdue invoices. Both balances include the collected cash.',
+    };
+  }),
 };
 
 export default lesson;

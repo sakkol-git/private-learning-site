@@ -1,4 +1,5 @@
-export type { DiagramLesson, Lesson, LessonLevel, Step, StepTag } from './types';
+export { experimentState } from './experiment';
+export type { DiagramLesson, Lesson, LessonExperiment, LessonLevel, Step, StepTag } from './types';
 export { validateCatalog, validateLesson } from './validate';
 export type { SceneIssue, SceneValidator, ValidateOptions } from './validate';
 export { diagramScene } from './diagram-scene';

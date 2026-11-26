@@ -23,6 +23,7 @@ const pct = (v: number) =>
   `${v > 0 ? '+' : v < 0 ? '−' : ''}${Math.abs(v).toFixed(Math.abs(v) < 10 ? 1 : 0)}`;
 
 const config: CourseConfig<StockMetrics, StockAction, StockInitial, ChartChange> = {
+  id: 'stocks',
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,

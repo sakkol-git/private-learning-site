@@ -1,3 +1,5 @@
+import { buildStepStates, securityScenarios } from '@ss/diagram-engine';
+import { experimentState } from '@ss/lesson-engine';
 import type { CourseLesson } from './index';
 
 const lesson: CourseLesson = {
@@ -150,6 +152,29 @@ const lesson: CourseLesson = {
       change: {},
     },
   ],
+};
+
+const sync = securityScenarios.ransomware(experimentState(lesson, 'sync', buildStepStates));
+const offline = securityScenarios.ransomware(experimentState(lesson, 'restored', buildStepStates));
+if (!sync || !offline) throw new Error('Recovery comparison requires a device');
+lesson.experiment = {
+  stepId: 'restored',
+  title: 'Which files are still locked?',
+  control: 'Recovery phase',
+  unit: '%',
+  frames: [
+    { label: 'After encryption', time: 500 },
+    { label: 'During restore', time: 2800 },
+    { label: 'After restore', time: 4000 },
+  ].map(({ label, time }) => ({
+    label,
+    rows: [
+      { label: 'Connected sync folder only', value: sync.metricsAt(time).filesLockedPct },
+      { label: 'With an offline backup', value: offline.metricsAt(time).filesLockedPct },
+    ],
+    caption:
+      'The connected folder mirrors the encrypted files. The offline copy can restore the laptop.',
+  })),
 };
 
 export default lesson;

@@ -43,3 +43,18 @@ test('a spread spike alone stops out a tight stop', async ({ page }) => {
   await page.getByRole('button', { name: 'Spread widens', exact: true }).click();
   await expect(tile(page, 'balance')).toHaveText('$9,934', { timeout: 5000 });
 });
+
+test('inspect and step through candles with the keyboard', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/lesson/reading-a-candle/2');
+  const picker = page.getByLabel('Inspect a bar');
+  await picker.selectOption('4');
+  await expect(page.locator('output')).toContainText('Open');
+  await page.getByRole('button', { name: 'Next bar', exact: true }).press('Enter');
+  await expect(picker).toHaveValue('5');
+  await expect(page.locator('.cs-candle')).toHaveCount(5);
+  await page.getByRole('button', { name: 'Previous bar', exact: true }).press('Space');
+  await expect(picker).toHaveValue('4');
+  await picker.selectOption('');
+  await expect(page.locator('.cs-candle')).toHaveCount(36);
+});

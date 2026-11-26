@@ -24,6 +24,7 @@ const config: CourseConfig<
   DiagramInitial<MoneyMetrics>,
   StepChange<MoneyMetrics>
 > = {
+  id: 'finance',
   siteName: SITE_NAME,
   authorName: AUTHOR_NAME,
   catalog,
